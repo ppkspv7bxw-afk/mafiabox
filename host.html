@@ -5,36 +5,82 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Host</title>
 </head>
-<body style="font-family: sans-serif; padding: 24px;">
+<body style="font-family: system-ui, sans-serif; padding: 24px;">
   <h1>🎥 Host</h1>
 
-  <button id="create">إنشاء غرفة</button>
-  <p id="code" style="font-size: 20px; margin-top: 12px;"></p>
+  <div style="margin: 12px 0; padding: 12px; border: 1px solid #ddd; border-radius: 10px;">
+    <div><strong>حالة الاتصال:</strong> <span id="conn">جاري الاتصال…</span></div>
+    <div style="margin-top: 8px;"><strong>كود الغرفة:</strong> <span id="code">—</span></div>
+  </div>
 
-  <h2>اللاعبين</h2>
-  <ul id="players"></ul>
+  <button id="create" disabled style="padding: 10px 14px; border-radius: 10px;">
+    إنشاء غرفة
+  </button>
 
-  <p><a href="/">رجوع</a></p>
+  <h2 style="margin-top: 20px;">اللاعبين</h2>
+  <ul id="players" style="line-height: 1.9;"></ul>
 
-  <!-- Socket.IO client من السيرفر نفسه -->
-  <script src="https://api.yourdomain.com/socket.io/socket.io.js"></script>
+  <p style="margin-top: 20px;"><a href="/">رجوع</a></p>
+
+  <!-- Socket.IO client من السيرفر -->
+  <script src="https://jackbox-server-pwtr.onrender.com/socket.io/socket.io.js"></script>
   <script>
-    const socket = io("https://api.yourdomain.com");
+    const SERVER_URL = "https://jackbox-server-pwtr.onrender.com";
 
+    const connEl = document.getElementById("conn");
     const codeEl = document.getElementById("code");
     const playersEl = document.getElementById("players");
     const createBtn = document.getElementById("create");
 
-    createBtn.onclick = () => {
-      socket.emit("host:createRoom");
-    };
-
-    socket.on("room:created", ({ roomCode }) => {
-      codeEl.textContent = "كود الغرفة: " + roomCode;
+    const socket = io(SERVER_URL, {
+      transports: ["websocket", "polling"]
     });
 
+    function setConn(text) {
+      connEl.textContent = text;
+    }
+
+    // اتصال ناجح
+    socket.on("connect", () => {
+      setConn("متصل ✅");
+      createBtn.disabled = false;
+    });
+
+    // انفصال
+    socket.on("disconnect", () => {
+      setConn("غير متصل ❌");
+      createBtn.disabled = true;
+    });
+
+    // فشل اتصال
+    socket.on("connect_error", (err) => {
+      setConn("فشل الاتصال ❌");
+      createBtn.disabled = true;
+      alert("فشل الاتصال بالسيرفر: " + (err?.message || err));
+      console.log("connect_error:", err);
+    });
+
+    // إنشاء غرفة
+    createBtn.onclick = () => {
+      if (!socket.connected) {
+        alert("السيرفر غير متصل. حاول مرة ثانية.");
+        return;
+      }
+      socket.emit("host:createRoom");
+      setConn("تم إرسال طلب إنشاء غرفة…");
+      // بعد ثواني بيرجع لك room:created و room:state
+    };
+
+    // استلم كود الغرفة
+    socket.on("room:created", ({ roomCode }) => {
+      codeEl.textContent = roomCode;
+      setConn("جاهز ✅ (الغرفة انعملت)");
+    });
+
+    // تحديث حالة الغرفة (لاعبين)
     socket.on("room:state", ({ roomCode, players }) => {
-      if (roomCode) codeEl.textContent = "كود الغرفة: " + roomCode;
+      if (roomCode) codeEl.textContent = roomCode;
+
       playersEl.innerHTML = "";
       (players || []).forEach(p => {
         const li = document.createElement("li");
@@ -43,7 +89,10 @@
       });
     });
 
-    socket.on("room:error", ({ message }) => alert(message));
+    // أخطاء الغرفة
+    socket.on("room:error", ({ message }) => {
+      alert(message || "صار خطأ");
+    });
   </script>
 </body>
 </html>
