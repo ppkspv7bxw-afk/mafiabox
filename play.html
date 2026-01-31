@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Play</title>
+</head>
+<body style="font-family: sans-serif; padding: 24px;">
+  <h1>📱 Play</h1>
+
+  <label>كود الغرفة</label><br/>
+  <input id="room" placeholder="مثال: ABCD" style="padding:8px; width: 220px;" /><br/><br/>
+
+  <label>اسمك</label><br/>
+  <input id="name" placeholder="اسم اللاعب" style="padding:8px; width: 220px;" /><br/><br/>
+
+  <button id="join">دخول</button>
+
+  <p id="status" style="margin-top: 12px;"></p>
+  <p><a href="/">رجوع</a></p>
+
+  <script src="https://api.yourdomain.com/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io("https://api.yourdomain.com");
+
+    const roomEl = document.getElementById("room");
+    const nameEl = document.getElementById("name");
+    const statusEl = document.getElementById("status");
+    const joinBtn = document.getElementById("join");
+
+    joinBtn.onclick = () => {
+      const roomCode = (roomEl.value || "").trim().toUpperCase();
+      const name = (nameEl.value || "").trim();
+      if (!roomCode || !name) return alert("اكتب كود الغرفة واسمك");
+      socket.emit("player:join", { roomCode, name });
+      statusEl.textContent = "تم إرسال طلب الدخول…";
+    };
+
+    socket.on("room:state", ({ roomCode, players }) => {
+      statusEl.textContent = `دخلت/تحدّثت الغرفة ${roomCode}. عدد اللاعبين: ${(players||[]).length}`;
+    });
+
+    socket.on("room:error", ({ message }) => alert(message));
+  </script>
+</body>
+</html>
