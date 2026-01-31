@@ -5,42 +5,93 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Play</title>
 </head>
-<body style="font-family: sans-serif; padding: 24px;">
+<body style="font-family: system-ui, sans-serif; padding: 24px;">
   <h1>📱 Play</h1>
 
+  <div style="margin: 12px 0; padding: 12px; border: 1px solid #ddd; border-radius: 10px;">
+    <div><strong>حالة الاتصال:</strong> <span id="conn">جاري الاتصال…</span></div>
+    <div style="margin-top: 8px;"><strong>الحالة:</strong> <span id="status">—</span></div>
+  </div>
+
   <label>كود الغرفة</label><br/>
-  <input id="room" placeholder="مثال: ABCD" style="padding:8px; width: 220px;" /><br/><br/>
+  <input id="room" placeholder="مثال: ABCD" style="padding:10px; width: 220px; border-radius: 10px; border:1px solid #ccc;" />
+  <br/><br/>
 
   <label>اسمك</label><br/>
-  <input id="name" placeholder="اسم اللاعب" style="padding:8px; width: 220px;" /><br/><br/>
+  <input id="name" placeholder="اسم اللاعب" style="padding:10px; width: 220px; border-radius: 10px; border:1px solid #ccc;" />
+  <br/><br/>
 
-  <button id="join">دخول</button>
+  <button id="join" disabled style="padding: 10px 14px; border-radius: 10px;">
+    دخول
+  </button>
 
-  <p id="status" style="margin-top: 12px;"></p>
-  <p><a href="/">رجوع</a></p>
+  <p style="margin-top: 20px;"><a href="/">رجوع</a></p>
 
-  <script src="https://api.yourdomain.com/socket.io/socket.io.js"></script>
+  <script src="https://jackbox-server-pwtr.onrender.com/socket.io/socket.io.js"></script>
   <script>
-    const socket = io("https://api.yourdomain.com");
+    const SERVER_URL = "https://jackbox-server-pwtr.onrender.com";
 
+    const connEl = document.getElementById("conn");
+    const statusEl = document.getElementById("status");
     const roomEl = document.getElementById("room");
     const nameEl = document.getElementById("name");
-    const statusEl = document.getElementById("status");
     const joinBtn = document.getElementById("join");
+
+    const socket = io(SERVER_URL, {
+      transports: ["websocket", "polling"]
+    });
+
+    function setConn(text) { connEl.textContent = text; }
+    function setStatus(text) { statusEl.textContent = text; }
+
+    socket.on("connect", () => {
+      setConn("متصل ✅");
+      joinBtn.disabled = false;
+      setStatus("اكتب كود الغرفة واسمك");
+    });
+
+    socket.on("disconnect", () => {
+      setConn("غير متصل ❌");
+      joinBtn.disabled = true;
+      setStatus("انقطع الاتصال");
+    });
+
+    socket.on("connect_error", (err) => {
+      setConn("فشل الاتصال ❌");
+      joinBtn.disabled = true;
+      alert("فشل الاتصال بالسيرفر: " + (err?.message || err));
+      console.log("connect_error:", err);
+    });
 
     joinBtn.onclick = () => {
       const roomCode = (roomEl.value || "").trim().toUpperCase();
       const name = (nameEl.value || "").trim();
-      if (!roomCode || !name) return alert("اكتب كود الغرفة واسمك");
+
+      if (!roomCode || !name) {
+        alert("اكتب كود الغرفة واسمك");
+        return;
+      }
+
+      if (!socket.connected) {
+        alert("السيرفر غير متصل. حاول مرة ثانية.");
+        return;
+      }
+
+      setStatus("جاري محاولة الدخول…");
       socket.emit("player:join", { roomCode, name });
-      statusEl.textContent = "تم إرسال طلب الدخول…";
     };
 
-    socket.on("room:state", ({ roomCode, players }) => {
-      statusEl.textContent = `دخلت/تحدّثت الغرفة ${roomCode}. عدد اللاعبين: ${(players||[]).length}`;
+    // لو دخلت كود غلط السيرفر بيرسل room:error
+    socket.on("room:error", ({ message }) => {
+      setStatus("فشل الدخول");
+      alert(message || "الغرفة غير موجودة");
     });
 
-    socket.on("room:error", ({ message }) => alert(message));
+    // لو الغرفة موجودة، السيرفر بيرسل room:state (للجميع)
+    socket.on("room:state", ({ roomCode, players }) => {
+      // هذا يعني الغرفة موجودة والاتصال شغال
+      setStatus(`تم الاتصال بالغرفة ${roomCode} ✅ (عدد اللاعبين: ${(players || []).length})`);
+    });
   </script>
 </body>
 </html>
