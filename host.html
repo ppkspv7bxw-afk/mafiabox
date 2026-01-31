@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Host</title>
+</head>
+<body style="font-family: sans-serif; padding: 24px;">
+  <h1>🎥 Host</h1>
+
+  <button id="create">إنشاء غرفة</button>
+  <p id="code" style="font-size: 20px; margin-top: 12px;"></p>
+
+  <h2>اللاعبين</h2>
+  <ul id="players"></ul>
+
+  <p><a href="/">رجوع</a></p>
+
+  <!-- Socket.IO client من السيرفر نفسه -->
+  <script src="https://api.yourdomain.com/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io("https://api.yourdomain.com");
+
+    const codeEl = document.getElementById("code");
+    const playersEl = document.getElementById("players");
+    const createBtn = document.getElementById("create");
+
+    createBtn.onclick = () => {
+      socket.emit("host:createRoom");
+    };
+
+    socket.on("room:created", ({ roomCode }) => {
+      codeEl.textContent = "كود الغرفة: " + roomCode;
+    });
+
+    socket.on("room:state", ({ roomCode, players }) => {
+      if (roomCode) codeEl.textContent = "كود الغرفة: " + roomCode;
+      playersEl.innerHTML = "";
+      (players || []).forEach(p => {
+        const li = document.createElement("li");
+        li.textContent = `${p.name} — ${p.score} نقطة`;
+        playersEl.appendChild(li);
+      });
+    });
+
+    socket.on("room:error", ({ message }) => alert(message));
+  </script>
+</body>
+</html>
