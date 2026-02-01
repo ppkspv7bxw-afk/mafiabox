@@ -5,591 +5,110 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Host</title>
   <style>
-    :root{
-      --bg:#0b1020;
-      --text:#eef1ff;
-      --muted:#a7b0d6;
-      --border:rgba(255,255,255,.10);
-      --shadow: 0 14px 40px rgba(0,0,0,.45);
-
-      --red:#ff2e55;
-      --green:#2ee59d;
-
-      --btn1:#ff3b6a;
-      --btn2:#ff1f4f;
-      --radius: 18px;
-    }
-    *{ box-sizing:border-box; }
-    body{
-      margin:0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-      background: radial-gradient(1200px 800px at 20% 0%, #19214a 0%, var(--bg) 55%);
-      color:var(--text);
-      overflow-x:hidden;
-    }
-    .wrap{ max-width: 980px; margin: 0 auto; padding: 22px; }
-    .card{
-      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
-      border:1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 18px;
-      box-shadow: var(--shadow);
-      position: relative;
-    }
-
-    .statusLight{
-      position:absolute;
-      top:14px;
-      left:14px;
-      width: 14px;
-      height: 14px;
-      border-radius: 999px;
-      background: var(--red);
-      box-shadow: 0 0 0 4px rgba(255,46,85,.12), 0 0 18px rgba(255,46,85,.35);
-    }
-    .statusLight.ok{
-      background: var(--green);
-      box-shadow: 0 0 0 4px rgba(46,229,157,.14), 0 0 18px rgba(46,229,157,.35);
-    }
-
-    .brand{
-      display:flex;
-      justify-content:center;
-      margin-top: 6px;
-      margin-bottom: 12px;
-    }
-    .brand img{
-      width: 340px;
-      max-width: 92%;
-      height: auto;
-      filter: drop-shadow(0 18px 34px rgba(255,35,79,.18));
-      border-radius: 18px;
-      border:1px solid rgba(255,255,255,.08);
-      background: rgba(0,0,0,.25);
-    }
-
-    .row{
-      display:flex; gap:10px; flex-wrap:wrap;
-      align-items:center; justify-content:space-between;
-    }
-    .pill{
-      display:inline-flex; align-items:center; gap:8px;
-      padding: 8px 12px; border-radius: 999px;
-      background: rgba(255,255,255,.06);
-      border:1px solid rgba(255,255,255,.10);
-      font-size: 13px;
-      color: var(--muted);
-    }
-
-    .btn{
-      border:0;
-      border-radius: 16px;
-      padding: 14px 14px;
-      font-weight: 950;
-      cursor:pointer;
-      color: #fff;
-      background: linear-gradient(135deg, var(--btn1), var(--btn2));
-      position: relative;
-      overflow:hidden;
-      box-shadow: 0 12px 26px rgba(255,35,79,.22);
-      transition: transform .08s ease, filter .15s ease, opacity .15s ease;
-      letter-spacing: .4px;
-      white-space: nowrap;
-      text-decoration:none;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      gap:10px;
-    }
-    .btn:active{ transform: scale(.99); }
-    .btn:hover{ filter: brightness(1.05); }
-    .btn:disabled{ opacity:.55; cursor:not-allowed; box-shadow:none; }
-
-    .btn::after{
-      content:"";
-      position:absolute;
-      top:-40%;
-      left:-60%;
-      width: 40%;
-      height: 180%;
-      transform: rotate(25deg);
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,.22), transparent);
-      animation: shine 2.2s infinite;
-    }
-    @keyframes shine{
-      0%{ left:-60%; }
-      55%{ left:120%; }
-      100%{ left:120%; }
-    }
-
-    .btn.secondary{
-      background: rgba(255,255,255,.07);
-      border:1px solid rgba(255,255,255,.12);
-      box-shadow: none;
-    }
-    .btn.secondary::after{ display:none; }
-
-    .btnGroup{ display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end; }
-
-    .modeWrap{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      margin: 8px 0 14px;
-    }
-    .modeBtn{
-      flex:1;
-      min-width: 220px;
-      justify-content:center;
-      background: rgba(255,255,255,.06);
-      border:1px solid rgba(255,255,255,.12);
-      box-shadow:none;
-    }
-    .modeBtn.active{
-      background: rgba(255,35,79,.16);
-      border-color: rgba(255,35,79,.28);
-    }
-    .modeBtn::after{ display:none; }
-
-    .codeRow{
-      margin-top: 10px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-    }
-    .codeBox{
-      position: relative;
-      width: min(520px, 100%);
-    }
-    .code{
-      font-size: 62px;
-      font-weight: 950;
-      letter-spacing: 8px;
-      padding: 12px 18px;
-      padding-left: 70px;
-      border-radius: 16px;
-      background: rgba(0,0,0,.25);
-      border:1px solid rgba(255,255,255,.10);
-      text-align:center;
-      user-select: none;
-    }
-    .copyInside{
-      position:absolute;
-      top: 50%;
-      left: 10px;
-      transform: translateY(-50%);
-      width: 48px;
-      height: 48px;
-      border-radius: 14px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.06);
-      cursor:pointer;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      opacity: .72;
-      transition: opacity .15s ease, background .15s ease, transform .08s ease;
-    }
-    .copyInside:hover{ opacity:.92; background: rgba(255,255,255,.10); }
-    .copyInside:active{ transform: translateY(-50%) scale(.99); }
-    .copyInside:disabled{ opacity:.35; cursor:not-allowed; }
-    .copyInside svg{ width: 20px; height: 20px; fill: rgba(238,241,255,.92); }
-
-    .qrWrap{
-      margin-top: 14px;
-      display:flex;
-      justify-content:center;
-    }
-    #qrcode{
-      width: 210px;
-      height: 210px;
-      border-radius: 18px;
-      overflow:hidden;
-      background: rgba(0,0,0,.25);
-      border:1px solid rgba(255,255,255,.10);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-    }
-
-    .toast{
-      margin-top: 12px;
-      padding: 10px 12px;
-      border-radius: 16px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.04);
-      color: rgba(167,176,214,.92);
-      display:none;
-      text-align:center;
-      white-space: pre-wrap;
-    }
-
-    .grid{
-      margin-top: 14px;
-      display:grid;
-      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
-      gap: 12px;
-    }
-    .player{
-      padding: 12px;
-      border-radius: 16px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.04);
-      display:flex; justify-content:space-between; gap:10px; align-items:center;
-    }
-    .player .name{ font-weight: 950; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-    .badge{
-      font-weight: 950;
-      font-size: 12px;
-      padding: 6px 10px;
-      border-radius: 999px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.06);
-      color: rgba(167,176,214,.95);
-      white-space:nowrap;
-    }
-    .badge.ready{
-      border-color: rgba(46,229,157,.25);
-      color: rgba(46,229,157,.95);
-      background: rgba(46,229,157,.10);
-    }
-
-    .inline{
-      margin-top: 12px;
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      align-items:center;
-      justify-content:center;
-    }
-    input{
-      width: min(360px, 100%);
-      padding: 13px 12px;
-      border-radius: 16px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.22);
-      color: var(--text);
-      outline:none;
-      font-size: 16px;
-    }
-    input:focus{
-      border-color: rgba(255,35,79,.55);
-      box-shadow: 0 0 0 4px rgba(255,35,79,.14);
-    }
+    :root{--bg:#0b1020;--text:#eef1ff;--muted:#a7b0d6;--border:rgba(255,255,255,.10);--shadow:0 14px 40px rgba(0,0,0,.45);--red:#ff2e55;--green:#2ee59d;--btn1:#ff3b6a;--btn2:#ff1f4f;--radius:18px;}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:radial-gradient(1200px 800px at 20% 0%,#19214a 0%,var(--bg) 55%);color:var(--text)}
+    .wrap{max-width:980px;margin:0 auto;padding:22px}
+    .card{background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.03));border:1px solid var(--border);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);position:relative}
+    .statusLight{position:absolute;top:14px;left:14px;width:14px;height:14px;border-radius:999px;background:var(--red);box-shadow:0 0 0 4px rgba(255,46,85,.12),0 0 18px rgba(255,46,85,.35)}
+    .statusLight.ok{background:var(--green);box-shadow:0 0 0 4px rgba(46,229,157,.14),0 0 18px rgba(46,229,157,.35)}
+    .brand{display:flex;justify-content:center;margin-top:6px;margin-bottom:12px}
+    .brand img{width:340px;max-width:92%;height:auto;filter:drop-shadow(0 18px 34px rgba(255,35,79,.18));border-radius:18px;border:1px solid rgba(255,255,255,.08);background:rgba(0,0,0,.25)}
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+    .pill{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.10);font-size:13px;color:var(--muted)}
+    .btn{border:0;border-radius:16px;padding:14px 14px;font-weight:950;cursor:pointer;color:#fff;background:linear-gradient(135deg,var(--btn1),var(--btn2));box-shadow:0 12px 26px rgba(255,35,79,.22);display:inline-flex;align-items:center;justify-content:center}
+    .btn:disabled{opacity:.55;cursor:not-allowed;box-shadow:none}
+    .btn.secondary{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);box-shadow:none}
+    .btnGroup{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+    .modeWrap{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0 14px}
+    .modeBtn{flex:1;min-width:220px;justify-content:center;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);box-shadow:none}
+    .modeBtn.active{background:rgba(255,35,79,.16);border-color:rgba(255,35,79,.28)}
+    .code{margin-top:10px;font-size:58px;font-weight:950;letter-spacing:8px;padding:12px 18px;border-radius:16px;background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.10);text-align:center;user-select:none}
   </style>
 </head>
-
 <body>
   <div class="wrap">
     <div class="card">
-      <span id="light" class="statusLight" aria-hidden="true"></span>
-
-      <div class="brand">
-        <img src="/brand.png" alt="brand" />
-      </div>
+      <span id="light" class="statusLight"></span>
+      <div class="brand"><img src="/brand.png" alt="brand"></div>
 
       <div class="modeWrap">
         <button id="modeDisplay" class="btn modeBtn active" type="button">جهاز عرض</button>
-        <button id="modePlayer" class="btn modeBtn" type="button">أنا لاعب + هوست</button>
+        <button id="modePlayer" class="btn modeBtn secondary" type="button">أنا لاعب + هوست</button>
       </div>
 
       <div class="row">
         <div class="pill">Players: <strong id="count">0</strong></div>
-
         <div class="btnGroup">
           <a class="btn secondary" href="/">Players</a>
-          <button id="reconnect" class="btn secondary" type="button">Reconnect</button>
           <button id="create" class="btn" type="button" disabled>Create Room</button>
-          <button id="start" class="btn secondary" type="button" disabled>Start</button>
+          <button id="start" class="btn secondary" type="button" disabled>Start → Lobby</button>
         </div>
       </div>
 
-      <div class="codeRow">
-        <div class="codeBox">
-          <button id="copyLinkInside" class="copyInside" type="button" disabled aria-label="Copy link">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M16 1H6a2 2 0 0 0-2 2v12h2V3h10V1zm3 4H10a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zm0 16h-9V7h9v14z"/>
-            </svg>
-          </button>
-          <div id="code" class="code">— — — —</div>
-        </div>
-      </div>
-
-      <div class="qrWrap">
-        <div id="qrcode">
-          <span style="color:rgba(167,176,214,.85); font-size:12px;">QR</span>
-        </div>
-      </div>
-
-      <div id="hostAsPlayerBox" class="inline" style="display:none;">
-        <input id="myName" placeholder="اسمك كـ لاعب" />
-        <button id="joinAsPlayer" class="btn secondary" type="button" disabled>Join as Player</button>
-        <button id="readyMe" class="btn" type="button" disabled>Ready</button>
-        <button id="leaveMe" class="btn secondary" type="button" disabled>Leave</button>
-      </div>
-
-      <div id="toast" class="toast"></div>
-    </div>
-
-    <div class="card" style="margin-top:14px;">
-      <h2 style="margin:0 0 10px;">Players</h2>
-      <div id="players" class="grid"></div>
-      <div id="empty" style="margin-top:10px; color:rgba(167,176,214,.9);">No players yet…</div>
+      <div id="code" class="code">— — — —</div>
     </div>
   </div>
 
   <script src="https://jackbox-server-pwtr.onrender.com/socket.io/socket.io.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-
   <script>
     const SERVER_URL = "https://jackbox-server-pwtr.onrender.com";
 
     const light = document.getElementById("light");
-    const codeEl = document.getElementById("code");
     const countEl = document.getElementById("count");
-    const playersEl = document.getElementById("players");
-    const emptyEl = document.getElementById("empty");
-    const toastEl = document.getElementById("toast");
-
-    const reconnectBtn = document.getElementById("reconnect");
     const createBtn = document.getElementById("create");
     const startBtn = document.getElementById("start");
-    const copyInsideBtn = document.getElementById("copyLinkInside");
-
+    const codeEl = document.getElementById("code");
     const modeDisplayBtn = document.getElementById("modeDisplay");
     const modePlayerBtn = document.getElementById("modePlayer");
 
-    const hostAsPlayerBox = document.getElementById("hostAsPlayerBox");
-    const myNameEl = document.getElementById("myName");
-    const joinAsPlayerBtn = document.getElementById("joinAsPlayer");
-    const readyMeBtn = document.getElementById("readyMe");
-    const leaveMeBtn = document.getElementById("leaveMe");
-
-    const qrBox = document.getElementById("qrcode");
-    const siteOrigin = location.origin;
-
-    let currentRoomCode = "";
-    let socket = null;
-
+    let roomCode = "";
     let hostMode = localStorage.getItem("hostMode") || "display";
-    let joinedAsPlayer = false;
-    let myReady = false;
-
-    function showToast(msg){
-      toastEl.textContent = msg;
-      toastEl.style.display = "block";
-      clearTimeout(toastEl._t);
-      toastEl._t = setTimeout(() => toastEl.style.display = "none", 1600);
-    }
-
-    async function copyText(text){
-      try{
-        await navigator.clipboard.writeText(text);
-        showToast("✅ Copied");
-      } catch(e){
-        showToast("Copy failed");
-      }
-    }
-
-    function setConnected(isOk){
-      light.classList.toggle("ok", !!isOk);
-      createBtn.disabled = !isOk;
-      if (!isOk){
-        startBtn.disabled = true;
-        copyInsideBtn.disabled = true;
-      }
-    }
-
-    function renderQR(link){
-      qrBox.innerHTML = "";
-      new QRCode(qrBox, {
-        text: link,
-        width: 210,
-        height: 210,
-        correctLevel: QRCode.CorrectLevel.M
-      });
-    }
-
-    function escapeHtml(s){
-      return String(s).replace(/[&<>"']/g, (c) => ({
-        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
-      }[c]));
-    }
-
     function setMode(mode){
       hostMode = mode;
       localStorage.setItem("hostMode", hostMode);
-
       modeDisplayBtn.classList.toggle("active", hostMode === "display");
       modePlayerBtn.classList.toggle("active", hostMode === "player");
-
-      hostAsPlayerBox.style.display = (hostMode === "player") ? "flex" : "none";
-
-      if (hostMode !== "player"){
-        joinAsPlayerBtn.disabled = true;
-        readyMeBtn.disabled = true;
-        leaveMeBtn.disabled = true;
-        joinedAsPlayer = false;
-        myReady = false;
-        readyMeBtn.textContent = "Ready";
-      } else {
-        joinAsPlayerBtn.disabled = !currentRoomCode;
-      }
+      modePlayerBtn.classList.toggle("secondary", hostMode !== "player");
+      modeDisplayBtn.classList.toggle("secondary", hostMode !== "display");
     }
-
-    function renderPlayers(list){
-      const players = list || [];
-      countEl.textContent = players.length;
-
-      playersEl.innerHTML = "";
-      if (players.length === 0){
-        emptyEl.style.display = "block";
-      } else {
-        emptyEl.style.display = "none";
-        players.forEach(p => {
-          const div = document.createElement("div");
-          div.className = "player";
-          const ready = !!p.ready;
-          div.innerHTML = `
-            <div class="name">${escapeHtml(p.name || "")}</div>
-            <div class="badge ${ready ? "ready" : ""}">${ready ? "READY" : "WAIT"}</div>
-          `;
-          playersEl.appendChild(div);
-        });
-      }
-
-      const allReady = players.length > 0 && players.every(p => !!p.ready);
-      startBtn.disabled = !allReady || !currentRoomCode;
-    }
-
-    function goToLobby(roomCode){
-      const code = (roomCode || currentRoomCode || "").trim().toUpperCase();
-      if (!code) return;
-      window.location.href = `/lobby.html?room=${encodeURIComponent(code)}`;
-    }
-
-    function startSocket(){
-      if (socket){
-        socket.removeAllListeners();
-        socket.disconnect();
-      }
-
-      setConnected(false);
-
-      socket = io(SERVER_URL, {
-        transports: ["websocket","polling"],
-        timeout: 15000
-      });
-
-      socket.on("connect", () => setConnected(true));
-      socket.on("disconnect", () => setConnected(false));
-      socket.on("connect_error", (err) => {
-        setConnected(false);
-        console.log("connect_error:", err);
-      });
-
-      socket.on("room:created", ({ roomCode }) => {
-        currentRoomCode = roomCode;
-        codeEl.textContent = roomCode;
-
-        const link = `${siteOrigin}/?room=${encodeURIComponent(roomCode)}`;
-        renderQR(link);
-
-        copyInsideBtn.disabled = false;
-
-        if (hostMode === "player"){
-          joinAsPlayerBtn.disabled = false;
-        }
-
-        showToast("✅ Room created");
-      });
-
-      socket.on("room:state", ({ roomCode, players }) => {
-        if (roomCode){
-          currentRoomCode = roomCode;
-          codeEl.textContent = roomCode;
-
-          const link = `${siteOrigin}/?room=${encodeURIComponent(roomCode)}`;
-          renderQR(link);
-
-          copyInsideBtn.disabled = false;
-
-          if (hostMode === "player"){
-            joinAsPlayerBtn.disabled = joinedAsPlayer ? true : false;
-          }
-        }
-        renderPlayers(players || []);
-      });
-
-      socket.on("room:error", ({ message }) => {
-        showToast(message || "Error");
-      });
-
-      // ✅ عند Start: تحويل للـ lobby.html
-      socket.on("game:started", ({ roomCode } = {}) => {
-        goToLobby(roomCode);
-      });
-    }
-
     setMode(hostMode);
     modeDisplayBtn.onclick = () => setMode("display");
     modePlayerBtn.onclick = () => setMode("player");
 
-    reconnectBtn.onclick = () => startSocket();
+    const socket = io(SERVER_URL, { transports:["websocket","polling"] });
 
-    createBtn.onclick = () => {
-      if (!socket || !socket.connected) return;
-      socket.emit("host:createRoom");
-    };
+    function normalizeRoom(x){ return String(x||"").trim().toUpperCase().replace(/[^A-Z0-9]/g,"").slice(0,8); }
 
-    copyInsideBtn.onclick = () => {
-      if (!currentRoomCode) return;
-      const link = `${siteOrigin}/?room=${encodeURIComponent(currentRoomCode)}`;
-      copyText(link);
-    };
+    socket.on("connect", () => { light.classList.add("ok"); createBtn.disabled = false; });
+    socket.on("disconnect", () => { light.classList.remove("ok"); createBtn.disabled = true; startBtn.disabled = true; });
+
+    createBtn.onclick = () => socket.emit("host:createRoom");
+
+    socket.on("room:created", ({ roomCode: rc }) => {
+      roomCode = normalizeRoom(rc);
+      codeEl.textContent = roomCode;
+      startBtn.disabled = true;
+    });
+
+    socket.on("room:state", ({ roomCode: rc, players }) => {
+      if (rc) roomCode = normalizeRoom(rc);
+      countEl.textContent = (players || []).length;
+
+      const allReady = (players || []).length > 0 && (players || []).every(p => !!p.ready);
+      startBtn.disabled = !roomCode || !allReady;
+    });
 
     startBtn.onclick = () => {
-      if (!currentRoomCode) return;
-      socket.emit("host:startGame", { roomCode: currentRoomCode });
-      showToast("▶️ Started");
-      // (التحويل يصير عند استقبال game:started)
+      if (!roomCode) return;
+      socket.emit("host:startGame", { roomCode });
     };
 
-    joinAsPlayerBtn.onclick = () => {
-      if (!currentRoomCode) return;
-      const nm = (myNameEl.value || "").trim();
-      if (!nm){
-        showToast("اكتب اسمك");
-        return;
-      }
-      socket.emit("player:join", { roomCode: currentRoomCode, name: nm });
-      joinedAsPlayer = true;
-      joinAsPlayerBtn.disabled = true;
-      readyMeBtn.disabled = false;
-      leaveMeBtn.disabled = false;
-      showToast("✅ Joined as player");
-    };
-
-    readyMeBtn.onclick = () => {
-      if (!currentRoomCode || !joinedAsPlayer) return;
-      myReady = !myReady;
-      readyMeBtn.textContent = myReady ? "Unready" : "Ready";
-      socket.emit("player:ready", { roomCode: currentRoomCode, ready: myReady });
-    };
-
-    leaveMeBtn.onclick = () => {
-      if (!currentRoomCode || !joinedAsPlayer) return;
-      socket.emit("player:leave", { roomCode: currentRoomCode });
-      joinedAsPlayer = false;
-      myReady = false;
-      readyMeBtn.textContent = "Ready";
-      readyMeBtn.disabled = true;
-      leaveMeBtn.disabled = true;
-      joinAsPlayerBtn.disabled = false;
-      showToast("👋 Left");
-    };
-
-    startSocket();
+    socket.on("game:started", ({ roomCode: rc } = {}) => {
+      const code = normalizeRoom(rc || roomCode);
+      if (!code) return;
+      window.location.href = `/lobby.html?room=${encodeURIComponent(code)}`;
+    });
   </script>
 </body>
 </html>
