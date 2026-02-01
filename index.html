@@ -3,7 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>GameHub4u</title>
+  <title>Host</title>
+
   <style>
     :root{
       --bg:#0b1020;
@@ -23,11 +24,11 @@
     body{
       margin:0;
       font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-      background: radial-gradient(1100px 760px at 70% 0%, #1a2350 0%, var(--bg) 55%);
+      background: radial-gradient(1200px 800px at 20% 0%, #19214a 0%, var(--bg) 55%);
       color:var(--text);
       overflow-x:hidden;
     }
-    .wrap{ max-width: 560px; margin: 0 auto; padding: 22px; }
+    .wrap{ max-width: 980px; margin: 0 auto; padding: 22px; }
     .card{
       background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
       border:1px solid var(--border);
@@ -37,7 +38,7 @@
       position: relative;
     }
 
-    /* 🔴🟢 لمبة اتصال فقط */
+    /* 🔴🟢 لمبة الاتصال فقط */
     .statusLight{
       position:absolute;
       top:14px;
@@ -53,7 +54,7 @@
       box-shadow: 0 0 0 4px rgba(46,229,157,.14), 0 0 18px rgba(46,229,157,.35);
     }
 
-    /* ✅ الشعار */
+    /* ✅ اللوغو */
     .brand{
       display:flex;
       justify-content:center;
@@ -61,42 +62,30 @@
       margin-bottom: 12px;
     }
     .brand img{
-      width: 240px;
-      max-width: 88%;
-      height:auto;
+      width: 340px;
+      max-width: 92%;
+      height: auto;
       filter: drop-shadow(0 18px 34px rgba(255,35,79,.18));
       border-radius: 18px;
       border:1px solid rgba(255,255,255,.08);
       background: rgba(0,0,0,.25);
     }
 
-    label{
-      display:block;
-      margin: 10px 0 6px;
-      color: rgba(167,176,214,.95);
-      font-weight: 900;
-      letter-spacing:.2px;
+    .row{
+      display:flex; gap:10px; flex-wrap:wrap;
+      align-items:center; justify-content:space-between;
+    }
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding: 8px 12px; border-radius: 999px;
+      background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.10);
+      font-size: 13px;
+      color: var(--muted);
     }
 
-    input{
-      width: 100%;
-      padding: 13px 12px;
-      border-radius: 16px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.22);
-      color: var(--text);
-      outline:none;
-      font-size: 16px;
-    }
-    input:focus{
-      border-color: rgba(255,35,79,.55);
-      box-shadow: 0 0 0 4px rgba(255,35,79,.14);
-    }
-
-    /* 🔥 زر ثيم + لمعان */
+    /* زر ثيم + لمعان */
     .btn{
-      width: 100%;
-      margin-top: 14px;
       border:0;
       border-radius: 16px;
       padding: 14px 14px;
@@ -108,8 +97,12 @@
       overflow:hidden;
       box-shadow: 0 12px 26px rgba(255,35,79,.22);
       transition: transform .08s ease, filter .15s ease, opacity .15s ease;
-      font-size: 16px;
       letter-spacing: .4px;
+      white-space: nowrap;
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
     }
     .btn:active{ transform: scale(.99); }
     .btn:hover{ filter: brightness(1.05); }
@@ -139,116 +132,97 @@
     }
     .btn.secondary::after{ display:none; }
 
-    .msg{
-      margin-top: 12px;
-      padding: 12px;
-      border-radius: 16px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.04);
-      color: rgba(167,176,214,.95);
-      line-height: 1.6;
-      display:none;
-      text-align:center;
-    }
-    .msg.bad{ border-color: rgba(255,46,85,.22); }
-    .msg.ok{ border-color: rgba(46,229,157,.22); }
+    .btnGroup{ display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end; }
 
-    .shake{ animation: shake .22s linear 2; }
-    @keyframes shake{
-      0%{ transform: translateX(0); }
-      25%{ transform: translateX(-6px); }
-      50%{ transform: translateX(6px); }
-      75%{ transform: translateX(-4px); }
-      100%{ transform: translateX(0); }
-    }
-
-    /* ✅ زر Host كبير مثل قبل */
-    .hostWrap{ margin-top: 14px; display:flex; justify-content:center; }
-    .hostBtn{
-      width: 100%;
-      padding: 14px 14px;
-      border-radius: 16px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.06);
-      color: var(--text);
-      font-weight: 950;
-      text-decoration:none;
+    /* ✅ مربع الكود + أيقونة نسخ داخل المربع */
+    .codeRow{
+      margin-top: 10px;
       display:flex;
       align-items:center;
       justify-content:center;
-      transition: transform .08s ease, background .15s ease;
-      opacity:.95;
     }
-    .hostBtn:hover{ background: rgba(255,255,255,.10); }
-    .hostBtn:active{ transform: scale(.99); }
-
-    /* ===== Lobby ===== */
-    .hidden{ display:none !important; }
-
-    .lobbyHeader{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:10px;
-      flex-wrap:wrap;
-      margin-top: 4px;
+    .codeBox{
+      position: relative;
+      width: min(520px, 100%);
     }
-    .pill{
-      display:inline-flex; align-items:center; gap:8px;
-      padding: 8px 12px; border-radius: 999px;
-      background: rgba(255,255,255,.06);
-      border:1px solid rgba(255,255,255,.10);
-      font-size: 13px;
-      color: var(--muted);
-    }
-
-    .roomCodeBig{
-      margin-top: 10px;
-      font-size: 56px;
+    .code{
+      font-size: 62px;
       font-weight: 950;
       letter-spacing: 8px;
       padding: 12px 18px;
+      padding-left: 70px; /* مساحة للأيقونة */
       border-radius: 16px;
       background: rgba(0,0,0,.25);
       border:1px solid rgba(255,255,255,.10);
       text-align:center;
-      user-select:none;
+      user-select: none;
+    }
+    .copyInside{
+      position:absolute;
+      top: 50%;
+      left: 10px;
+      transform: translateY(-50%);
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.06);
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      opacity: .72; /* شبه شفاف */
+      transition: opacity .15s ease, background .15s ease, transform .08s ease;
+    }
+    .copyInside:hover{ opacity:.92; background: rgba(255,255,255,.10); }
+    .copyInside:active{ transform: translateY(-50%) scale(.99); }
+    .copyInside:disabled{ opacity:.35; cursor:not-allowed; }
+    .copyInside svg{ width: 20px; height: 20px; fill: rgba(238,241,255,.92); }
+
+    /* ✅ QR بدون نصوص */
+    .qrWrap{
+      margin-top: 14px;
+      display:flex;
+      justify-content:center;
+    }
+    #qrcode{
+      width: 210px;
+      height: 210px;
+      border-radius: 18px;
+      overflow:hidden;
+      background: rgba(0,0,0,.25);
+      border:1px solid rgba(255,255,255,.10);
+      display:flex;
+      align-items:center;
+      justify-content:center;
     }
 
-    .hint{
-      margin-top:10px;
+    .toast{
+      margin-top: 12px;
       padding: 10px 12px;
       border-radius: 16px;
-      border:1px dashed rgba(255,255,255,.18);
-      color: rgba(167,176,214,.90);
-      background: rgba(255,255,255,.03);
-      line-height: 1.7;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      color: rgba(167,176,214,.92);
+      display:none;
       text-align:center;
+      white-space: pre-wrap;
     }
 
     .grid{
-      margin-top: 12px;
+      margin-top: 14px;
       display:grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 10px;
+      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+      gap: 12px;
     }
     .player{
       padding: 12px;
       border-radius: 16px;
       border:1px solid rgba(255,255,255,.10);
       background: rgba(255,255,255,.04);
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:10px;
-      overflow:hidden;
+      display:flex; justify-content:space-between; gap:10px; align-items:center;
     }
-    .player .name{
-      font-weight: 950;
-      white-space: nowrap;
-      overflow:hidden;
-      text-overflow: ellipsis;
-    }
+    .player .name{ font-weight: 950; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
     .badge{
       font-weight: 950;
       font-size: 12px;
@@ -264,153 +238,122 @@
       color: rgba(46,229,157,.95);
       background: rgba(46,229,157,.10);
     }
-    .empty{
-      margin-top: 10px;
-      text-align:center;
-      color: rgba(167,176,214,.9);
-    }
 
-    .btnRow{
-      margin-top: 12px;
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-    }
-    .btnHalf{
-      width: calc(50% - 5px);
-      margin-top: 0;
-    }
-    @media (max-width: 480px){
-      .btnHalf{ width:100%; }
-    }
+    h2{ margin:0 0 10px; }
   </style>
 </head>
 
 <body>
   <div class="wrap">
-    <div class="card" id="card">
+    <div class="card">
       <span id="light" class="statusLight" aria-hidden="true"></span>
 
       <div class="brand">
         <img src="/brand.png" alt="brand" />
       </div>
 
-      <!-- ===== Join View (نفس قبل) ===== -->
-      <div id="joinView">
-        <label>كود الغرفة</label>
-        <input id="room" placeholder="ABCD" inputmode="latin" autocomplete="off" />
+      <div class="row">
+        <div class="pill">Players: <strong id="count">0</strong></div>
 
-        <label>اسمك</label>
-        <input id="name" placeholder="اسم اللاعب" autocomplete="name" />
-
-        <button id="join" class="btn" disabled>دخول</button>
-
-        <div id="msg" class="msg"></div>
-
-        <div class="hostWrap">
-          <a class="hostBtn" href="/host.html">Host</a>
+        <div class="btnGroup">
+          <a class="btn secondary" href="/">Players</a>
+          <button id="reconnect" class="btn secondary" type="button">Reconnect</button>
+          <button id="create" class="btn" type="button" disabled>Create Room</button>
+          <button id="start" class="btn secondary" type="button" disabled>Start</button>
         </div>
       </div>
 
-      <!-- ===== Lobby View (Ready + Leave) ===== -->
-      <div id="lobbyView" class="hidden">
-        <div class="lobbyHeader">
-          <div class="pill">You: <strong id="meName">—</strong></div>
-          <div class="pill">Players: <strong id="count">0</strong></div>
-        </div>
-
-        <div id="roomBig" class="roomCodeBig">— — — —</div>
-
-        <div class="hint">Waiting for host…</div>
-
-        <div id="players" class="grid"></div>
-        <div id="empty" class="empty">No players yet…</div>
-
-        <div class="btnRow">
-          <button id="ready" class="btn btnHalf" type="button">Ready</button>
-          <button id="leave" class="btn secondary btnHalf" type="button">Leave</button>
+      <div class="codeRow">
+        <div class="codeBox">
+          <button id="copyLinkInside" class="copyInside" type="button" disabled aria-label="Copy link">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M16 1H6a2 2 0 0 0-2 2v12h2V3h10V1zm3 4H10a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zm0 16h-9V7h9v14z"/>
+            </svg>
+          </button>
+          <div id="code" class="code">— — — —</div>
         </div>
       </div>
 
+      <div class="qrWrap">
+        <div id="qrcode">
+          <span style="color:rgba(167,176,214,.85); font-size:12px;">QR</span>
+        </div>
+      </div>
+
+      <div id="toast" class="toast"></div>
+    </div>
+
+    <div class="card" style="margin-top:14px;">
+      <h2>Players</h2>
+      <div id="players" class="grid"></div>
+      <div id="empty" style="margin-top:10px; color:rgba(167,176,214,.9);">No players yet…</div>
     </div>
   </div>
 
+  <!-- ✅ مهم: Socket.IO من السيرفر نفسه (ليس CDN) -->
   <script src="https://jackbox-server-pwtr.onrender.com/socket.io/socket.io.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
   <script>
     const SERVER_URL = "https://jackbox-server-pwtr.onrender.com";
 
     const light = document.getElementById("light");
-    const card = document.getElementById("card");
-
-    const joinView = document.getElementById("joinView");
-    const lobbyView = document.getElementById("lobbyView");
-
-    const roomEl = document.getElementById("room");
-    const nameEl = document.getElementById("name");
-    const joinBtn = document.getElementById("join");
-    const msgEl = document.getElementById("msg");
-
-    const meNameEl = document.getElementById("meName");
+    const codeEl = document.getElementById("code");
     const countEl = document.getElementById("count");
-    const roomBigEl = document.getElementById("roomBig");
     const playersEl = document.getElementById("players");
     const emptyEl = document.getElementById("empty");
-    const readyBtn = document.getElementById("ready");
-    const leaveBtn = document.getElementById("leave");
+    const toastEl = document.getElementById("toast");
 
-    const socket = io(SERVER_URL, { transports: ["websocket", "polling"] });
+    const reconnectBtn = document.getElementById("reconnect");
+    const createBtn = document.getElementById("create");
+    const startBtn = document.getElementById("start");
+    const copyInsideBtn = document.getElementById("copyLinkInside");
 
-    let myRoom = "";
-    let myName = "";
-    let myReady = false;
-    let joined = false;
+    const qrBox = document.getElementById("qrcode");
+    const siteOrigin = location.origin;
 
-    function showMsg(text, type){
-      msgEl.textContent = text;
-      msgEl.className = "msg " + (type || "");
-      msgEl.style.display = "block";
-      clearTimeout(msgEl._t);
-      msgEl._t = setTimeout(() => msgEl.style.display = "none", 2000);
+    let currentRoomCode = "";
+    let socket = null;
+
+    function showToast(msg){
+      toastEl.textContent = msg;
+      toastEl.style.display = "block";
+      clearTimeout(toastEl._t);
+      toastEl._t = setTimeout(() => toastEl.style.display = "none", 1600);
     }
-    function shake(){
-      card.classList.remove("shake");
-      void card.offsetWidth;
-      card.classList.add("shake");
+
+    async function copyText(text){
+      try{
+        await navigator.clipboard.writeText(text);
+        showToast("✅ Copied");
+      } catch(e){
+        showToast("Copy failed");
+      }
     }
-    function normalizeRoom(text){
-      return String(text || "").trim().toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 8);
+
+    function setConnected(isOk){
+      light.classList.toggle("ok", !!isOk);
+      createBtn.disabled = !isOk;
+      if (!isOk){
+        startBtn.disabled = true;
+        copyInsideBtn.disabled = true;
+      }
     }
+
+    function renderQR(link){
+      qrBox.innerHTML = "";
+      new QRCode(qrBox, {
+        text: link,
+        width: 210,
+        height: 210,
+        correctLevel: QRCode.CorrectLevel.M
+      });
+    }
+
     function escapeHtml(s){
       return String(s).replace(/[&<>"']/g, (c) => ({
         "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
       }[c]));
-    }
-
-    function enterLobby(roomCode, name){
-      joined = true;
-      joinView.classList.add("hidden");
-      lobbyView.classList.remove("hidden");
-      roomBigEl.textContent = roomCode;
-      meNameEl.textContent = name;
-    }
-
-    function exitLobbyUI(){
-      joined = false;
-      myReady = false;
-      readyBtn.textContent = "Ready";
-
-      lobbyView.classList.add("hidden");
-      joinView.classList.remove("hidden");
-
-      playersEl.innerHTML = "";
-      emptyEl.style.display = "block";
-      countEl.textContent = "0";
-      roomBigEl.textContent = "— — — —";
-      meNameEl.textContent = "—";
-
-      joinBtn.disabled = !socket.connected;
-      joinBtn.textContent = "دخول";
-      setTimeout(() => roomEl.focus(), 0);
     }
 
     function renderPlayers(list){
@@ -420,111 +363,98 @@
       playersEl.innerHTML = "";
       if (players.length === 0){
         emptyEl.style.display = "block";
-        return;
+      } else {
+        emptyEl.style.display = "none";
+        players.forEach(p => {
+          const div = document.createElement("div");
+          div.className = "player";
+          const ready = !!p.ready;
+          div.innerHTML = `
+            <div class="name">${escapeHtml(p.name || "")}</div>
+            <div class="badge ${ready ? "ready" : ""}">${ready ? "READY" : "WAIT"}</div>
+          `;
+          playersEl.appendChild(div);
+        });
       }
-      emptyEl.style.display = "none";
 
-      players.forEach(p => {
-        const div = document.createElement("div");
-        div.className = "player";
-        const ready = !!p.ready;
-        const isMe = (p.name || "") === (myName || "");
-        div.innerHTML = `
-          <div class="name">${escapeHtml(p.name || "")}${isMe ? " (You)" : ""}</div>
-          <div class="badge ${ready ? "ready" : ""}">${ready ? "READY" : "WAIT"}</div>
-        `;
-        playersEl.appendChild(div);
+      // ✅ Start يتفعل إذا الكل Ready وفيه لاعبين
+      const allReady = players.length > 0 && players.every(p => !!p.ready);
+      startBtn.disabled = !allReady || !currentRoomCode;
+    }
+
+    function startSocket(){
+      if (socket){
+        socket.removeAllListeners();
+        socket.disconnect();
+      }
+
+      setConnected(false);
+
+      // ✅ اتصال بسيط (الأكثر توافقًا)
+      socket = io(SERVER_URL, {
+        transports: ["websocket","polling"],
+        timeout: 15000
+      });
+
+      socket.on("connect", () => setConnected(true));
+      socket.on("disconnect", () => setConnected(false));
+      socket.on("connect_error", (err) => {
+        setConnected(false);
+        console.log("connect_error:", err);
+      });
+
+      socket.on("room:created", ({ roomCode }) => {
+        currentRoomCode = roomCode;
+        codeEl.textContent = roomCode;
+
+        const link = `${siteOrigin}/?room=${encodeURIComponent(roomCode)}`;
+        renderQR(link);
+
+        copyInsideBtn.disabled = false;
+        startBtn.disabled = true;
+        showToast("✅ Room created");
+      });
+
+      socket.on("room:state", ({ roomCode, players }) => {
+        if (roomCode){
+          currentRoomCode = roomCode;
+          codeEl.textContent = roomCode;
+
+          const link = `${siteOrigin}/?room=${encodeURIComponent(roomCode)}`;
+          renderQR(link);
+
+          copyInsideBtn.disabled = false;
+        }
+        renderPlayers(players || []);
+      });
+
+      socket.on("room:error", ({ message }) => {
+        showToast(message || "Error");
       });
     }
 
-    // ✅ QR: ?room=ABCD
-    (function(){
-      const params = new URLSearchParams(location.search);
-      const room = normalizeRoom(params.get("room") || "");
-      if (room){
-        roomEl.value = room;
-        setTimeout(() => nameEl.focus(), 0);
-      } else {
-        setTimeout(() => roomEl.focus(), 0);
-      }
-    })();
+    reconnectBtn.onclick = () => startSocket();
 
-    roomEl.addEventListener("input", () => {
-      roomEl.value = normalizeRoom(roomEl.value);
-    });
-
-    socket.on("connect", () => {
-      light.classList.add("ok");
-      joinBtn.disabled = false;
-    });
-
-    socket.on("disconnect", () => {
-      light.classList.remove("ok");
-      joinBtn.disabled = true;
-      if (!joined) showMsg("انقطع الاتصال", "bad");
-    });
-
-    socket.on("connect_error", () => {
-      light.classList.remove("ok");
-      joinBtn.disabled = true;
-      if (!joined) showMsg("فشل الاتصال", "bad");
-    });
-
-    joinBtn.onclick = () => {
-      const roomCode = normalizeRoom(roomEl.value);
-      const name = (nameEl.value || "").trim();
-
-      if (!roomCode || roomCode.length < 4) { showMsg("اكتب كود صحيح", "bad"); shake(); return; }
-      if (!name) { showMsg("اكتب اسمك", "bad"); shake(); return; }
-      if (!socket.connected) { showMsg("السيرفر غير متصل", "bad"); shake(); return; }
-
-      myRoom = roomCode;
-      myName = name;
-
-      joinBtn.disabled = true;
-      joinBtn.textContent = "…";
-      socket.emit("player:join", { roomCode, name });
+    createBtn.onclick = () => {
+      if (!socket || !socket.connected) return;
+      socket.emit("host:createRoom");
     };
 
-    // ✅ Ready toggle
-    readyBtn.onclick = () => {
-      if (!joined || !myRoom) return;
-      myReady = !myReady;
-      readyBtn.textContent = myReady ? "Unready" : "Ready";
-      socket.emit("player:ready", { roomCode: myRoom, ready: myReady });
+    // ✅ نسخ الرابط فقط
+    copyInsideBtn.onclick = () => {
+      if (!currentRoomCode) return;
+      const link = `${siteOrigin}/?room=${encodeURIComponent(currentRoomCode)}`;
+      copyText(link);
     };
 
-    // ✅ Leave (يرجع شاشة الدخول + يرسل للسيرفر)
-    leaveBtn.onclick = () => {
-      if (myRoom) socket.emit("player:leave", { roomCode: myRoom });
-      exitLobbyUI();
-      showMsg("تم الخروج", "ok");
+    // ✅ Start
+    startBtn.onclick = () => {
+      if (!currentRoomCode) return;
+      socket.emit("host:startGame", { roomCode: currentRoomCode });
+      showToast("▶️ Started");
     };
 
-    socket.on("room:error", ({ message }) => {
-      joinBtn.disabled = false;
-      joinBtn.textContent = "دخول";
-      showMsg(message || "الغرفة غير موجودة", "bad");
-      shake();
-    });
-
-    socket.on("room:state", ({ roomCode, players }) => {
-      // إذا اللاعب انضم بنجاح: ندخله اللوبي
-      if (!joined && roomCode && roomCode === myRoom){
-        enterLobby(roomCode, myName);
-      }
-
-      // تحديث القائمة داخل اللوبي فقط
-      if (joined && roomCode === myRoom){
-        renderPlayers(players || []);
-      }
-
-      // رجّع زر الدخول (احتياط)
-      if (!joined){
-        joinBtn.disabled = !socket.connected;
-        joinBtn.textContent = "دخول";
-      }
-    });
+    startSocket();
   </script>
 </body>
 </html>
