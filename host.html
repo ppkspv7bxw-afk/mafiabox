@@ -3,96 +3,270 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Host</title>
+  <title>GameHub4u - Host</title>
+  <style>
+    :root{
+      --bg:#0b1020;
+      --card:#121a33;
+      --muted:#a7b0d6;
+      --text:#eef1ff;
+      --ok:#2ee59d;
+      --bad:#ff5c7a;
+      --btn:#2b6bff;
+      --btn2:#1b2550;
+      --border:rgba(255,255,255,.08);
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius: 16px;
+    }
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      background: radial-gradient(1200px 800px at 20% 0%, #19214a 0%, var(--bg) 50%);
+      color:var(--text);
+    }
+    .wrap{ max-width: 980px; margin: 0 auto; padding: 22px; }
+    .top{ display:flex; gap:14px; flex-wrap:wrap; align-items:stretch; }
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border:1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: var(--shadow);
+    }
+    .grow{ flex: 1 1 520px; }
+    .small{ flex: 1 1 280px; min-width: 280px; }
+    .brand{
+      display:flex; align-items:center; gap:12px;
+      margin-bottom: 12px;
+    }
+    .brand img{
+      width:54px; height:54px;
+      border-radius: 14px;
+      border:1px solid var(--border);
+      background: rgba(0,0,0,.25);
+      object-fit: cover;
+      box-shadow: 0 0 24px rgba(255,92,122,.15);
+    }
+    .brand h1{ margin:0; font-size: 22px; }
+    .brand p{ margin:2px 0 0; color: var(--muted); font-size: 13px; }
+    .muted{ color: var(--muted); }
+    .row{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding: 8px 12px; border-radius: 999px;
+      background: rgba(255,255,255,.06);
+      border:1px solid var(--border);
+      font-size: 13px;
+    }
+    .dot{ width:10px; height:10px; border-radius:999px; background: var(--bad); }
+    .dot.ok{ background: var(--ok); }
+    .codeBox{
+      margin-top: 12px;
+      display:flex; gap:12px; flex-wrap:wrap; align-items:center; justify-content:space-between;
+    }
+    .code{
+      font-size: 52px;
+      font-weight: 900;
+      letter-spacing: 6px;
+      padding: 10px 16px;
+      border-radius: 14px;
+      background: rgba(0,0,0,.25);
+      border:1px solid var(--border);
+      min-width: 260px;
+      text-align:center;
+    }
+    button{
+      border:0;
+      border-radius: 14px;
+      padding: 12px 14px;
+      font-weight: 800;
+      cursor:pointer;
+      color: var(--text);
+      background: var(--btn);
+      transition: transform .05s ease, opacity .15s ease;
+      white-space: nowrap;
+    }
+    button:active{ transform: scale(.99); }
+    button.secondary{ background: var(--btn2); border:1px solid var(--border); }
+    button:disabled{ opacity:.45; cursor:not-allowed; }
+    .hint{
+      margin-top:10px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border:1px dashed rgba(255,255,255,.18);
+      color: var(--muted);
+      background: rgba(255,255,255,.03);
+      line-height: 1.7;
+    }
+    .grid{
+      margin-top: 14px;
+      display:grid;
+      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+      gap: 12px;
+    }
+    .player{
+      padding: 12px;
+      border-radius: 14px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.04);
+      display:flex; justify-content:space-between; gap:10px; align-items:center;
+    }
+    .player .name{ font-weight: 900; }
+    .player .score{ color: var(--muted); font-weight: 800; }
+    .toast{
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.04);
+      color: var(--muted);
+      display:none;
+    }
+    a{ color:#9ab3ff; text-decoration:none; }
+    .footer{ margin-top: 14px; font-size: 13px; color: var(--muted); }
+  </style>
 </head>
-<body style="font-family: system-ui, sans-serif; padding: 24px;">
-  <h1>🎥 Host</h1>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <div class="card grow">
+        <div class="brand">
+          <img src="/logo.jpeg" alt="GameHub4u Logo" />
+          <div>
+            <h1>GameHub4u — Host</h1>
+            <p>أنشئ غرفة وخل اللاعبين يدخلون من الصفحة الرئيسية</p>
+          </div>
+        </div>
 
-  <div style="margin: 12px 0; padding: 12px; border: 1px solid #ddd; border-radius: 10px;">
-    <div><strong>حالة الاتصال:</strong> <span id="conn">جاري الاتصال…</span></div>
-    <div style="margin-top: 8px;"><strong>كود الغرفة:</strong> <span id="code">—</span></div>
+        <div class="row">
+          <div class="pill"><span id="dot" class="dot"></span> <span id="conn">جاري الاتصال…</span></div>
+          <div class="pill">عدد اللاعبين: <strong id="count">0</strong></div>
+        </div>
+
+        <div class="codeBox">
+          <div>
+            <div class="muted" style="margin-bottom:6px;">كود الغرفة</div>
+            <div id="code" class="code">— — — —</div>
+          </div>
+
+          <div class="row" style="justify-content:flex-end;">
+            <button id="create" disabled>إنشاء غرفة</button>
+            <button id="copyCode" class="secondary" disabled>نسخ الكود</button>
+            <button id="copyLink" class="secondary" disabled>نسخ رابط اللاعبين</button>
+          </div>
+        </div>
+
+        <div class="hint">
+          📌 رابط الموقع للاعبين: <strong id="domainHint">—</strong><br/>
+          (اللاعب يدخل ويكتب الكود + اسمه)
+        </div>
+
+        <div id="toast" class="toast"></div>
+      </div>
+
+      <div class="card small">
+        <h1>⚙️ ملاحظات</h1>
+        <p class="muted" style="margin-top:8px; line-height:1.7;">
+          الآن هذا نظام غرف + دخول لاعبين.<br/>
+          الخطوة الجاية: سؤال → إجابة → تصويت → نقاط.
+        </p>
+        <div class="footer">
+          <a href="/">رجوع للصفحة الرئيسية</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:14px;">
+      <h1>👥 اللاعبين</h1>
+      <div id="players" class="grid"></div>
+      <div id="empty" class="muted" style="margin-top:10px;">لا يوجد لاعبين بعد…</div>
+    </div>
   </div>
 
-  <button id="create" disabled style="padding: 10px 14px; border-radius: 10px;">
-    إنشاء غرفة
-  </button>
-
-  <h2 style="margin-top: 20px;">اللاعبين</h2>
-  <ul id="players" style="line-height: 1.9;"></ul>
-
-  <p style="margin-top: 20px;"><a href="/">رجوع</a></p>
-
-  <!-- Socket.IO client من السيرفر -->
   <script src="https://jackbox-server-pwtr.onrender.com/socket.io/socket.io.js"></script>
   <script>
     const SERVER_URL = "https://jackbox-server-pwtr.onrender.com";
 
     const connEl = document.getElementById("conn");
+    const dotEl = document.getElementById("dot");
     const codeEl = document.getElementById("code");
+    const countEl = document.getElementById("count");
     const playersEl = document.getElementById("players");
+    const emptyEl = document.getElementById("empty");
+    const toastEl = document.getElementById("toast");
+
     const createBtn = document.getElementById("create");
+    const copyCodeBtn = document.getElementById("copyCode");
+    const copyLinkBtn = document.getElementById("copyLink");
+    const domainHintEl = document.getElementById("domainHint");
 
-    const socket = io(SERVER_URL, {
-      transports: ["websocket", "polling"]
-    });
+    const socket = io(SERVER_URL, { transports: ["websocket", "polling"] });
 
-    function setConn(text) {
-      connEl.textContent = text;
+    let currentRoomCode = "";
+    const siteOrigin = location.origin;
+    domainHintEl.textContent = siteOrigin;
+
+    function toast(msg){
+      toastEl.textContent = msg;
+      toastEl.style.display = "block";
+      clearTimeout(toastEl._t);
+      toastEl._t = setTimeout(() => toastEl.style.display = "none", 1800);
     }
 
-    // اتصال ناجح
-    socket.on("connect", () => {
-      setConn("متصل ✅");
-      createBtn.disabled = false;
-    });
-
-    // انفصال
-    socket.on("disconnect", () => {
-      setConn("غير متصل ❌");
-      createBtn.disabled = true;
-    });
-
-    // فشل اتصال
-    socket.on("connect_error", (err) => {
-      setConn("فشل الاتصال ❌");
-      createBtn.disabled = true;
-      alert("فشل الاتصال بالسيرفر: " + (err?.message || err));
-      console.log("connect_error:", err);
-    });
-
-    // إنشاء غرفة
-    createBtn.onclick = () => {
-      if (!socket.connected) {
-        alert("السيرفر غير متصل. حاول مرة ثانية.");
-        return;
+    async function copyText(text){
+      try{
+        await navigator.clipboard.writeText(text);
+        toast("تم النسخ ✅");
+      } catch(e){
+        toast("ما قدرت أنسخ — انسخه يدويًا");
       }
+    }
+
+    socket.on("connect", () => {
+      connEl.textContent = "متصل ✅";
+      dotEl.classList.add("ok");
+      createBtn.disabled = false;
+      toast("اتصال جاهز");
+    });
+
+    socket.on("disconnect", () => {
+      connEl.textContent = "غير متصل ❌";
+      dotEl.classList.remove("ok");
+      createBtn.disabled = true;
+      copyCodeBtn.disabled = true;
+      copyLinkBtn.disabled = true;
+      toast("انقطع الاتصال");
+    });
+
+    socket.on("connect_error", (err) => {
+      connEl.textContent = "فشل الاتصال ❌";
+      dotEl.classList.remove("ok");
+      createBtn.disabled = true;
+      copyCodeBtn.disabled = true;
+      copyLinkBtn.disabled = true;
+      console.log("connect_error:", err);
+      toast("فشل الاتصال بالسيرفر");
+    });
+
+    createBtn.onclick = () => {
+      if (!socket.connected) return toast("السيرفر غير متصل");
       socket.emit("host:createRoom");
-      setConn("تم إرسال طلب إنشاء غرفة…");
-      // بعد ثواني بيرجع لك room:created و room:state
+      toast("جاري إنشاء غرفة…");
     };
 
-    // استلم كود الغرفة
+    copyCodeBtn.onclick = () => {
+      if (!currentRoomCode) return;
+      copyText(currentRoomCode);
+    };
+
+    // ✅ مهم: لأن الصفحة الرئيسية صارت هي دخول اللاعبين
+    copyLinkBtn.onclick = () => {
+      if (!currentRoomCode) return;
+      const link = `${siteOrigin}/?room=${encodeURIComponent(currentRoomCode)}`;
+      copyText(link);
+    };
+
     socket.on("room:created", ({ roomCode }) => {
-      codeEl.textContent = roomCode;
-      setConn("جاهز ✅ (الغرفة انعملت)");
-    });
-
-    // تحديث حالة الغرفة (لاعبين)
-    socket.on("room:state", ({ roomCode, players }) => {
-      if (roomCode) codeEl.textContent = roomCode;
-
-      playersEl.innerHTML = "";
-      (players || []).forEach(p => {
-        const li = document.createElement("li");
-        li.textContent = `${p.name} — ${p.score} نقطة`;
-        playersEl.appendChild(li);
-      });
-    });
-
-    // أخطاء الغرفة
-    socket.on("room:error", ({ message }) => {
-      alert(message || "صار خطأ");
-    });
-  </script>
-</body>
-</html>
+      currentRoomCode = roomCode;
+      code
