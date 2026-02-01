@@ -1,8 +1,8 @@
 <!doctype html>
 <html lang="en" dir="ltr">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Host</title>
   <style>
     :root{
@@ -13,14 +13,14 @@
       --btn1:#ff3b6a; --btn2:#ff1f4f;
       --radius:18px;
     }
-    *{ box-sizing:border-box }
+    *{box-sizing:border-box}
     body{
       margin:0;
       font-family: system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
       background: radial-gradient(1200px 800px at 20% 0%, #19214a 0%, var(--bg) 55%);
-      color: var(--text);
+      color:var(--text);
     }
-    .wrap{ max-width:980px; margin:0 auto; padding:22px; }
+    .wrap{max-width:780px;margin:0 auto;padding:22px}
     .card{
       background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
       border:1px solid var(--border);
@@ -28,6 +28,7 @@
       padding: 18px;
       box-shadow: var(--shadow);
       position: relative;
+      overflow:hidden;
     }
     .statusLight{
       position:absolute; top:14px; left:14px;
@@ -39,278 +40,164 @@
       background: var(--green);
       box-shadow: 0 0 0 4px rgba(46,229,157,.14), 0 0 18px rgba(46,229,157,.35);
     }
-    .brand{ display:flex; justify-content:center; margin-top:6px; margin-bottom:12px; }
+    .brand{display:flex;justify-content:center;margin:6px 0 14px}
     .brand img{
-      width:360px; max-width:92%; height:auto;
+      width:320px;max-width:92%;height:auto;
       filter: drop-shadow(0 18px 34px rgba(255,35,79,.18));
       border-radius:18px;
       border:1px solid rgba(255,255,255,.08);
       background: rgba(0,0,0,.25);
     }
-
-    .row{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      align-items:center;
-      justify-content:space-between;
-    }
     .pill{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding:8px 12px;
-      border-radius:999px;
+      display:inline-flex;align-items:center;gap:8px;
+      padding:8px 12px;border-radius:999px;
       background: rgba(255,255,255,.06);
       border:1px solid rgba(255,255,255,.10);
-      font-size:13px;
-      color: var(--muted);
+      font-size:13px;color:var(--muted);
     }
-
+    .roomCode{font-weight:950;letter-spacing:4px;color:#fff}
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-top:10px}
     .btn{
-      border:0;
-      border-radius:16px;
-      padding:14px 14px;
-      font-weight:950;
-      cursor:pointer;
-      color:#fff;
+      border:0;border-radius:16px;padding:14px 14px;
+      font-weight:950;cursor:pointer;color:#fff;
       background: linear-gradient(135deg, var(--btn1), var(--btn2));
       box-shadow: 0 12px 26px rgba(255,35,79,.22);
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      white-space: nowrap;
+      display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;
       transition: transform .08s ease, filter .15s ease, opacity .15s ease;
-      position:relative;
-      overflow:hidden;
+      position:relative;overflow:hidden;
     }
-    .btn:hover{ filter: brightness(1.05); }
-    .btn:active{ transform: scale(.99); }
-    .btn:disabled{ opacity:.55; cursor:not-allowed; box-shadow:none; }
+    .btn:hover{filter:brightness(1.05)}
+    .btn:active{transform:scale(.99)}
+    .btn:disabled{opacity:.55;cursor:not-allowed;box-shadow:none}
     .btn.secondary{
       background: rgba(255,255,255,.07);
       border:1px solid rgba(255,255,255,.12);
-      box-shadow:none;
-      color: var(--text);
+      box-shadow:none;color:var(--text);
     }
     .btn::after{
-      content:"";
-      position:absolute;
-      top:-40%;
-      left:-60%;
-      width:40%;
-      height:180%;
-      transform: rotate(25deg);
+      content:"";position:absolute;top:-40%;left:-60%;
+      width:40%;height:180%;transform:rotate(25deg);
       background: linear-gradient(90deg, transparent, rgba(255,255,255,.22), transparent);
       animation: shine 2.2s infinite;
     }
-    .btn.secondary::after{ display:none; }
-    @keyframes shine{ 0%{left:-60%} 55%{left:120%} 100%{left:120%} }
+    .btn.secondary::after{display:none}
+    @keyframes shine{0%{left:-60%}55%{left:120%}100%{left:120%}}
 
-    .modeWrap{ display:flex; gap:10px; flex-wrap:wrap; margin: 8px 0 14px; }
-    .modeBtn{
-      flex:1;
-      min-width:220px;
-      background: rgba(255,255,255,.06);
-      border:1px solid rgba(255,255,255,.12);
-      box-shadow:none;
-      color: var(--text);
-    }
-    .modeBtn.active{
-      background: rgba(255,35,79,.16);
-      border-color: rgba(255,35,79,.28);
-    }
-
-    .codeBox{
-      margin-top:10px;
-      position: relative;
-      border-radius:16px;
-      background: rgba(0,0,0,.25);
+    .box{
+      margin-top:12px;
+      border-radius:18px;
       border:1px solid rgba(255,255,255,.10);
-      overflow:hidden;
+      background: rgba(0,0,0,.18);
+      padding:14px;
     }
-    .code{
-      font-size:58px;
-      font-weight:950;
-      letter-spacing:8px;
-      padding:18px 18px 18px 64px;
-      text-align:center;
-      user-select:none;
+    .qrWrap{
+      margin-top:10px;
+      display:flex;gap:14px;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;
     }
-    .copyInside{
-      position:absolute;
-      top:50%;
-      left:12px;
-      transform: translateY(-50%);
-      width:44px;
-      height:44px;
-      border-radius:14px;
+    .qr{
+      width:240px;height:240px;
+      border-radius:16px;
       border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.06);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      cursor:pointer;
-      opacity:.55;
-      transition: opacity .15s ease, background .15s ease, transform .08s ease;
-      user-select:none;
+      background:#fff;
+      overflow:hidden;
+      display:flex;align-items:center;justify-content:center;
     }
-    .copyInside:hover{ opacity:.95; background: rgba(255,255,255,.10); }
-    .copyInside:active{ transform: translateY(-50%) scale(.99); }
-    .copyInside svg{ width:20px; height:20px; }
-
+    .qr img{width:100%;height:100%;object-fit:cover}
+    .small{font-size:12px;color:var(--muted)}
+    .copyRow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:8px}
+    .copyBtn{
+      width:44px;height:44px;border-radius:14px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.08);
+      cursor:pointer;
+      display:flex;align-items:center;justify-content:center;
+      opacity:.85;
+      transition: transform .08s ease, opacity .15s ease, filter .15s ease;
+    }
+    .copyBtn:hover{opacity:1;filter:brightness(1.05)}
+    .copyBtn:active{transform:scale(.99)}
+    .copyBtn svg{opacity:.9}
     .toast{
-      position: fixed;
-      left: 16px;
-      bottom: 16px;
+      position: fixed;left: 16px;bottom: 16px;
       background: rgba(0,0,0,.55);
       border: 1px solid rgba(255,255,255,.12);
       color: var(--text);
-      padding: 10px 12px;
-      border-radius: 14px;
-      font-weight: 900;
-      display:none;
-      z-index: 9999;
-      box-shadow: var(--shadow);
+      padding: 10px 12px;border-radius: 14px;font-weight: 900;
+      display:none;z-index: 9999;box-shadow: var(--shadow);
     }
-
-    .qrWrap{ margin-top:14px; display:flex; justify-content:center; }
-    .qrCard{
-      width: 380px;
-      border-radius: 18px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.03);
-      padding: 14px;
-      text-align:center;
-    }
-    .qrWhite{
-      background:#fff;
-      border-radius: 16px;
-      padding: 14px;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-    }
-    #qrImg{ width:320px; height:320px; display:block; }
-
-    .grid{
-      margin-top:12px;
-      display:grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap:10px;
-    }
-    .player{
-      padding:12px;
-      border-radius:16px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.04);
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:10px;
-      overflow:hidden;
-    }
-    .player .name{
-      font-weight:950;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-    }
-    .badge{
-      font-weight:950;
-      font-size:12px;
-      padding:6px 10px;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.06);
-      color: rgba(167,176,214,.95);
-      white-space:nowrap;
-    }
-    .badge.ready{
-      border-color: rgba(46,229,157,.25);
-      color: rgba(46,229,157,.95);
-      background: rgba(46,229,157,.10);
-    }
-
-    .hostAsPlayerBox{
-      margin-top:12px;
-      display:none;
-      gap:10px;
-      flex-wrap:wrap;
-      justify-content:center;
-      align-items:center;
-    }
-    input{
-      width:min(360px, 100%);
-      padding:13px 12px;
-      border-radius:16px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.22);
-      color: var(--text);
-      outline:none;
-      font-size: 16px;
+    .warn{
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid rgba(255,46,85,.22);
+      background: rgba(255,46,85,.08);
+      color: rgba(255,210,218,.95);
+      font-size:13px;
     }
   </style>
 </head>
-
 <body>
   <div class="wrap">
     <div class="card">
       <span id="light" class="statusLight"></span>
-
       <div class="brand"><img src="/brand.png" alt="brand"></div>
 
-      <div class="modeWrap">
-        <button id="modeDisplay" class="btn modeBtn" type="button">Display</button>
-        <button id="modePlayer" class="btn modeBtn" type="button">Host &amp; Player</button>
+      <div class="warn">
+        IMPORTANT: Open host from <b>gamehub4u.com</b> (same domain as players) to avoid localStorage mismatch.
       </div>
 
       <div class="row">
-        <div class="pill">Players: <strong id="count">0</strong></div>
-        <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end;">
-          <a class="btn secondary" href="/">Players</a>
-          <button id="start" class="btn secondary" type="button" disabled>Start → Lobby</button>
+        <div class="pill">Room: <span id="roomCode" class="roomCode">----</span></div>
+        <div class="pill">Mode: <strong>Host & Player</strong></div>
+      </div>
+
+      <div class="box">
+        <div style="font-weight:1000;">Join Link</div>
+        <div class="small" id="linkText" style="margin-top:6px;">—</div>
+
+        <div class="copyRow">
+          <button id="copyBtn" class="copyBtn" type="button" aria-label="Copy link">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+              <path d="M9 9h10v10H9V9Z" stroke="white" stroke-width="2"/>
+              <path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1" stroke="white" stroke-width="2"/>
+            </svg>
+          </button>
+          <div class="pill" style="flex:1;min-width:240px;justify-content:space-between;">
+            <span>Code:</span><span id="codeInline" class="roomCode">----</span>
+          </div>
         </div>
-      </div>
 
-      <div class="codeBox">
-        <div id="code" class="code">— — — —</div>
-        <button id="copyLink" class="copyInside" type="button" title="Copy room link" aria-label="Copy room link" disabled>
-          <svg viewBox="0 0 24 24" fill="none">
-            <path d="M9 9h10v10H9V9Z" stroke="currentColor" stroke-width="2" opacity=".95"/>
-            <path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1" stroke="currentColor" stroke-width="2" opacity=".85"/>
-          </svg>
-        </button>
-      </div>
+        <div class="qrWrap">
+          <div>
+            <div class="small">Scan QR</div>
+            <div class="qr"><img id="qrImg" alt="QR"></div>
+            <div class="small" style="margin-top:6px;">(White background for best scanning)</div>
+          </div>
 
-      <div class="qrWrap">
-        <div class="qrCard">
-          <div class="qrWhite">
-            <img id="qrImg" alt="QR" />
+          <div style="flex:1;min-width:260px;">
+            <div style="font-weight:1000;">Next</div>
+            <div class="small" style="margin-top:6px;">
+              1) Players open the link or scan QR<br/>
+              2) They join with name<br/>
+              3) You control the game from lobby
+            </div>
+            <div class="row" style="justify-content:flex-start;margin-top:12px;">
+              <button id="goLobby" class="btn" type="button" disabled>Go to Lobby</button>
+              <button id="recreate" class="btn secondary" type="button" disabled>Recreate Room</button>
+            </div>
           </div>
         </div>
       </div>
 
-      <div id="hostAsPlayerBox" class="hostAsPlayerBox">
-        <input id="myName" placeholder="Your name (as player)" />
-        <button id="joinAsPlayer" class="btn secondary" type="button" disabled>Join as Player</button>
-        <button id="readyMe" class="btn" type="button" disabled>Ready</button>
-        <button id="leaveMe" class="btn secondary" type="button" disabled>Leave</button>
-      </div>
-
-      <div id="players" class="grid"></div>
     </div>
   </div>
 
-  <div id="toast" class="toast">Copied ✅</div>
+  <div id="toast" class="toast">OK</div>
 
-  <!-- ✅ IMPORTANT: load socket.io from Render server (NOT from gamehub4u) -->
   <script src="https://jackbox-server-pwtr.onrender.com/socket.io/socket.io.js"></script>
-
   <script>
-    // ✅ IMPORTANT: connect to Render server
     const SERVER_URL = "https://jackbox-server-pwtr.onrender.com";
-    const SITE_ORIGIN = "https://www.gamehub4u.com";
+    const WEB_ORIGIN = location.origin; // ✅ always same domain
 
     function uuidFallback(){
       return "id-" + Date.now().toString(16) + "-" + Math.random().toString(16).slice(2);
@@ -319,33 +206,18 @@
     localStorage.setItem("clientId", clientId);
 
     const light = document.getElementById("light");
-    const countEl = document.getElementById("count");
-    const startBtn = document.getElementById("start");
-    const codeEl = document.getElementById("code");
-    const playersEl = document.getElementById("players");
-
-    const modeDisplayBtn = document.getElementById("modeDisplay");
-    const modePlayerBtn = document.getElementById("modePlayer");
-    const hostAsPlayerBox = document.getElementById("hostAsPlayerBox");
-    const myNameEl = document.getElementById("myName");
-    const joinAsPlayerBtn = document.getElementById("joinAsPlayer");
-    const readyMeBtn = document.getElementById("readyMe");
-    const leaveMeBtn = document.getElementById("leaveMe");
-
-    const copyBtn = document.getElementById("copyLink");
-    const toast = document.getElementById("toast");
+    const roomCodeEl = document.getElementById("roomCode");
+    const codeInline = document.getElementById("codeInline");
+    const linkText = document.getElementById("linkText");
     const qrImg = document.getElementById("qrImg");
+    const copyBtn = document.getElementById("copyBtn");
+    const goLobby = document.getElementById("goLobby");
+    const recreate = document.getElementById("recreate");
+    const toast = document.getElementById("toast");
 
     const socket = io(SERVER_URL, { transports:["websocket","polling"], auth:{ clientId } });
 
     let roomCode = "";
-    let hostMode = localStorage.getItem("hostMode") || "display";
-    let joinedAsPlayer = false;
-    let myReady = false;
-    let myName = "";
-
-    function normalizeRoom(x){ return String(x||"").trim().toUpperCase().replace(/[^A-Z0-9]/g,"").slice(0,8); }
-    function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c])); }
 
     function showToast(text){
       toast.textContent = text;
@@ -354,76 +226,19 @@
       toast._t = setTimeout(() => toast.style.display = "none", 1200);
     }
 
-    function roomLink(code){
-      return `${SITE_ORIGIN}/?room=${encodeURIComponent(code)}`;
-    }
+    function setRoom(code){
+      roomCode = (code || "").trim().toUpperCase();
+      roomCodeEl.textContent = roomCode || "----";
+      codeInline.textContent = roomCode || "----";
 
-    function copyToClipboard(text){
-      if (!text) return;
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(text).then(() => showToast("Copied ✅")).catch(() => fallbackCopy(text));
-      } else fallbackCopy(text);
-    }
-    function fallbackCopy(text){
-      const ta = document.createElement("textarea");
-      ta.value = text;
-      ta.style.position = "fixed";
-      ta.style.left = "-9999px";
-      document.body.appendChild(ta);
-      ta.select();
-      try { document.execCommand("copy"); showToast("Copied ✅"); } catch { showToast("Copy failed"); }
-      document.body.removeChild(ta);
-    }
+      const link = `${WEB_ORIGIN}/?room=${encodeURIComponent(roomCode)}`;
+      linkText.textContent = link;
 
-    // ✅ QR from server as PNG
-    function renderQR(link){
-      qrImg.src = `${SERVER_URL}/qr?data=${encodeURIComponent(link)}&t=${Date.now()}`;
-    }
+      // QR from server endpoint (/qr?data=...)
+      qrImg.src = `${SERVER_URL}/qr?data=${encodeURIComponent(link)}`;
 
-    function setMode(mode){
-      hostMode = mode;
-      localStorage.setItem("hostMode", hostMode);
-
-      modeDisplayBtn.classList.toggle("active", hostMode === "display");
-      modePlayerBtn.classList.toggle("active", hostMode === "player");
-
-      hostAsPlayerBox.style.display = (hostMode === "player") ? "flex" : "none";
-
-      if (hostMode !== "player"){
-        joinedAsPlayer = false;
-        myReady = false;
-        myName = "";
-        readyMeBtn.textContent = "Ready";
-        joinAsPlayerBtn.disabled = true;
-        readyMeBtn.disabled = true;
-        leaveMeBtn.disabled = true;
-      } else {
-        joinAsPlayerBtn.disabled = !roomCode;
-      }
-    }
-    setMode(hostMode);
-    modeDisplayBtn.onclick = () => setMode("display");
-    modePlayerBtn.onclick = () => setMode("player");
-
-    function renderPlayers(players){
-      playersEl.innerHTML = "";
-      const list = players || [];
-      countEl.textContent = list.length;
-
-      list.forEach(p => {
-        const div = document.createElement("div");
-        const ready = !!p.ready;
-        const isMe = myName && (p.name||"") === myName;
-        div.className = "player";
-        div.innerHTML = `
-          <div class="name">${escapeHtml(p.name||"")}${isMe ? " (Host)" : ""}</div>
-          <div class="badge ${ready ? "ready" : ""}">${ready ? "READY" : "WAIT"}</div>
-        `;
-        playersEl.appendChild(div);
-      });
-
-      const allReady = list.length > 0 && list.every(x => !!x.ready);
-      startBtn.disabled = !roomCode || !allReady;
+      goLobby.disabled = !roomCode;
+      recreate.disabled = !roomCode;
     }
 
     socket.on("connect", () => {
@@ -433,95 +248,33 @@
 
     socket.on("disconnect", () => {
       light.classList.remove("ok");
-      startBtn.disabled = true;
-      joinAsPlayerBtn.disabled = true;
-      readyMeBtn.disabled = true;
-      leaveMeBtn.disabled = true;
-      copyBtn.disabled = true;
+      goLobby.disabled = true;
+      recreate.disabled = true;
     });
 
-    socket.on("room:created", ({ roomCode: rc }) => {
-      roomCode = normalizeRoom(rc);
-      codeEl.textContent = roomCode;
-
-      const link = roomLink(roomCode);
-      renderQR(link);
-
-      if (hostMode === "player") joinAsPlayerBtn.disabled = false;
-      copyBtn.disabled = false;
+    socket.on("room:created", ({ roomCode: rc } = {}) => {
+      setRoom(rc);
+      showToast("Room ready");
     });
 
-    socket.on("room:state", ({ roomCode: rc, players }) => {
-      if (rc) roomCode = normalizeRoom(rc);
-      renderPlayers(players || []);
-      if (hostMode === "player") joinAsPlayerBtn.disabled = !roomCode || joinedAsPlayer;
-
-      if (roomCode && codeEl.textContent.trim().startsWith("—")) {
-        codeEl.textContent = roomCode;
-        renderQR(roomLink(roomCode));
+    copyBtn.onclick = async () => {
+      if (!roomCode) return;
+      const link = `${WEB_ORIGIN}/?room=${encodeURIComponent(roomCode)}`;
+      try{
+        await navigator.clipboard.writeText(link);
+        showToast("Link copied");
+      }catch(e){
+        showToast("Copy failed");
       }
-    });
+    };
 
-    socket.on("room:closed", () => {
-      showToast("Room closed");
-      setTimeout(() => window.location.href = "/", 600);
-    });
-
-    socket.on("join:error", ({ message } = {}) => showToast(message || "Join error"));
-    socket.on("start:error", ({ message } = {}) => showToast(message || "Cannot start"));
-
-    startBtn.onclick = () => {
+    goLobby.onclick = () => {
       if (!roomCode) return;
-      socket.emit("host:startGame", { roomCode });
+      location.href = `${WEB_ORIGIN}/lobby.html?room=${encodeURIComponent(roomCode)}`;
     };
 
-    socket.on("game:started", ({ roomCode: rc } = {}) => {
-      const code = normalizeRoom(rc || roomCode);
-      if (!code) return;
-      window.location.href = `/lobby.html?room=${encodeURIComponent(code)}`;
-    });
-
-    copyBtn.onclick = () => {
-      if (!roomCode) return;
-      copyToClipboard(roomLink(roomCode));
-    };
-
-    joinAsPlayerBtn.onclick = () => {
-      if (!roomCode) return;
-      const nm = (myNameEl.value || "").trim();
-      if (!nm) { showToast("Enter name"); return; }
-      myName = nm;
-      socket.emit("player:join", { roomCode, name: nm, clientId });
-    };
-
-    socket.on("player:joined", ({ roomCode: rc, name } = {}) => {
-      const code = normalizeRoom(rc || "");
-      if (!code || code !== roomCode) return;
-      if (hostMode === "player" && name && name === myName){
-        joinedAsPlayer = true;
-        joinAsPlayerBtn.disabled = true;
-        readyMeBtn.disabled = false;
-        leaveMeBtn.disabled = false;
-      }
-    });
-
-    readyMeBtn.onclick = () => {
-      if (!roomCode || !joinedAsPlayer) return;
-      myReady = !myReady;
-      readyMeBtn.textContent = myReady ? "Unready" : "Ready";
-      socket.emit("player:ready", { roomCode, ready: myReady, clientId });
-    };
-
-    leaveMeBtn.onclick = () => {
-      if (!roomCode || !joinedAsPlayer) return;
-      socket.emit("player:leave", { roomCode, clientId });
-      joinedAsPlayer = false;
-      myReady = false;
-      myName = "";
-      readyMeBtn.textContent = "Ready";
-      readyMeBtn.disabled = true;
-      leaveMeBtn.disabled = true;
-      joinAsPlayerBtn.disabled = false;
+    recreate.onclick = () => {
+      socket.emit("host:createRoom");
     };
   </script>
 </body>
