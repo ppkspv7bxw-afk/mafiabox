@@ -12,6 +12,10 @@
       --red:#ff2e55; --green:#2ee59d;
       --btn1:#ff3b6a; --btn2:#ff1f4f;
       --radius:18px;
+
+      /* QR readability */
+      --qr-bg: rgba(255,255,255,.10); /* ✅ very light, NOT white box */
+      --qr-fg: #0b0b12;               /* dark modules */
     }
     *{ box-sizing:border-box }
     body{
@@ -87,14 +91,12 @@
     .btn:hover{ filter: brightness(1.05); }
     .btn:active{ transform: scale(.99); }
     .btn:disabled{ opacity:.55; cursor:not-allowed; box-shadow:none; }
-
     .btn.secondary{
       background: rgba(255,255,255,.07);
       border:1px solid rgba(255,255,255,.12);
       box-shadow:none;
       color: var(--text);
     }
-
     .btn::after{
       content:"";
       position:absolute;
@@ -143,7 +145,7 @@
     .copyInside{
       position:absolute;
       top:50%;
-      left:12px;  /* ✅ left */
+      left:12px;
       transform: translateY(-50%);
       width:44px;
       height:44px;
@@ -154,17 +156,13 @@
       align-items:center;
       justify-content:center;
       cursor:pointer;
-      opacity:.55;              /* شبه شفافة */
+      opacity:.55;
       transition: opacity .15s ease, background .15s ease, transform .08s ease;
       user-select:none;
     }
-    .copyInside:hover{
-      opacity:.95;
-      background: rgba(255,255,255,.10);
-    }
+    .copyInside:hover{ opacity:.95; background: rgba(255,255,255,.10); }
     .copyInside:active{ transform: translateY(-50%) scale(.99); }
     .copyInside svg{ width:20px; height:20px; }
-
     .toast{
       position: fixed;
       left: 16px;
@@ -190,21 +188,29 @@
       justify-content:center;
     }
     .qrCard{
-      width: 360px; /* bigger */
+      width: 380px;
       border-radius: 18px;
       border:1px solid rgba(255,255,255,.10);
       background: rgba(255,255,255,.03);
       padding: 14px;
       text-align:center;
     }
+    .qrPad{
+      /* ✅ Not a white box, but enough contrast to scan */
+      display:inline-block;
+      padding: 16px;                 /* quiet-zone cushion */
+      border-radius: 22px;
+      background: var(--qr-bg);      /* very light translucent */
+      border: 1px solid rgba(255,255,255,.12);
+      backdrop-filter: blur(6px);
+    }
     .qrCard canvas{
       width: 320px !important;
       height: 320px !important;
-      border-radius: 18px;
-      background: transparent; /* ✅ no white background */
+      border-radius: 14px;
+      background: transparent;
       padding: 0;
       display:block;
-      margin: 0 auto;
     }
 
     /* Players list */
@@ -289,7 +295,6 @@
 
       <div class="row">
         <div class="pill">Players: <strong id="count">0</strong></div>
-
         <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end;">
           <a class="btn secondary" href="/">Players</a>
           <button id="start" class="btn secondary" type="button" disabled>Start → Lobby</button>
@@ -298,8 +303,6 @@
 
       <div class="codeBox">
         <div id="code" class="code">— — — —</div>
-
-        <!-- Copy icon INSIDE the code box (semi transparent) -->
         <button id="copyLink" class="copyInside" type="button" title="Copy room link" aria-label="Copy room link" disabled>
           <svg viewBox="0 0 24 24" fill="none">
             <path d="M9 9h10v10H9V9Z" stroke="currentColor" stroke-width="2" opacity=".95"/>
@@ -310,7 +313,9 @@
 
       <div class="qrWrap">
         <div class="qrCard">
-          <canvas id="qr" width="640" height="640"></canvas>
+          <div class="qrPad">
+            <canvas id="qr" width="720" height="720"></canvas>
+          </div>
         </div>
       </div>
 
@@ -370,7 +375,6 @@
         return res;
       }
 
-      // versions 1..10 for ECC M
       const V = [
         null,
         { size: 21, dataCW: 16, eccCW: 10 },
@@ -484,8 +488,9 @@
           up = !up;
         }
       }
-      function maskBit(mask, r, c){ return ((r + c) % 2) === 0; } // mask 0
-      function applyMask(m, mask){
+
+      // mask 0
+      function applyMask(m){
         const n = m.length;
         for (let r = 0; r < n; r++){
           for (let c = 0; c < n; c++){
@@ -497,11 +502,12 @@
             const inFormat = (r === 8 || c === 8);
             if (inFinder || inTiming || inFormat) continue;
             if (m[r][c] === null) continue;
-            if (maskBit(mask, r, c)) m[r][c] ^= 1;
+            if (((r + c) % 2) === 0) m[r][c] ^= 1;
           }
         }
       }
-      const FORMAT_M_MASK0 = 0b101010000010010; // ECC M + mask 0
+
+      const FORMAT_M_MASK0 = 0b101010000010010;
       function writeFormat(m){
         const n = m.length;
         const bits = FORMAT_M_MASK0;
@@ -516,6 +522,7 @@
         for (let i = 0; i < 8; i++) m[8][n - 1 - i] = bit(i);
         for (let i = 0; i < 7; i++) m[n - 1 - i][8] = bit(8 + i);
       }
+
       function toBits(bytes){
         const bits = [];
         for (const b of bytes){
@@ -523,19 +530,22 @@
         }
         return bits;
       }
+
       function drawToCanvas(matrix, canvas, quiet = 4){
         const n = matrix.length;
         const ctx = canvas.getContext("2d");
-        ctx.clearRect(0,0,canvas.width,canvas.height);
 
-        // Transparent background: do NOT paint white
+        // ✅ paint a VERY LIGHT translucent background (scan-friendly)
         ctx.clearRect(0,0,canvas.width,canvas.height);
+        ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue("--qr-bg").trim() || "rgba(255,255,255,.10)";
+        ctx.fillRect(0,0,canvas.width,canvas.height);
 
         const total = n + quiet * 2;
         const scale = Math.floor(canvas.width / total);
         const offset = Math.floor((canvas.width - scale * total) / 2);
 
-        ctx.fillStyle = "#000";
+        // modules
+        ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue("--qr-fg").trim() || "#0b0b12";
         for (let r = 0; r < n; r++){
           for (let c = 0; c < n; c++){
             if (matrix[r][c]) {
@@ -569,7 +579,7 @@
         addDarkModule(m, ver);
 
         placeData(m, bits);
-        applyMask(m, 0);
+        applyMask(m);
         writeFormat(m);
 
         for (let r = 0; r < size; r++){
@@ -701,7 +711,7 @@
       startBtn.disabled = !roomCode || !allReady;
     }
 
-    // ✅ Auto-create room when host page opens
+    // Auto-create room when host opens
     socket.on("connect", () => {
       light.classList.add("ok");
       socket.emit("host:createRoom");
@@ -748,13 +758,11 @@
       window.location.href = `/lobby.html?room=${encodeURIComponent(code)}`;
     });
 
-    // Copy link (icon inside - left)
     copyBtn.onclick = () => {
       if (!roomCode) return;
       copyToClipboard(roomLink(roomCode));
     };
 
-    // Host & Player
     joinAsPlayerBtn.onclick = () => {
       if (!roomCode) return;
       const nm = (myNameEl.value || "").trim();
