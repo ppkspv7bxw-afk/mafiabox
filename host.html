@@ -133,7 +133,7 @@
       font-size:58px;
       font-weight:950;
       letter-spacing:8px;
-      padding:18px 18px 18px 64px; /* space LEFT for copy icon */
+      padding:18px 18px 18px 64px;
       text-align:center;
       user-select:none;
     }
@@ -174,14 +174,7 @@
       box-shadow: var(--shadow);
     }
 
-    .qrWrap{
-      margin-top:14px;
-      display:flex;
-      gap:12px;
-      flex-wrap:wrap;
-      align-items:flex-start;
-      justify-content:center;
-    }
+    .qrWrap{ margin-top:14px; display:flex; justify-content:center; }
     .qrCard{
       width: 380px;
       border-radius: 18px;
@@ -193,17 +186,12 @@
     .qrWhite{
       background:#fff;
       border-radius: 16px;
-      padding: 14px; /* keeps quiet-zone */
+      padding: 14px;
       display:inline-flex;
       align-items:center;
       justify-content:center;
     }
-    #qrImg{
-      width:320px;
-      height:320px;
-      display:block;
-      image-rendering: pixelated;
-    }
+    #qrImg{ width:320px; height:320px; display:block; }
 
     .grid{
       margin-top:12px;
@@ -262,13 +250,6 @@
       outline:none;
       font-size: 16px;
     }
-
-    @media (max-width:520px){
-      .code{ font-size:52px; }
-      .qrCard{ width: 100%; }
-      #qrImg{ width:280px; height:280px; }
-      .qrWhite{ padding:12px; }
-    }
   </style>
 </head>
 
@@ -323,13 +304,12 @@
 
   <div id="toast" class="toast">Copied ✅</div>
 
-  <!-- IMPORTANT: this must point to YOUR server domain -->
-  <script src="/socket.io/socket.io.js"></script>
+  <!-- ✅ IMPORTANT: load socket.io from Render server (NOT from gamehub4u) -->
+  <script src="https://jackbox-server-pwtr.onrender.com/socket.io/socket.io.js"></script>
 
   <script>
-    // MUST match the same server you deployed (Render URL)
-    // If you are serving this host.html from the same server, leave it as location.origin
-    const SERVER_URL = location.origin;
+    // ✅ IMPORTANT: connect to Render server
+    const SERVER_URL = "https://jackbox-server-pwtr.onrender.com";
     const SITE_ORIGIN = "https://www.gamehub4u.com";
 
     function uuidFallback(){
@@ -395,7 +375,7 @@
       document.body.removeChild(ta);
     }
 
-    // ✅ Server-generated QR PNG (always readable)
+    // ✅ QR from server as PNG
     function renderQR(link){
       qrImg.src = `${SERVER_URL}/qr?data=${encodeURIComponent(link)}&t=${Date.now()}`;
     }
@@ -484,22 +464,16 @@
 
     socket.on("room:closed", () => {
       showToast("Room closed");
-      // يرجع للصفحة الرئيسية
       setTimeout(() => window.location.href = "/", 600);
     });
 
-    socket.on("join:error", ({ message } = {}) => {
-      showToast(message || "Join error");
-    });
+    socket.on("join:error", ({ message } = {}) => showToast(message || "Join error"));
+    socket.on("start:error", ({ message } = {}) => showToast(message || "Cannot start"));
 
     startBtn.onclick = () => {
       if (!roomCode) return;
       socket.emit("host:startGame", { roomCode });
     };
-
-    socket.on("start:error", ({ message } = {}) => {
-      showToast(message || "Cannot start");
-    });
 
     socket.on("game:started", ({ roomCode: rc } = {}) => {
       const code = normalizeRoom(rc || roomCode);
