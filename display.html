@@ -3,14 +3,13 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Host</title>
+  <title>Display</title>
   <style>
     :root{
       --bg:#0b1020; --text:#eef1ff; --muted:#a7b0d6;
       --border:rgba(255,255,255,.10);
       --shadow:0 14px 40px rgba(0,0,0,.45);
       --red:#ff2e55; --green:#2ee59d;
-      --btn1:#ff3b6a; --btn2:#ff1f4f;
       --radius:18px;
     }
     *{box-sizing:border-box}
@@ -20,7 +19,7 @@
       background: radial-gradient(1200px 800px at 20% 0%, #19214a 0%, var(--bg) 55%);
       color:var(--text);
     }
-    .wrap{max-width:900px;margin:0 auto;padding:22px}
+    .wrap{max-width:1100px;margin:0 auto;padding:22px}
     .card{
       background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
       border:1px solid var(--border);
@@ -30,17 +29,7 @@
       position: relative;
       overflow:hidden;
     }
-    .statusLight{
-      position:absolute; top:14px; left:14px;
-      width:14px; height:14px; border-radius:999px;
-      background: var(--red);
-      box-shadow: 0 0 0 4px rgba(255,46,85,.12), 0 0 18px rgba(255,46,85,.35);
-    }
-    .statusLight.ok{
-      background: var(--green);
-      box-shadow: 0 0 0 4px rgba(46,229,157,.14), 0 0 18px rgba(46,229,157,.35);
-    }
-    .brand{display:flex;justify-content:center;margin:6px 0 14px}
+    .brand{display:flex;justify-content:center;margin:6px 0 12px}
     .brand img{
       width:320px;max-width:92%;height:auto;
       filter: drop-shadow(0 18px 34px rgba(255,35,79,.18));
@@ -48,288 +37,161 @@
       border:1px solid rgba(255,255,255,.08);
       background: rgba(0,0,0,.25);
     }
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between}
     .pill{
       display:inline-flex;align-items:center;gap:8px;
-      padding:8px 12px;border-radius:999px;
+      padding:10px 14px;border-radius:999px;
       background: rgba(255,255,255,.06);
       border:1px solid rgba(255,255,255,.10);
-      font-size:13px;color:var(--muted);
+      font-size:14px;color:var(--muted);
     }
-    .roomCode{font-weight:950;letter-spacing:4px;color:#fff}
-    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-top:10px}
-    .btn{
-      border:0;border-radius:16px;padding:14px 14px;
-      font-weight:950;cursor:pointer;color:#fff;
-      background: linear-gradient(135deg, var(--btn1), var(--btn2));
-      box-shadow: 0 12px 26px rgba(255,35,79,.22);
-      display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;
-      transition: transform .08s ease, filter .15s ease, opacity .15s ease;
-      position:relative;overflow:hidden;
-    }
-    .btn:hover{filter:brightness(1.05)}
-    .btn:active{transform:scale(.99)}
-    .btn:disabled{opacity:.55;cursor:not-allowed;box-shadow:none}
-    .btn.secondary{
-      background: rgba(255,255,255,.07);
-      border:1px solid rgba(255,255,255,.12);
-      box-shadow:none;color:var(--text);
-    }
-    .btn::after{
-      content:"";position:absolute;top:-40%;left:-60%;
-      width:40%;height:180%;transform:rotate(25deg);
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,.22), transparent);
-      animation: shine 2.2s infinite;
-    }
-    .btn.secondary::after{display:none}
-    @keyframes shine{0%{left:-60%}55%{left:120%}100%{left:120%}}
-
+    .roomCode{font-weight:950;letter-spacing:5px;color:#fff;font-size:18px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px;margin-top:12px}
     .box{
-      margin-top:12px;
       border-radius:18px;
       border:1px solid rgba(255,255,255,.10);
       background: rgba(0,0,0,.18);
       padding:14px;
     }
-    .qrWrap{
-      margin-top:10px;
-      display:flex;gap:14px;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;
-    }
-    .qr{
-      width:260px;height:260px;
-      border-radius:16px;
-      border:1px solid rgba(255,255,255,.12);
-      background:#fff;
-      overflow:hidden;
-      display:flex;align-items:center;justify-content:center;
-    }
-    .qr img{width:100%;height:100%;object-fit:cover}
+    .title{font-weight:1000;margin-bottom:8px}
     .small{font-size:12px;color:var(--muted)}
-    .copyRow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:8px}
-    .copyBtn{
-      width:44px;height:44px;border-radius:14px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.08);
-      cursor:pointer;
-      display:flex;align-items:center;justify-content:center;
-      opacity:.85;
-      transition: transform .08s ease, opacity .15s ease, filter .15s ease;
+    .player{
+      padding:12px;border-radius:16px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      display:flex;justify-content:space-between;align-items:center;gap:10px;
     }
-    .copyBtn:hover{opacity:1;filter:brightness(1.05)}
-    .copyBtn:active{transform:scale(.99)}
-    .copyBtn svg{opacity:.9}
-
-    .input{
-      width:100%;
-      padding:14px 14px;
-      border-radius:16px;
-      border:1px solid rgba(255,255,255,.12);
+    .badge{
+      font-weight:950;font-size:12px;padding:6px 10px;border-radius:999px;
+      border:1px solid rgba(255,255,255,.10);
       background: rgba(255,255,255,.06);
-      color: var(--text);
-      outline:none;
-      font-weight:900;
-      font-size:14px;
+      color: rgba(167,176,214,.95);
+      white-space:nowrap;
     }
-    .label{font-size:12px;color:var(--muted);font-weight:900;margin:0 0 8px}
-    select.input{cursor:pointer}
-
-    .toast{
-      position: fixed;left: 16px;bottom: 16px;
-      background: rgba(0,0,0,.55);
-      border: 1px solid rgba(255,255,255,.12);
-      color: var(--text);
-      padding: 10px 12px;border-radius: 14px;font-weight: 900;
-      display:none;z-index: 9999;box-shadow: var(--shadow);
+    .badge.ready{
+      border-color: rgba(46,229,157,.25);
+      color: rgba(46,229,157,.95);
+      background: rgba(46,229,157,.10);
     }
   </style>
 </head>
 <body>
   <div class="wrap">
     <div class="card">
-      <span id="light" class="statusLight"></span>
       <div class="brand"><img src="/brand.png" alt="brand"></div>
 
       <div class="row">
         <div class="pill">Room: <span id="roomCode" class="roomCode">----</span></div>
-        <div class="pill">Status: <strong id="statusTxt">Connecting…</strong></div>
+        <div class="pill">Game: <strong id="game">—</strong></div>
+        <div class="pill">Phase: <strong id="phase">—</strong></div>
+        <div class="pill">Round: <strong id="round">—</strong></div>
       </div>
 
-      <div class="box">
-        <div style="font-weight:1000;">Join Link</div>
-        <div class="small" id="linkText" style="margin-top:6px;">—</div>
-
-        <div class="copyRow">
-          <button id="copyBtn" class="copyBtn" type="button" aria-label="Copy link">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-              <path d="M9 9h10v10H9V9Z" stroke="white" stroke-width="2"/>
-              <path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1" stroke="white" stroke-width="2"/>
-            </svg>
-          </button>
-          <div class="pill" style="flex:1;min-width:240px;justify-content:space-between;">
-            <span>Code:</span><span id="codeInline" class="roomCode">----</span>
-          </div>
+      <div class="grid">
+        <div class="box">
+          <div class="title">Players</div>
+          <div id="players"></div>
+          <div class="small" style="margin-top:8px;">(Display mode shows no roles)</div>
         </div>
 
-        <div class="qrWrap">
-          <div>
-            <div class="small">Scan QR</div>
-            <div class="qr"><img id="qrImg" alt="QR"></div>
-            <div class="small" style="margin-top:6px;">(White background for best scanning)</div>
-          </div>
-
-          <div style="flex:1;min-width:300px;">
-            <div style="font-weight:1000;">Host Mode</div>
-
-            <div style="margin-top:10px;">
-              <div class="label">Mode</div>
-              <select id="mode" class="input">
-                <option value="hostPlayer" selected>Host & Player</option>
-                <option value="display">Display</option>
-              </select>
-            </div>
-
-            <div id="nameBox" style="margin-top:10px;">
-              <div class="label">Your name (Host as player)</div>
-              <input id="hostName" class="input" placeholder="e.g. Mohammed" autocomplete="off"/>
-              <div class="small" style="margin-top:6px;">This will add you to the lobby players list.</div>
-            </div>
-
-            <div class="row" style="justify-content:flex-start;margin-top:12px;">
-              <button id="primaryBtn" class="btn" type="button" disabled>Join & Go Lobby</button>
-              <button id="recreate" class="btn secondary" type="button" disabled>Recreate Room</button>
-            </div>
-
-            <div class="small" style="margin-top:10px;">
-              Display mode opens a TV screen (no roles). Host still controls from Lobby.
-            </div>
-          </div>
+        <div class="box">
+          <div class="title">Last Result</div>
+          <div id="result" class="small">—</div>
+          <div id="winner" style="margin-top:10px;font-weight:1000;"></div>
         </div>
       </div>
-
     </div>
   </div>
-
-  <div id="toast" class="toast">OK</div>
 
   <script src="https://jackbox-server-pwtr.onrender.com/socket.io/socket.io.js"></script>
   <script>
     const SERVER_URL = "https://jackbox-server-pwtr.onrender.com";
-    const WEB_ORIGIN = location.origin;
 
-    function uuidFallback(){
-      return "id-" + Date.now().toString(16) + "-" + Math.random().toString(16).slice(2);
-    }
-    const clientId = localStorage.getItem("clientId") || (crypto && crypto.randomUUID ? crypto.randomUUID() : uuidFallback());
-    localStorage.setItem("clientId", clientId);
-
-    const light = document.getElementById("light");
-    const statusTxt = document.getElementById("statusTxt");
+    const qs = new URLSearchParams(location.search);
+    const roomCode = (qs.get("room") || "").trim().toUpperCase();
 
     const roomCodeEl = document.getElementById("roomCode");
-    const codeInline = document.getElementById("codeInline");
-    const linkText = document.getElementById("linkText");
-    const qrImg = document.getElementById("qrImg");
-    const copyBtn = document.getElementById("copyBtn");
+    const playersEl = document.getElementById("players");
+    const gameEl = document.getElementById("game");
+    const phaseEl = document.getElementById("phase");
+    const roundEl = document.getElementById("round");
+    const resultEl = document.getElementById("result");
+    const winnerEl = document.getElementById("winner");
 
-    const modeSel = document.getElementById("mode");
-    const nameBox = document.getElementById("nameBox");
-    const hostName = document.getElementById("hostName");
+    roomCodeEl.textContent = roomCode || "----";
 
-    const primaryBtn = document.getElementById("primaryBtn");
-    const recreate = document.getElementById("recreate");
-    const toast = document.getElementById("toast");
+    const displayId = "display-" + Math.random().toString(16).slice(2);
 
-    const socket = io(SERVER_URL, { transports:["websocket","polling"], auth:{ clientId } });
+    const socket = io(SERVER_URL, { transports:["websocket","polling"], auth:{ clientId: displayId } });
 
-    let roomCode = "";
+    function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c])); }
 
-    function showToast(text){
-      toast.textContent = text;
-      toast.style.display = "block";
-      clearTimeout(toast._t);
-      toast._t = setTimeout(() => toast.style.display = "none", 1200);
+    function renderPlayers(list){
+      playersEl.innerHTML = "";
+      (list || []).forEach(p => {
+        const div = document.createElement("div");
+        div.className = "player";
+        div.innerHTML = `
+          <div style="font-weight:950; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${escapeHtml(p.name||"Player")}</div>
+          <div class="badge ${p.ready ? "ready" : ""}">${p.ready ? "READY" : "WAIT"}</div>
+        `;
+        playersEl.appendChild(div);
+      });
+      if (!list || list.length === 0){
+        const div = document.createElement("div");
+        div.className = "small";
+        div.textContent = "No players yet";
+        playersEl.appendChild(div);
+      }
     }
 
-    function setRoom(code){
-      roomCode = (code || "").trim().toUpperCase();
-      roomCodeEl.textContent = roomCode || "----";
-      codeInline.textContent = roomCode || "----";
-
-      const link = `${WEB_ORIGIN}/?room=${encodeURIComponent(roomCode)}`;
-      linkText.textContent = link;
-
-      qrImg.src = `${SERVER_URL}/qr?data=${encodeURIComponent(link)}`;
-
-      primaryBtn.disabled = !roomCode;
-      recreate.disabled = !roomCode;
+    function labelPhase(p){
+      if (p === "role") return "ROLE REVEAL";
+      if (p === "night") return "NIGHT";
+      if (p === "day") return "DAY VOTE";
+      return p || "—";
     }
-
-    function refreshModeUI(){
-      const mode = modeSel.value;
-      nameBox.style.display = (mode === "hostPlayer") ? "block" : "none";
-      primaryBtn.textContent = (mode === "display") ? "Open Display" : "Join & Go Lobby";
-    }
-
-    modeSel.onchange = refreshModeUI;
-    refreshModeUI();
 
     socket.on("connect", () => {
-      light.classList.add("ok");
-      statusTxt.textContent = "Connected";
-      socket.emit("host:createRoom");
-    });
-
-    socket.on("disconnect", () => {
-      light.classList.remove("ok");
-      statusTxt.textContent = "Disconnected";
-      primaryBtn.disabled = true;
-      recreate.disabled = true;
-    });
-
-    socket.on("room:created", ({ roomCode: rc } = {}) => {
-      setRoom(rc);
-      showToast("Room ready");
-    });
-
-    copyBtn.onclick = async () => {
       if (!roomCode) return;
-      const link = `${WEB_ORIGIN}/?room=${encodeURIComponent(roomCode)}`;
-      try{
-        await navigator.clipboard.writeText(link);
-        showToast("Link copied");
-      }catch(e){
-        showToast("Copy failed");
-      }
-    };
+      socket.emit("room:getState", { roomCode });
+      socket.emit("hub:getState", { roomCode });
+      socket.emit("mafia:getState", { roomCode, clientId: displayId });
+    });
 
-    primaryBtn.onclick = () => {
-      if (!roomCode) return;
+    socket.on("room:state", ({ players } = {}) => renderPlayers(players || []));
+    socket.on("hub:state", ({ currentGame } = {}) => gameEl.textContent = currentGame || "—");
 
-      const mode = modeSel.value;
+    socket.on("mafia:state", (s) => {
+      if (!s) return;
+      phaseEl.textContent = labelPhase(s.phase);
+      roundEl.textContent = s.round || "—";
 
-      if (mode === "display") {
-        location.href = `${WEB_ORIGIN}/display.html?room=${encodeURIComponent(roomCode)}`;
-        return;
+      if (s.lastResult){
+        if (s.lastResult.type === "night"){
+          const died = s.lastResult.died ? s.lastResult.died.name : "No one";
+          resultEl.textContent = `Night: ${died} died.`;
+        } else if (s.lastResult.type === "day"){
+          if (s.lastResult.tie) resultEl.textContent = "Day: Tie — no one eliminated.";
+          else {
+            const el = s.lastResult.eliminated ? s.lastResult.eliminated.name : "No one";
+            resultEl.textContent = `Day: ${el} eliminated.`;
+          }
+        }
+      } else {
+        resultEl.textContent = "—";
       }
 
-      const nm = (hostName.value || "").trim();
-      if (!nm) { showToast("Enter your name"); return; }
-
-      socket.emit("host:joinAsPlayer", { roomCode, name: nm });
-    };
-
-    socket.on("host:joinedAsPlayer", ({ roomCode: rc } = {}) => {
-      const code = (rc || roomCode || "").trim().toUpperCase();
-      showToast("Joined as player");
-      setTimeout(() => {
-        location.href = `${WEB_ORIGIN}/lobby.html?room=${encodeURIComponent(code)}`;
-      }, 200);
+      winnerEl.textContent = s.winnerTeam ? (s.winnerTeam === "mafia" ? "🏆 MAFIA WINS" : "🏆 TOWN WINS") : "";
     });
 
-    socket.on("host:joinAsPlayer:error", ({ message } = {}) => {
-      showToast(message || "Join failed");
-    });
-
-    recreate.onclick = () => socket.emit("host:createRoom");
+    // keep fresh
+    setInterval(() => {
+      if (!roomCode) return;
+      socket.emit("room:getState", { roomCode });
+      socket.emit("hub:getState", { roomCode });
+      socket.emit("mafia:getState", { roomCode, clientId: displayId });
+    }, 1200);
   </script>
 </body>
 </html>
