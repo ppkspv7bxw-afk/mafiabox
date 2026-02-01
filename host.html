@@ -17,7 +17,6 @@
 
       --btn1:#ff3b6a;
       --btn2:#ff1f4f;
-      --btnDark:#1b2550;
       --radius: 18px;
     }
     *{ box-sizing:border-box; }
@@ -54,7 +53,7 @@
       box-shadow: 0 0 0 4px rgba(46,229,157,.14), 0 0 18px rgba(46,229,157,.35);
     }
 
-    /* ✅ اللوغو (صورة) أكبر وأوضح */
+    /* ✅ اللوغو كبير وواضح */
     .brand{
       display:flex;
       justify-content:center;
@@ -62,7 +61,7 @@
       margin-bottom: 12px;
     }
     .brand img{
-      width: 320px;
+      width: 340px;
       max-width: 92%;
       height: auto;
       filter: drop-shadow(0 18px 34px rgba(255,35,79,.18));
@@ -71,7 +70,10 @@
       background: rgba(0,0,0,.25);
     }
 
-    .row{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between; }
+    .row{
+      display:flex; gap:10px; flex-wrap:wrap;
+      align-items:center; justify-content:space-between;
+    }
     .pill{
       display:inline-flex; align-items:center; gap:8px;
       padding: 8px 12px; border-radius: 999px;
@@ -79,22 +81,6 @@
       border:1px solid rgba(255,255,255,.10);
       font-size: 13px;
       color: var(--muted);
-    }
-
-    .codeBox{
-      margin-top: 10px;
-      display:flex; gap:12px; flex-wrap:wrap; align-items:center; justify-content:space-between;
-    }
-    .code{
-      font-size: 60px;
-      font-weight: 950;
-      letter-spacing: 8px;
-      padding: 12px 18px;
-      border-radius: 16px;
-      background: rgba(0,0,0,.25);
-      border:1px solid rgba(255,255,255,.10);
-      min-width: 280px;
-      text-align:center;
     }
 
     /* 🔥 زر ثيم + تأثير */
@@ -112,6 +98,10 @@
       transition: transform .08s ease, filter .15s ease, opacity .15s ease;
       letter-spacing: .4px;
       white-space: nowrap;
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
     }
     .btn:active{ transform: scale(.99); }
     .btn:hover{ filter: brightness(1.05); }
@@ -143,39 +133,61 @@
 
     .btnGroup{ display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end; }
 
-    .hint{
-      margin-top:10px;
-      padding: 10px 12px;
-      border-radius: 16px;
-      border:1px dashed rgba(255,255,255,.18);
-      color: rgba(167,176,214,.90);
-      background: rgba(255,255,255,.03);
-      line-height: 1.7;
-    }
-
-    .qrWrap{
-      margin-top: 12px;
+    /* ✅ مربع الكود + أيقونة داخل المربع */
+    .codeRow{
+      margin-top: 10px;
       display:flex;
-      gap:12px;
-      flex-wrap:wrap;
       align-items:center;
-      justify-content:space-between;
+      justify-content:center;
     }
-    .qrCard{
-      display:flex;
-      gap:12px;
-      align-items:center;
-      padding: 12px;
+    .codeBox{
+      position: relative;
+      width: min(520px, 100%);
+    }
+    .code{
+      font-size: 62px;
+      font-weight: 950;
+      letter-spacing: 8px;
+      padding: 12px 18px;
+      padding-left: 70px; /* مساحة للأيقونة داخل المربع */
       border-radius: 16px;
+      background: rgba(0,0,0,.25);
       border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.04);
-      flex: 1 1 520px;
-      min-width: 320px;
+      text-align:center;
+      user-select: none;
+    }
+    .copyInside{
+      position:absolute;
+      top: 50%;
+      left: 10px;
+      transform: translateY(-50%);
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.06);
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      opacity: .72; /* ✅ شبه شفاف */
+      transition: opacity .15s ease, background .15s ease, transform .08s ease;
+    }
+    .copyInside:hover{ opacity:.92; background: rgba(255,255,255,.10); }
+    .copyInside:active{ transform: translateY(-50%) scale(.99); }
+    .copyInside:disabled{ opacity:.35; cursor:not-allowed; }
+    .copyInside svg{ width: 20px; height: 20px; fill: rgba(238,241,255,.92); }
+
+    /* ✅ QR بدون نص */
+    .qrWrap{
+      margin-top: 14px;
+      display:flex;
+      justify-content:center;
     }
     #qrcode{
-      width: 160px;
-      height: 160px;
-      border-radius: 16px;
+      width: 210px;
+      height: 210px;
+      border-radius: 18px;
       overflow:hidden;
       background: rgba(0,0,0,.25);
       border:1px solid rgba(255,255,255,.10);
@@ -183,18 +195,9 @@
       align-items:center;
       justify-content:center;
     }
-    .qrText{
-      flex:1;
-      min-width: 180px;
-      line-height: 1.8;
-      color: rgba(167,176,214,.92);
-      font-size: 14px;
-      word-break: break-word;
-    }
-    .qrText strong{ color: var(--text); }
 
     .toast{
-      margin-top: 10px;
+      margin-top: 12px;
       padding: 10px 12px;
       border-radius: 16px;
       border:1px solid rgba(255,255,255,.10);
@@ -202,6 +205,7 @@
       color: rgba(167,176,214,.92);
       display:none;
       white-space: pre-wrap;
+      text-align:center;
     }
 
     .grid{
@@ -220,54 +224,44 @@
     .player .name{ font-weight: 950; }
     .player .score{ color: rgba(167,176,214,.92); font-weight: 900; }
 
-    a{ color:#9ab3ff; text-decoration:none; }
+    h2{ margin:0 0 10px; }
   </style>
 </head>
 <body>
   <div class="wrap">
-
     <div class="card">
       <span id="light" class="statusLight" aria-hidden="true"></span>
 
       <div class="brand">
-        <!-- ✅ استبدال كلمة/عنوان بصورة -->
-        <img src="/brand.png" alt="GameHub4u" />
+        <img src="/brand.png" alt="brand" />
       </div>
 
       <div class="row">
         <div class="pill">Players: <strong id="count">0</strong></div>
+
         <div class="btnGroup">
-          <!-- ✅ زر يوديك للصفحة الرئيسية -->
           <a class="btn secondary" href="/">Players</a>
           <button id="reconnect" class="btn secondary" type="button">Reconnect</button>
           <button id="create" class="btn" type="button" disabled>Create Room</button>
-          <button id="copyCode" class="btn secondary" type="button" disabled>Copy Code</button>
-          <button id="copyLink" class="btn secondary" type="button" disabled>Copy Link</button>
         </div>
       </div>
 
-      <div class="codeBox">
-        <div>
-          <div class="pill" style="display:inline-flex;">ROOM CODE</div>
+      <!-- ✅ كود + أيقونة النسخ داخل المربع (ينسخ الرابط فقط) -->
+      <div class="codeRow">
+        <div class="codeBox">
+          <button id="copyLinkInside" class="copyInside" type="button" disabled aria-label="Copy link">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M16 1H6a2 2 0 0 0-2 2v12h2V3h10V1zm3 4H10a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zm0 16h-9V7h9v14z"/>
+            </svg>
+          </button>
+
           <div id="code" class="code">— — — —</div>
         </div>
       </div>
 
       <div class="qrWrap">
-        <div class="qrCard">
-          <div id="qrcode">
-            <span style="color:rgba(167,176,214,.85); font-size:12px;">QR بعد إنشاء الغرفة</span>
-          </div>
-          <div class="qrText">
-            <div><strong>Scan to Join</strong></div>
-            <div>يمدي اللاعبين يمسحون الـ QR ويدخلون تلقائيًا.</div>
-            <div style="margin-top:6px;">Link: <span id="joinLink">—</span></div>
-          </div>
-        </div>
-
-        <div class="hint" style="flex:1 1 320px; min-width:320px;">
-          افتح الصفحة الرئيسية على جوال اللاعب أو امسح الـ QR.<br/>
-          بعدها يدخل اللاعب اسمه فقط (الكود يجي جاهز).
+        <div id="qrcode">
+          <span style="color:rgba(167,176,214,.85); font-size:12px;">QR</span>
         </div>
       </div>
 
@@ -275,16 +269,13 @@
     </div>
 
     <div class="card" style="margin-top:14px;">
-      <h2 style="margin:0 0 10px;">Players</h2>
+      <h2>Players</h2>
       <div id="players" class="grid"></div>
       <div id="empty" style="margin-top:10px; color:rgba(167,176,214,.9);">No players yet…</div>
     </div>
-
   </div>
 
-  <!-- Socket.IO من CDN -->
   <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
-  <!-- QRCode lib من CDN -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
   <script>
@@ -299,12 +290,9 @@
 
     const reconnectBtn = document.getElementById("reconnect");
     const createBtn = document.getElementById("create");
-    const copyCodeBtn = document.getElementById("copyCode");
-    const copyLinkBtn = document.getElementById("copyLink");
+    const copyInsideBtn = document.getElementById("copyLinkInside");
 
     const qrBox = document.getElementById("qrcode");
-    const joinLinkEl = document.getElementById("joinLink");
-
     const siteOrigin = location.origin;
 
     let currentRoomCode = "";
@@ -314,7 +302,7 @@
       toastEl.textContent = msg;
       toastEl.style.display = "block";
       clearTimeout(toastEl._t);
-      toastEl._t = setTimeout(() => toastEl.style.display = "none", 2200);
+      toastEl._t = setTimeout(() => toastEl.style.display = "none", 1500);
     }
 
     async function copyText(text){
@@ -322,28 +310,24 @@
         await navigator.clipboard.writeText(text);
         showToast("✅ Copied");
       } catch(e){
-        showToast("Copy failed — copy manually");
+        showToast("Copy failed");
       }
     }
 
     function setConnected(isOk){
       light.classList.toggle("ok", !!isOk);
       createBtn.disabled = !isOk;
-      if (!isOk){
-        copyCodeBtn.disabled = true;
-        copyLinkBtn.disabled = true;
-      }
+      if (!isOk) copyInsideBtn.disabled = true;
     }
 
     function renderQR(link){
       qrBox.innerHTML = "";
       new QRCode(qrBox, {
         text: link,
-        width: 160,
-        height: 160,
+        width: 210,
+        height: 210,
         correctLevel: QRCode.CorrectLevel.M
       });
-      joinLinkEl.textContent = link;
     }
 
     function escapeHtml(s){
@@ -369,33 +353,18 @@
         reconnectionDelay: 800
       });
 
-      socket.on("connect", () => {
-        setConnected(true);
-        showToast("✅ Ready");
-      });
-
-      socket.on("disconnect", () => {
-        setConnected(false);
-        showToast("❌ Disconnected");
-      });
-
-      socket.on("connect_error", (err) => {
-        setConnected(false);
-        console.log("connect_error:", err);
-        showToast("❌ Connection failed");
-      });
+      socket.on("connect", () => setConnected(true));
+      socket.on("disconnect", () => setConnected(false));
+      socket.on("connect_error", (err) => { setConnected(false); console.log("connect_error:", err); });
 
       socket.on("room:created", ({ roomCode }) => {
         currentRoomCode = roomCode;
         codeEl.textContent = roomCode;
 
-        copyCodeBtn.disabled = false;
-        copyLinkBtn.disabled = false;
-
-        // ✅ الصفحة الرئيسية + تعبئة room
         const link = `${siteOrigin}/?room=${encodeURIComponent(roomCode)}`;
         renderQR(link);
 
+        copyInsideBtn.disabled = false;
         showToast("✅ Room created");
       });
 
@@ -403,8 +372,6 @@
         if (roomCode){
           currentRoomCode = roomCode;
           codeEl.textContent = roomCode;
-          copyCodeBtn.disabled = false;
-          copyLinkBtn.disabled = false;
         }
 
         const list = players || [];
@@ -424,28 +391,18 @@
         }
       });
 
-      socket.on("room:error", ({ message }) => {
-        showToast(message || "Error");
-      });
+      socket.on("room:error", ({ message }) => showToast(message || "Error"));
     }
 
-    reconnectBtn.onclick = () => {
-      showToast("…");
-      startSocket();
-    };
+    reconnectBtn.onclick = () => startSocket();
 
     createBtn.onclick = () => {
-      if (!socket || !socket.connected) return showToast("Server offline");
+      if (!socket || !socket.connected) return;
       socket.emit("host:createRoom");
-      showToast("Creating…");
     };
 
-    copyCodeBtn.onclick = () => {
-      if (!currentRoomCode) return;
-      copyText(currentRoomCode);
-    };
-
-    copyLinkBtn.onclick = () => {
+    // ✅ نسخ الرابط فقط
+    copyInsideBtn.onclick = () => {
       if (!currentRoomCode) return;
       const link = `${siteOrigin}/?room=${encodeURIComponent(currentRoomCode)}`;
       copyText(link);
