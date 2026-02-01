@@ -4,7 +4,6 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Host</title>
-
   <style>
     :root{
       --bg:#0b1020;
@@ -38,7 +37,6 @@
       position: relative;
     }
 
-    /* 🔴🟢 لمبة الاتصال فقط */
     .statusLight{
       position:absolute;
       top:14px;
@@ -54,7 +52,6 @@
       box-shadow: 0 0 0 4px rgba(46,229,157,.14), 0 0 18px rgba(46,229,157,.35);
     }
 
-    /* ✅ اللوغو */
     .brand{
       display:flex;
       justify-content:center;
@@ -84,7 +81,6 @@
       color: var(--muted);
     }
 
-    /* زر ثيم + لمعان */
     .btn{
       border:0;
       border-radius: 16px;
@@ -103,6 +99,7 @@
       display:inline-flex;
       align-items:center;
       justify-content:center;
+      gap:10px;
     }
     .btn:active{ transform: scale(.99); }
     .btn:hover{ filter: brightness(1.05); }
@@ -134,7 +131,26 @@
 
     .btnGroup{ display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end; }
 
-    /* ✅ مربع الكود + أيقونة نسخ داخل المربع */
+    .modeWrap{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin: 8px 0 14px;
+    }
+    .modeBtn{
+      flex:1;
+      min-width: 220px;
+      justify-content:center;
+      background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.12);
+      box-shadow:none;
+    }
+    .modeBtn.active{
+      background: rgba(255,35,79,.16);
+      border-color: rgba(255,35,79,.28);
+    }
+    .modeBtn::after{ display:none; }
+
     .codeRow{
       margin-top: 10px;
       display:flex;
@@ -150,7 +166,7 @@
       font-weight: 950;
       letter-spacing: 8px;
       padding: 12px 18px;
-      padding-left: 70px; /* مساحة للأيقونة */
+      padding-left: 70px;
       border-radius: 16px;
       background: rgba(0,0,0,.25);
       border:1px solid rgba(255,255,255,.10);
@@ -171,7 +187,7 @@
       display:flex;
       align-items:center;
       justify-content:center;
-      opacity: .72; /* شبه شفاف */
+      opacity: .72;
       transition: opacity .15s ease, background .15s ease, transform .08s ease;
     }
     .copyInside:hover{ opacity:.92; background: rgba(255,255,255,.10); }
@@ -179,7 +195,6 @@
     .copyInside:disabled{ opacity:.35; cursor:not-allowed; }
     .copyInside svg{ width: 20px; height: 20px; fill: rgba(238,241,255,.92); }
 
-    /* ✅ QR بدون نصوص */
     .qrWrap{
       margin-top: 14px;
       display:flex;
@@ -239,7 +254,28 @@
       background: rgba(46,229,157,.10);
     }
 
-    h2{ margin:0 0 10px; }
+    .inline{
+      margin-top: 12px;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:center;
+    }
+    input{
+      width: min(360px, 100%);
+      padding: 13px 12px;
+      border-radius: 16px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.22);
+      color: var(--text);
+      outline:none;
+      font-size: 16px;
+    }
+    input:focus{
+      border-color: rgba(255,35,79,.55);
+      box-shadow: 0 0 0 4px rgba(255,35,79,.14);
+    }
   </style>
 </head>
 
@@ -250,6 +286,12 @@
 
       <div class="brand">
         <img src="/brand.png" alt="brand" />
+      </div>
+
+      <!-- ✅ اختيار وضع الهوست -->
+      <div class="modeWrap">
+        <button id="modeDisplay" class="btn modeBtn active" type="button">جهاز عرض</button>
+        <button id="modePlayer" class="btn modeBtn" type="button">أنا لاعب + هوست</button>
       </div>
 
       <div class="row">
@@ -280,17 +322,25 @@
         </div>
       </div>
 
+      <!-- ✅ يظهر فقط إذا اخترت "أنا لاعب + هوست" -->
+      <div id="hostAsPlayerBox" class="inline" style="display:none;">
+        <input id="myName" placeholder="اسمك كـ لاعب" />
+        <button id="joinAsPlayer" class="btn secondary" type="button" disabled>Join as Player</button>
+        <button id="readyMe" class="btn" type="button" disabled>Ready</button>
+        <button id="leaveMe" class="btn secondary" type="button" disabled>Leave</button>
+      </div>
+
       <div id="toast" class="toast"></div>
     </div>
 
     <div class="card" style="margin-top:14px;">
-      <h2>Players</h2>
+      <h2 style="margin:0 0 10px;">Players</h2>
       <div id="players" class="grid"></div>
       <div id="empty" style="margin-top:10px; color:rgba(167,176,214,.9);">No players yet…</div>
     </div>
   </div>
 
-  <!-- ✅ مهم: Socket.IO من السيرفر نفسه (ليس CDN) -->
+  <!-- ✅ Socket.IO من السيرفر نفسه -->
   <script src="https://jackbox-server-pwtr.onrender.com/socket.io/socket.io.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
@@ -309,11 +359,24 @@
     const startBtn = document.getElementById("start");
     const copyInsideBtn = document.getElementById("copyLinkInside");
 
+    const modeDisplayBtn = document.getElementById("modeDisplay");
+    const modePlayerBtn = document.getElementById("modePlayer");
+
+    const hostAsPlayerBox = document.getElementById("hostAsPlayerBox");
+    const myNameEl = document.getElementById("myName");
+    const joinAsPlayerBtn = document.getElementById("joinAsPlayer");
+    const readyMeBtn = document.getElementById("readyMe");
+    const leaveMeBtn = document.getElementById("leaveMe");
+
     const qrBox = document.getElementById("qrcode");
     const siteOrigin = location.origin;
 
     let currentRoomCode = "";
     let socket = null;
+
+    let hostMode = localStorage.getItem("hostMode") || "display"; // display | player
+    let joinedAsPlayer = false;
+    let myReady = false;
 
     function showToast(msg){
       toastEl.textContent = msg;
@@ -356,6 +419,28 @@
       }[c]));
     }
 
+    function setMode(mode){
+      hostMode = mode;
+      localStorage.setItem("hostMode", hostMode);
+
+      modeDisplayBtn.classList.toggle("active", hostMode === "display");
+      modePlayerBtn.classList.toggle("active", hostMode === "player");
+
+      hostAsPlayerBox.style.display = (hostMode === "player") ? "flex" : "none";
+
+      // لو غيرت الوضع إلى Display، عطّل أزرار اللاعب
+      if (hostMode !== "player"){
+        joinAsPlayerBtn.disabled = true;
+        readyMeBtn.disabled = true;
+        leaveMeBtn.disabled = true;
+        joinedAsPlayer = false;
+        myReady = false;
+        readyMeBtn.textContent = "Ready";
+      } else {
+        joinAsPlayerBtn.disabled = !currentRoomCode;
+      }
+    }
+
     function renderPlayers(list){
       const players = list || [];
       countEl.textContent = players.length;
@@ -377,7 +462,7 @@
         });
       }
 
-      // ✅ Start يتفعل إذا الكل Ready وفيه لاعبين
+      // Start يتفعل إذا الكل Ready وفيه لاعبين
       const allReady = players.length > 0 && players.every(p => !!p.ready);
       startBtn.disabled = !allReady || !currentRoomCode;
     }
@@ -390,7 +475,6 @@
 
       setConnected(false);
 
-      // ✅ اتصال بسيط (الأكثر توافقًا)
       socket = io(SERVER_URL, {
         transports: ["websocket","polling"],
         timeout: 15000
@@ -411,7 +495,12 @@
         renderQR(link);
 
         copyInsideBtn.disabled = false;
-        startBtn.disabled = true;
+
+        // زر Join as Player يتفعل إذا وضع لاعب
+        if (hostMode === "player"){
+          joinAsPlayerBtn.disabled = false;
+        }
+
         showToast("✅ Room created");
       });
 
@@ -424,6 +513,10 @@
           renderQR(link);
 
           copyInsideBtn.disabled = false;
+
+          if (hostMode === "player"){
+            joinAsPlayerBtn.disabled = joinedAsPlayer ? true : false;
+          }
         }
         renderPlayers(players || []);
       });
@@ -431,7 +524,17 @@
       socket.on("room:error", ({ message }) => {
         showToast(message || "Error");
       });
+
+      socket.on("game:started", () => {
+        showToast("🎬 Game Started!");
+      });
     }
+
+    // الوضع الافتراضي
+    setMode(hostMode);
+
+    modeDisplayBtn.onclick = () => setMode("display");
+    modePlayerBtn.onclick = () => setMode("player");
 
     reconnectBtn.onclick = () => startSocket();
 
@@ -440,18 +543,51 @@
       socket.emit("host:createRoom");
     };
 
-    // ✅ نسخ الرابط فقط
     copyInsideBtn.onclick = () => {
       if (!currentRoomCode) return;
       const link = `${siteOrigin}/?room=${encodeURIComponent(currentRoomCode)}`;
       copyText(link);
     };
 
-    // ✅ Start
     startBtn.onclick = () => {
       if (!currentRoomCode) return;
       socket.emit("host:startGame", { roomCode: currentRoomCode });
       showToast("▶️ Started");
+    };
+
+    // Host as Player controls
+    joinAsPlayerBtn.onclick = () => {
+      if (!currentRoomCode) return;
+      const nm = (myNameEl.value || "").trim();
+      if (!nm){
+        showToast("اكتب اسمك");
+        return;
+      }
+      socket.emit("player:join", { roomCode: currentRoomCode, name: nm });
+      joinedAsPlayer = true;
+      joinAsPlayerBtn.disabled = true;
+      readyMeBtn.disabled = false;
+      leaveMeBtn.disabled = false;
+      showToast("✅ Joined as player");
+    };
+
+    readyMeBtn.onclick = () => {
+      if (!currentRoomCode || !joinedAsPlayer) return;
+      myReady = !myReady;
+      readyMeBtn.textContent = myReady ? "Unready" : "Ready";
+      socket.emit("player:ready", { roomCode: currentRoomCode, ready: myReady });
+    };
+
+    leaveMeBtn.onclick = () => {
+      if (!currentRoomCode || !joinedAsPlayer) return;
+      socket.emit("player:leave", { roomCode: currentRoomCode });
+      joinedAsPlayer = false;
+      myReady = false;
+      readyMeBtn.textContent = "Ready";
+      readyMeBtn.disabled = true;
+      leaveMeBtn.disabled = true;
+      joinAsPlayerBtn.disabled = false;
+      showToast("👋 Left");
     };
 
     startSocket();
