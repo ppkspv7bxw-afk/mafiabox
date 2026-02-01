@@ -4,6 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Host</title>
+
   <style>
     :root{
       --bg:#0b1020;
@@ -241,6 +242,7 @@
     h2{ margin:0 0 10px; }
   </style>
 </head>
+
 <body>
   <div class="wrap">
     <div class="card">
@@ -257,20 +259,17 @@
           <a class="btn secondary" href="/">Players</a>
           <button id="reconnect" class="btn secondary" type="button">Reconnect</button>
           <button id="create" class="btn" type="button" disabled>Create Room</button>
-          <!-- ✅ زر Start -->
           <button id="start" class="btn secondary" type="button" disabled>Start</button>
         </div>
       </div>
 
       <div class="codeRow">
         <div class="codeBox">
-          <!-- ✅ نسخ الرابط فقط -->
           <button id="copyLinkInside" class="copyInside" type="button" disabled aria-label="Copy link">
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="M16 1H6a2 2 0 0 0-2 2v12h2V3h10V1zm3 4H10a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zm0 16h-9V7h9v14z"/>
             </svg>
           </button>
-
           <div id="code" class="code">— — — —</div>
         </div>
       </div>
@@ -291,7 +290,8 @@
     </div>
   </div>
 
-  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+  <!-- ✅ مهم: Socket.IO من السيرفر نفسه (ليس CDN) -->
+  <script src="https://jackbox-server-pwtr.onrender.com/socket.io/socket.io.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
   <script>
@@ -332,4 +332,129 @@
     }
 
     function setConnected(isOk){
-      light.classList.toggle("ok", !!is
+      light.classList.toggle("ok", !!isOk);
+      createBtn.disabled = !isOk;
+      if (!isOk){
+        startBtn.disabled = true;
+        copyInsideBtn.disabled = true;
+      }
+    }
+
+    function renderQR(link){
+      qrBox.innerHTML = "";
+      new QRCode(qrBox, {
+        text: link,
+        width: 210,
+        height: 210,
+        correctLevel: QRCode.CorrectLevel.M
+      });
+    }
+
+    function escapeHtml(s){
+      return String(s).replace(/[&<>"']/g, (c) => ({
+        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+      }[c]));
+    }
+
+    function renderPlayers(list){
+      const players = list || [];
+      countEl.textContent = players.length;
+
+      playersEl.innerHTML = "";
+      if (players.length === 0){
+        emptyEl.style.display = "block";
+      } else {
+        emptyEl.style.display = "none";
+        players.forEach(p => {
+          const div = document.createElement("div");
+          div.className = "player";
+          const ready = !!p.ready;
+          div.innerHTML = `
+            <div class="name">${escapeHtml(p.name || "")}</div>
+            <div class="badge ${ready ? "ready" : ""}">${ready ? "READY" : "WAIT"}</div>
+          `;
+          playersEl.appendChild(div);
+        });
+      }
+
+      // ✅ Start يتفعل إذا الكل Ready وفيه لاعبين
+      const allReady = players.length > 0 && players.every(p => !!p.ready);
+      startBtn.disabled = !allReady || !currentRoomCode;
+    }
+
+    function startSocket(){
+      if (socket){
+        socket.removeAllListeners();
+        socket.disconnect();
+      }
+
+      setConnected(false);
+
+      // ✅ اتصال بسيط (الأكثر توافقًا)
+      socket = io(SERVER_URL, {
+        transports: ["websocket","polling"],
+        timeout: 15000
+      });
+
+      socket.on("connect", () => setConnected(true));
+      socket.on("disconnect", () => setConnected(false));
+      socket.on("connect_error", (err) => {
+        setConnected(false);
+        console.log("connect_error:", err);
+      });
+
+      socket.on("room:created", ({ roomCode }) => {
+        currentRoomCode = roomCode;
+        codeEl.textContent = roomCode;
+
+        const link = `${siteOrigin}/?room=${encodeURIComponent(roomCode)}`;
+        renderQR(link);
+
+        copyInsideBtn.disabled = false;
+        startBtn.disabled = true;
+        showToast("✅ Room created");
+      });
+
+      socket.on("room:state", ({ roomCode, players }) => {
+        if (roomCode){
+          currentRoomCode = roomCode;
+          codeEl.textContent = roomCode;
+
+          const link = `${siteOrigin}/?room=${encodeURIComponent(roomCode)}`;
+          renderQR(link);
+
+          copyInsideBtn.disabled = false;
+        }
+        renderPlayers(players || []);
+      });
+
+      socket.on("room:error", ({ message }) => {
+        showToast(message || "Error");
+      });
+    }
+
+    reconnectBtn.onclick = () => startSocket();
+
+    createBtn.onclick = () => {
+      if (!socket || !socket.connected) return;
+      socket.emit("host:createRoom");
+    };
+
+    // ✅ نسخ الرابط فقط
+    copyInsideBtn.onclick = () => {
+      if (!currentRoomCode) return;
+      const link = `${siteOrigin}/?room=${encodeURIComponent(currentRoomCode)}`;
+      copyText(link);
+    };
+
+    // ✅ Start
+    startBtn.onclick = () => {
+      if (!currentRoomCode) return;
+      socket.emit("host:startGame", { roomCode: currentRoomCode });
+      showToast("▶️ Started");
+    };
+
+    startSocket();
+  </script>
+</body>
+</html>
