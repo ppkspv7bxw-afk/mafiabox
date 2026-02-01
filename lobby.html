@@ -1,29 +1,146 @@
 <!doctype html>
-<html lang="ar" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Lobby</title>
   <style>
-    :root{--bg:#0b1020;--text:#eef1ff;--muted:#a7b0d6;--border:rgba(255,255,255,.10);--shadow:0 14px 40px rgba(0,0,0,.45);--red:#ff2e55;--green:#2ee59d;--btn1:#ff3b6a;--btn2:#ff1f4f;--radius:18px;}
+    :root{
+      --bg:#0b1020; --text:#eef1ff; --muted:#a7b0d6;
+      --border:rgba(255,255,255,.10);
+      --shadow:0 14px 40px rgba(0,0,0,.45);
+      --red:#ff2e55; --green:#2ee59d;
+      --btn1:#ff3b6a; --btn2:#ff1f4f;
+      --radius:18px;
+    }
     *{box-sizing:border-box}
-    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:radial-gradient(1100px 760px at 70% 0%,#1a2350 0%,var(--bg) 55%);color:var(--text)}
-    .wrap{max-width:900px;margin:0 auto;padding:22px}
-    .card{background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.03));border:1px solid var(--border);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);position:relative}
-    .statusLight{position:absolute;top:14px;left:14px;width:14px;height:14px;border-radius:999px;background:var(--red);box-shadow:0 0 0 4px rgba(255,46,85,.12),0 0 18px rgba(255,46,85,.35)}
-    .statusLight.ok{background:var(--green);box-shadow:0 0 0 4px rgba(46,229,157,.14),0 0 18px rgba(46,229,157,.35)}
-    .brand{display:flex;justify-content:center;margin-top:6px;margin-bottom:12px}
-    .brand img{width:300px;max-width:88%;height:auto;filter:drop-shadow(0 18px 34px rgba(255,35,79,.18));border-radius:18px;border:1px solid rgba(255,255,255,.08);background:rgba(0,0,0,.25)}
-    .roomCodeBig{margin-top:10px;font-size:64px;font-weight:950;letter-spacing:10px;padding:14px 18px;border-radius:16px;background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.10);text-align:center;user-select:none}
-    .hint{margin-top:10px;padding:12px;border-radius:16px;border:1px dashed rgba(255,255,255,.18);color:rgba(167,176,214,.90);background:rgba(255,255,255,.03);text-align:center;font-weight:900}
-    .grid{margin-top:14px;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
-    .player{padding:12px;border-radius:16px;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.04);display:flex;justify-content:space-between;align-items:center;gap:10px}
-    .player .name{font-weight:950;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-    .badge{font-weight:950;font-size:12px;padding:6px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.06);color:rgba(167,176,214,.95)}
-    .badge.ready{border-color:rgba(46,229,157,.25);color:rgba(46,229,157,.95);background:rgba(46,229,157,.10)}
-    .row{margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
-    .btn{border:0;border-radius:16px;padding:14px 18px;font-weight:950;cursor:pointer;color:#fff;background:linear-gradient(135deg,var(--btn1),var(--btn2));box-shadow:0 12px 26px rgba(255,35,79,.22)}
-    .btn.secondary{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);box-shadow:none;color:var(--text)}
+    body{
+      margin:0;
+      font-family: system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+      background: radial-gradient(1200px 800px at 20% 0%, #19214a 0%, var(--bg) 55%);
+      color:var(--text);
+    }
+    .wrap{max-width:1100px;margin:0 auto;padding:22px}
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
+      border:1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: var(--shadow);
+      position: relative;
+    }
+    .statusLight{
+      position:absolute; top:14px; left:14px;
+      width:14px; height:14px; border-radius:999px;
+      background: var(--red);
+      box-shadow: 0 0 0 4px rgba(255,46,85,.12), 0 0 18px rgba(255,46,85,.35);
+    }
+    .statusLight.ok{
+      background: var(--green);
+      box-shadow: 0 0 0 4px rgba(46,229,157,.14), 0 0 18px rgba(46,229,157,.35);
+    }
+    .brand{display:flex;justify-content:center;margin:6px 0 10px}
+    .brand img{
+      width:300px;max-width:92%;height:auto;
+      filter: drop-shadow(0 18px 34px rgba(255,35,79,.18));
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,.08);
+      background: rgba(0,0,0,.25);
+    }
+    .topRow{
+      display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;
+      margin-top:8px;
+    }
+    .pill{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:8px 12px;border-radius:999px;
+      background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.10);
+      font-size:13px;color:var(--muted);
+    }
+    .roomCode{font-weight:950;letter-spacing:4px;color:#fff}
+    .btn{
+      border:0;border-radius:16px;padding:14px 14px;
+      font-weight:950;cursor:pointer;color:#fff;
+      background: linear-gradient(135deg, var(--btn1), var(--btn2));
+      box-shadow: 0 12px 26px rgba(255,35,79,.22);
+      display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;
+      transition: transform .08s ease, filter .15s ease, opacity .15s ease;
+      position:relative;overflow:hidden;
+    }
+    .btn:hover{filter:brightness(1.05)}
+    .btn:active{transform:scale(.99)}
+    .btn:disabled{opacity:.55;cursor:not-allowed;box-shadow:none}
+    .btn.secondary{
+      background: rgba(255,255,255,.07);
+      border:1px solid rgba(255,255,255,.12);
+      box-shadow:none;color:var(--text);
+    }
+    .btn::after{
+      content:"";position:absolute;top:-40%;left:-60%;
+      width:40%;height:180%;transform:rotate(25deg);
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.22), transparent);
+      animation: shine 2.2s infinite;
+    }
+    .btn.secondary::after{display:none}
+    @keyframes shine{0%{left:-60%}55%{left:120%}100%{left:120%}}
+
+    .tabs{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+    .tab{
+      padding:10px 12px;border-radius:14px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      font-weight:950;cursor:pointer;
+      color: var(--text);
+      user-select:none;
+    }
+    .tab.active{
+      background: rgba(255,35,79,.16);
+      border-color: rgba(255,35,79,.28);
+    }
+
+    .section{display:none;margin-top:12px}
+    .section.active{display:block}
+
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap:10px;
+    }
+    .player, .gameCard, .scoreCard{
+      padding:12px;border-radius:16px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      display:flex;justify-content:space-between;align-items:center;gap:10px;
+      overflow:hidden;
+    }
+    .name{font-weight:950;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .badge{
+      font-weight:950;font-size:12px;padding:6px 10px;border-radius:999px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.06);
+      color: rgba(167,176,214,.95);
+      white-space:nowrap;
+    }
+    .badge.ready{
+      border-color: rgba(46,229,157,.25);
+      color: rgba(46,229,157,.95);
+      background: rgba(46,229,157,.10);
+    }
+
+    .gameLeft{display:flex;flex-direction:column;gap:2px}
+    .gameTitle{font-weight:950}
+    .gameMeta{font-size:12px;color:var(--muted)}
+    .small{font-size:12px;color:var(--muted)}
+
+    .toast{
+      position: fixed;left: 16px;bottom: 16px;
+      background: rgba(0,0,0,.55);
+      border: 1px solid rgba(255,255,255,.12);
+      color: var(--text);
+      padding: 10px 12px;border-radius: 14px;font-weight: 900;
+      display:none;z-index: 9999;box-shadow: var(--shadow);
+    }
   </style>
 </head>
 <body>
@@ -31,76 +148,282 @@
     <div class="card">
       <span id="light" class="statusLight"></span>
       <div class="brand"><img src="/brand.png" alt="brand"></div>
-      <div id="roomBig" class="roomCodeBig">— — — —</div>
-      <div class="hint">اختر اللعبة ثم Start</div>
 
-      <div id="players" class="grid"></div>
+      <div class="topRow">
+        <div class="pill">Room: <span id="roomCode" class="roomCode">----</span></div>
+        <div class="pill">Players: <strong id="count">0</strong></div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end;">
+          <button id="readyBtn" class="btn" type="button" disabled>Ready</button>
+          <button id="leaveBtn" class="btn secondary" type="button" disabled>Leave</button>
+          <button id="startMafiaBtn" class="btn secondary" type="button" disabled>Start Mafia</button>
+        </div>
+      </div>
 
-      <div class="row">
-        <button class="btn" id="startMafia">Start Mafia</button>
-        <button class="btn secondary" id="back">رجوع</button>
+      <div class="tabs">
+        <div id="tabPlayers" class="tab active">Players</div>
+        <div id="tabGames" class="tab">Games</div>
+        <div id="tabBoard" class="tab">Leaderboard</div>
+      </div>
+
+      <div id="secPlayers" class="section active">
+        <div id="players" class="grid"></div>
+      </div>
+
+      <div id="secGames" class="section">
+        <div class="grid">
+          <div class="gameCard">
+            <div class="gameLeft">
+              <div class="gameTitle">Mafia</div>
+              <div class="gameMeta">5–12 players • Roles • Voting • Rounds</div>
+            </div>
+            <button id="gameMafia" class="btn secondary" type="button">Select</button>
+          </div>
+
+          <div class="gameCard">
+            <div class="gameLeft">
+              <div class="gameTitle">Secret Hitler</div>
+              <div class="gameMeta">Coming soon</div>
+            </div>
+            <span class="badge">SOON</span>
+          </div>
+
+          <div class="gameCard">
+            <div class="gameLeft">
+              <div class="gameTitle">Werewolf</div>
+              <div class="gameMeta">Coming soon</div>
+            </div>
+            <span class="badge">SOON</span>
+          </div>
+
+          <div class="gameCard">
+            <div class="gameLeft">
+              <div class="gameTitle">Resident</div>
+              <div class="gameMeta">Coming soon</div>
+            </div>
+            <span class="badge">SOON</span>
+          </div>
+
+          <div class="gameCard">
+            <div class="gameLeft">
+              <div class="gameTitle">Out of the Loop</div>
+              <div class="gameMeta">Coming soon</div>
+            </div>
+            <span class="badge">SOON</span>
+          </div>
+        </div>
+
+        <div style="margin-top:10px" class="small">
+          Host selects a game, then starts it when all players are READY.
+        </div>
+      </div>
+
+      <div id="secBoard" class="section">
+        <div id="board" class="grid"></div>
       </div>
     </div>
   </div>
 
+  <div id="toast" class="toast">OK</div>
+
   <script src="https://jackbox-server-pwtr.onrender.com/socket.io/socket.io.js"></script>
   <script>
     const SERVER_URL = "https://jackbox-server-pwtr.onrender.com";
+    const WEB_ORIGIN = "https://www.gamehub4u.com";
 
-    const clientId = localStorage.getItem("clientId") || (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random());
+    function uuidFallback(){
+      return "id-" + Date.now().toString(16) + "-" + Math.random().toString(16).slice(2);
+    }
+    const clientId = localStorage.getItem("clientId") || (crypto && crypto.randomUUID ? crypto.randomUUID() : uuidFallback());
     localStorage.setItem("clientId", clientId);
+
+    const qs = new URLSearchParams(location.search);
+    let roomCode = (qs.get("room") || "").trim().toUpperCase();
+
+    const light = document.getElementById("light");
+    const roomCodeEl = document.getElementById("roomCode");
+    const countEl = document.getElementById("count");
+    const playersEl = document.getElementById("players");
+    const boardEl = document.getElementById("board");
+
+    const readyBtn = document.getElementById("readyBtn");
+    const leaveBtn = document.getElementById("leaveBtn");
+    const startMafiaBtn = document.getElementById("startMafiaBtn");
+    const gameMafiaBtn = document.getElementById("gameMafia");
+
+    const tabPlayers = document.getElementById("tabPlayers");
+    const tabGames = document.getElementById("tabGames");
+    const tabBoard = document.getElementById("tabBoard");
+    const secPlayers = document.getElementById("secPlayers");
+    const secGames = document.getElementById("secGames");
+    const secBoard = document.getElementById("secBoard");
+
+    const toast = document.getElementById("toast");
 
     const socket = io(SERVER_URL, { transports:["websocket","polling"], auth:{ clientId } });
 
-    const light = document.getElementById("light");
-    const roomBigEl = document.getElementById("roomBig");
-    const playersEl = document.getElementById("players");
-    const backBtn = document.getElementById("back");
-    const startMafiaBtn = document.getElementById("startMafia");
+    let joined = false;
+    let ready = false;
+    let isHost = false;
+    let currentGame = null;
 
-    function escapeHtml(s){
-      return String(s).replace(/[&<>"']/g, (c) => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+    function showToast(text){
+      toast.textContent = text;
+      toast.style.display = "block";
+      clearTimeout(toast._t);
+      toast._t = setTimeout(() => toast.style.display = "none", 1200);
     }
-    function normalizeRoom(text){
-      return String(text || "").trim().toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 8);
+    function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c])); }
+
+    function setTab(which){
+      tabPlayers.classList.toggle("active", which==="players");
+      tabGames.classList.toggle("active", which==="games");
+      tabBoard.classList.toggle("active", which==="board");
+      secPlayers.classList.toggle("active", which==="players");
+      secGames.classList.toggle("active", which==="games");
+      secBoard.classList.toggle("active", which==="board");
     }
+    tabPlayers.onclick = () => setTab("players");
+    tabGames.onclick = () => setTab("games");
+    tabBoard.onclick = () => setTab("board");
 
-    const params = new URLSearchParams(location.search);
-    const roomCode = normalizeRoom(params.get("room") || "");
-    roomBigEl.textContent = roomCode || "— — — —";
-
-    socket.on("connect", () => {
-      light.classList.add("ok");
-      if (roomCode) socket.emit("player:attach", { roomCode, clientId });
-    });
-    socket.on("disconnect", () => light.classList.remove("ok"));
-
-    socket.on("room:state", ({ roomCode: code, players }) => {
-      if (roomCode && code !== roomCode) return;
+    function renderPlayers(players){
       playersEl.innerHTML = "";
-      (players || []).forEach(p => {
+      const list = players || [];
+      countEl.textContent = list.length;
+
+      list.forEach(p => {
         const div = document.createElement("div");
+        const rdy = !!p.ready;
+        const me = (p.clientId === clientId);
         div.className = "player";
-        const ready = !!p.ready;
         div.innerHTML = `
-          <div class="name">${escapeHtml(p.name || "")}</div>
-          <div class="badge ${ready ? "ready" : ""}">${ready ? "READY" : "WAIT"}</div>
+          <div class="name">${escapeHtml(p.name||"")}${me ? " (You)" : ""}</div>
+          <div class="badge ${rdy ? "ready" : ""}">${rdy ? "READY" : "WAIT"}</div>
         `;
         playersEl.appendChild(div);
       });
+
+      const me = list.find(x => x.clientId === clientId);
+      joined = !!me;
+      ready = !!(me && me.ready);
+
+      readyBtn.disabled = !joined;
+      leaveBtn.disabled = !joined;
+      readyBtn.textContent = ready ? "Unready" : "Ready";
+
+      const allReady = list.length > 0 && list.every(x => !!x.ready);
+      startMafiaBtn.disabled = !(isHost && allReady && currentGame === "mafia");
+    }
+
+    function renderBoard(leaderboard){
+      boardEl.innerHTML = "";
+      const list = leaderboard || [];
+      if (list.length === 0){
+        const empty = document.createElement("div");
+        empty.className = "scoreCard";
+        empty.innerHTML = `<div class="name">No scores yet</div><div class="badge">0</div>`;
+        boardEl.appendChild(empty);
+        return;
+      }
+
+      list.forEach((p, idx) => {
+        const div = document.createElement("div");
+        div.className = "scoreCard";
+        div.innerHTML = `
+          <div class="name">#${idx+1} ${escapeHtml(p.name||"Player")}</div>
+          <div class="badge">${p.points} pts • ${p.wins} wins • ${p.gamesPlayed} games</div>
+        `;
+        boardEl.appendChild(div);
+      });
+    }
+
+    socket.on("connect", () => {
+      light.classList.add("ok");
+      if (!roomCode){
+        showToast("Missing room");
+        return;
+      }
+      roomCodeEl.textContent = roomCode;
+
+      socket.emit("host:attach", { roomCode });
+      socket.emit("player:attach", { roomCode, clientId });
+
+      socket.emit("room:getState", { roomCode });
+      socket.emit("hub:getState", { roomCode });
     });
 
-    startMafiaBtn.onclick = () => {
-      if (!roomCode) return;
-      socket.emit("host:launchGame", { roomCode, gameKey: "mafia" });
+    socket.on("disconnect", () => {
+      light.classList.remove("ok");
+      readyBtn.disabled = true;
+      leaveBtn.disabled = true;
+      startMafiaBtn.disabled = true;
+    });
+
+    socket.on("host:attached", () => {
+      isHost = true;
+      showToast("Host OK");
+      socket.emit("hub:getState", { roomCode });
+      socket.emit("room:getState", { roomCode });
+    });
+
+    socket.on("host:attach:error", () => {
+      isHost = false;
+    });
+
+    socket.on("room:state", ({ roomCode: rc, players } = {}) => {
+      if (rc) roomCode = rc;
+      roomCodeEl.textContent = roomCode || "----";
+      renderPlayers(players || []);
+    });
+
+    socket.on("hub:state", ({ currentGame: cg, leaderboard } = {}) => {
+      currentGame = cg || null;
+      renderBoard(leaderboard || []);
+      socket.emit("room:getState", { roomCode });
+    });
+
+    socket.on("join:error", ({ message } = {}) => showToast(message || "Join error"));
+    socket.on("start:error", ({ message } = {}) => showToast(message || "Cannot start"));
+
+    readyBtn.onclick = () => {
+      if (!joined) return;
+      ready = !ready;
+      readyBtn.textContent = ready ? "Unready" : "Ready";
+      socket.emit("player:ready", { roomCode, ready, clientId });
     };
 
-    socket.on("game:launch", ({ roomCode: code, gameKey }) => {
-      if (roomCode && code !== roomCode) return;
-      if (gameKey === "mafia") window.location.href = `/mafia.html?room=${encodeURIComponent(roomCode)}`;
+    leaveBtn.onclick = () => {
+      if (!joined) return;
+      socket.emit("player:leave", { roomCode, clientId });
+      setTimeout(() => location.href = `${WEB_ORIGIN}/`, 250);
+    };
+
+    gameMafiaBtn.onclick = () => {
+      if (!isHost) { showToast("Host only"); return; }
+      socket.emit("hub:setGame", { roomCode, game: "mafia" });
+      showToast("Mafia selected");
+    };
+
+    startMafiaBtn.onclick = () => {
+      if (!isHost) return;
+      socket.emit("mafia:start", { roomCode });
+    };
+
+    socket.on("mafia:started", ({ roomCode: rc } = {}) => {
+      const code = (rc || roomCode || "").trim().toUpperCase();
+      if (!code) return;
+      location.href = `${WEB_ORIGIN}/mafia.html?room=${encodeURIComponent(code)}`;
     });
 
-    backBtn.onclick = () => window.location.href = "/";
+    socket.on("hub:lobby", ({ roomCode: rc } = {}) => {
+      const code = (rc || roomCode || "").trim().toUpperCase();
+      location.href = `${WEB_ORIGIN}/lobby.html?room=${encodeURIComponent(code)}`;
+    });
+
+    socket.on("room:closed", () => {
+      showToast("Room closed");
+      setTimeout(() => location.href = `${WEB_ORIGIN}/`, 600);
+    });
   </script>
 </body>
 </html>
