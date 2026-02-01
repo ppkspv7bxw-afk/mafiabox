@@ -41,9 +41,11 @@
       border:1px solid var(--border);
       background: rgba(0,0,0,.25);
       object-fit: cover;
+      box-shadow: 0 0 24px rgba(255,92,122,.15);
     }
     .brand h1{ margin:0; font-size: 22px; }
     .brand p{ margin:2px 0 0; color: var(--muted); font-size: 13px; }
+
     label{ display:block; margin: 10px 0 6px; color: var(--muted); font-weight: 700; }
     input{
       width: 100%;
@@ -56,6 +58,7 @@
       font-size: 16px;
     }
     input:focus{ border-color: rgba(43,107,255,.7); box-shadow: 0 0 0 4px rgba(43,107,255,.15); }
+
     button{
       width: 100%;
       margin-top: 14px;
@@ -71,6 +74,7 @@
     }
     button:active{ transform: scale(.99); }
     button:disabled{ opacity:.5; cursor:not-allowed; }
+
     .pill{
       display:flex; align-items:center; justify-content:space-between;
       padding: 10px 12px;
@@ -82,6 +86,7 @@
     }
     .dot{ width:10px; height:10px; border-radius:999px; background: var(--bad); margin-left: 8px; }
     .dot.ok{ background: var(--ok); }
+
     .msg{
       margin-top: 12px;
       padding: 12px;
@@ -94,6 +99,7 @@
     }
     .msg.ok{ border-color: rgba(46,229,157,.25); }
     .msg.bad{ border-color: rgba(255,92,122,.25); }
+
     .shake{ animation: shake .22s linear 2; }
     @keyframes shake{
       0%{ transform: translateX(0); }
@@ -102,6 +108,7 @@
       75%{ transform: translateX(-4px); }
       100%{ transform: translateX(0); }
     }
+
     a{ color:#9ab3ff; text-decoration:none; }
     .footer{
       margin-top: 14px;
@@ -124,7 +131,8 @@
   <div class="wrap">
     <div class="card" id="card">
       <div class="brand">
-        <img src="/logo.jpeg" alt="GameHub4u Logo" />
+        <!-- ✅ GIF بدل اللوقو -->
+        <img src="/brand.gif" alt="GameHub4u" />
         <div>
           <h1>GameHub4u</h1>
           <p>ادخل كود الغرفة واسمك</p>
