@@ -124,6 +124,45 @@
       display:none;
       white-space: pre-wrap;
     }
+
+    .qrWrap{
+      margin-top: 12px;
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:space-between;
+    }
+    .qrCard{
+      display:flex;
+      gap:12px;
+      align-items:center;
+      padding: 12px;
+      border-radius: 14px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.04);
+      flex: 1 1 420px;
+      min-width: 320px;
+    }
+    #qrcode{
+      width: 128px;
+      height: 128px;
+      border-radius: 14px;
+      overflow:hidden;
+      background: rgba(0,0,0,.25);
+      border:1px solid var(--border);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .qrText{
+      flex:1;
+      min-width: 180px;
+      line-height: 1.7;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
     a{ color:#9ab3ff; text-decoration:none; }
   </style>
 </head>
@@ -131,10 +170,11 @@
   <div class="wrap">
     <div class="card">
       <div class="brand">
-        <img src="/logo.jpeg" alt="GameHub4u Logo" />
+        <!-- ✅ GIF بدل اللوقو -->
+        <img src="/brand.gif" alt="GameHub4u" />
         <div>
           <h1>GameHub4u — Host</h1>
-          <p>أنشئ غرفة وشارك رابط الدخول للاعبين</p>
+          <p>أنشئ غرفة وخل اللاعبين يمسحون الـ QR أو يدخلون من الصفحة الرئيسية</p>
         </div>
       </div>
 
@@ -157,12 +197,27 @@
         </div>
       </div>
 
-      <div class="hint">
-        📌 رابط الموقع للاعبين: <strong id="domainHint">—</strong><br/>
-        (اللاعب يدخل من الصفحة الرئيسية ويكتب الكود + اسمه)
+      <!-- ✅ QR يظهر بعد إنشاء الغرفة -->
+      <div class="qrWrap">
+        <div class="qrCard">
+          <div id="qrcode">
+            <span class="muted" style="font-size:12px;">QR بعد إنشاء الغرفة</span>
+          </div>
+          <div class="qrText">
+            <div><strong style="color:var(--text);">دخول سريع</strong></div>
+            <div>خل اللاعبين يمسحون الكود من الجوال ويدخلون تلقائيًا مع كود الغرفة.</div>
+            <div class="muted" style="margin-top:6px;">الرابط: <span id="joinLink">—</span></div>
+          </div>
+        </div>
+
+        <div class="hint" style="flex:1 1 320px; min-width:320px;">
+          📌 رابط الموقع للاعبين: <strong id="domainHint">—</strong><br/>
+          اللاعب يدخل من الصفحة الرئيسية ويكتب الكود + اسمه
+        </div>
       </div>
 
       <div id="toast" class="toast"></div>
+
       <div style="margin-top:14px;">
         <a href="/">رجوع للصفحة الرئيسية</a>
       </div>
@@ -175,8 +230,11 @@
     </div>
   </div>
 
-  <!-- ✅ Socket.IO client من CDN (أضمن من تحميلها من السيرفر) -->
+  <!-- Socket.IO من CDN -->
   <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+  <!-- QRCode lib من CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
   <script>
     const SERVER_URL = "https://jackbox-server-pwtr.onrender.com";
 
@@ -194,10 +252,15 @@
     const copyLinkBtn = document.getElementById("copyLink");
     const domainHintEl = document.getElementById("domainHint");
 
+    const qrBox = document.getElementById("qrcode");
+    const joinLinkEl = document.getElementById("joinLink");
+
     const siteOrigin = location.origin;
     domainHintEl.textContent = siteOrigin;
 
     let currentRoomCode = "";
+    let socket = null;
+    let qr = null;
 
     function showToast(msg){
       toastEl.textContent = msg;
@@ -221,8 +284,18 @@
       createBtn.disabled = !isOk;
     }
 
-    // ✅ إنشاء Socket مع إعدادات أوضح + محاولات اتصال
-    let socket = null;
+    function renderQR(link){
+      // امسح أي QR قديم
+      qrBox.innerHTML = "";
+      qr = new QRCode(qrBox, {
+        text: link,
+        width: 128,
+        height: 128,
+        correctLevel: QRCode.CorrectLevel.M
+      });
+      joinLinkEl.textContent = link;
+    }
+
     function startSocket(){
       if (socket) {
         socket.removeAllListeners();
@@ -254,8 +327,8 @@
 
       socket.on("connect_error", (err) => {
         setConnected(false, "فشل الاتصال ❌");
-        showToast("فشل الاتصال بالسيرفر:\n" + (err?.message || err));
         console.log("connect_error:", err);
+        showToast("فشل الاتصال بالسيرفر:\n" + (err?.message || err));
       });
 
       socket.on("room:created", ({ roomCode }) => {
@@ -263,6 +336,11 @@
         codeEl.textContent = roomCode;
         copyCodeBtn.disabled = false;
         copyLinkBtn.disabled = false;
+
+        // ✅ رابط دخول اللاعبين للصفحة الرئيسية مع room
+        const link = `${siteOrigin}/?room=${encodeURIComponent(currentRoomCode)}`;
+        renderQR(link);
+
         showToast("تم إنشاء الغرفة ✅");
       });
 
@@ -291,9 +369,7 @@
         }
       });
 
-      socket.on("room:error", ({ message }) => {
-        showToast(message || "صار خطأ");
-      });
+      socket.on("room:error", ({ message }) => showToast(message || "صار خطأ"));
     }
 
     reconnectBtn.onclick = () => {
@@ -312,7 +388,6 @@
       copyText(currentRoomCode);
     };
 
-    // ✅ رابط اللاعبين للصفحة الرئيسية (لأنها Play)
     copyLinkBtn.onclick = () => {
       if (!currentRoomCode) return;
       const link = `${siteOrigin}/?room=${encodeURIComponent(currentRoomCode)}`;
@@ -325,7 +400,6 @@
       }[c]));
     }
 
-    // ابدأ الاتصال
     startSocket();
   </script>
 </body>
