@@ -288,7 +288,6 @@
         <img src="/brand.png" alt="brand" />
       </div>
 
-      <!-- ✅ اختيار وضع الهوست -->
       <div class="modeWrap">
         <button id="modeDisplay" class="btn modeBtn active" type="button">جهاز عرض</button>
         <button id="modePlayer" class="btn modeBtn" type="button">أنا لاعب + هوست</button>
@@ -322,7 +321,6 @@
         </div>
       </div>
 
-      <!-- ✅ يظهر فقط إذا اخترت "أنا لاعب + هوست" -->
       <div id="hostAsPlayerBox" class="inline" style="display:none;">
         <input id="myName" placeholder="اسمك كـ لاعب" />
         <button id="joinAsPlayer" class="btn secondary" type="button" disabled>Join as Player</button>
@@ -340,7 +338,6 @@
     </div>
   </div>
 
-  <!-- ✅ Socket.IO من السيرفر نفسه -->
   <script src="https://jackbox-server-pwtr.onrender.com/socket.io/socket.io.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
@@ -374,7 +371,7 @@
     let currentRoomCode = "";
     let socket = null;
 
-    let hostMode = localStorage.getItem("hostMode") || "display"; // display | player
+    let hostMode = localStorage.getItem("hostMode") || "display";
     let joinedAsPlayer = false;
     let myReady = false;
 
@@ -428,7 +425,6 @@
 
       hostAsPlayerBox.style.display = (hostMode === "player") ? "flex" : "none";
 
-      // لو غيرت الوضع إلى Display، عطّل أزرار اللاعب
       if (hostMode !== "player"){
         joinAsPlayerBtn.disabled = true;
         readyMeBtn.disabled = true;
@@ -462,9 +458,14 @@
         });
       }
 
-      // Start يتفعل إذا الكل Ready وفيه لاعبين
       const allReady = players.length > 0 && players.every(p => !!p.ready);
       startBtn.disabled = !allReady || !currentRoomCode;
+    }
+
+    function goToLobby(roomCode){
+      const code = (roomCode || currentRoomCode || "").trim().toUpperCase();
+      if (!code) return;
+      window.location.href = `/lobby.html?room=${encodeURIComponent(code)}`;
     }
 
     function startSocket(){
@@ -496,7 +497,6 @@
 
         copyInsideBtn.disabled = false;
 
-        // زر Join as Player يتفعل إذا وضع لاعب
         if (hostMode === "player"){
           joinAsPlayerBtn.disabled = false;
         }
@@ -525,14 +525,13 @@
         showToast(message || "Error");
       });
 
-      socket.on("game:started", () => {
-        showToast("🎬 Game Started!");
+      // ✅ عند Start: تحويل للـ lobby.html
+      socket.on("game:started", ({ roomCode } = {}) => {
+        goToLobby(roomCode);
       });
     }
 
-    // الوضع الافتراضي
     setMode(hostMode);
-
     modeDisplayBtn.onclick = () => setMode("display");
     modePlayerBtn.onclick = () => setMode("player");
 
@@ -553,9 +552,9 @@
       if (!currentRoomCode) return;
       socket.emit("host:startGame", { roomCode: currentRoomCode });
       showToast("▶️ Started");
+      // (التحويل يصير عند استقبال game:started)
     };
 
-    // Host as Player controls
     joinAsPlayerBtn.onclick = () => {
       if (!currentRoomCode) return;
       const nm = (myNameEl.value || "").trim();
