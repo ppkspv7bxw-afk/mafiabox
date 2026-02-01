@@ -3,126 +3,154 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>GameHub4u - Host</title>
+  <title>Host</title>
   <style>
     :root{
       --bg:#0b1020;
-      --muted:#a7b0d6;
       --text:#eef1ff;
-      --ok:#2ee59d;
-      --bad:#ff5c7a;
-      --btn:#2b6bff;
-      --btn2:#1b2550;
-      --border:rgba(255,255,255,.08);
-      --shadow: 0 10px 30px rgba(0,0,0,.35);
-      --radius: 16px;
+      --muted:#a7b0d6;
+      --border:rgba(255,255,255,.10);
+      --shadow: 0 14px 40px rgba(0,0,0,.45);
+
+      --red:#ff2e55;
+      --green:#2ee59d;
+
+      --btn1:#ff3b6a;
+      --btn2:#ff1f4f;
+      --btnDark:#1b2550;
+      --radius: 18px;
     }
     *{ box-sizing:border-box; }
     body{
       margin:0;
       font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-      background: radial-gradient(1200px 800px at 20% 0%, #19214a 0%, var(--bg) 50%);
+      background: radial-gradient(1200px 800px at 20% 0%, #19214a 0%, var(--bg) 55%);
       color:var(--text);
+      overflow-x:hidden;
     }
     .wrap{ max-width: 980px; margin: 0 auto; padding: 22px; }
     .card{
-      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
       border:1px solid var(--border);
       border-radius: var(--radius);
-      padding: 16px;
+      padding: 18px;
       box-shadow: var(--shadow);
+      position: relative;
     }
+
+    /* 🔴🟢 لمبة الاتصال فقط */
+    .statusLight{
+      position:absolute;
+      top:14px;
+      left:14px;
+      width: 14px;
+      height: 14px;
+      border-radius: 999px;
+      background: var(--red);
+      box-shadow: 0 0 0 4px rgba(255,46,85,.12), 0 0 18px rgba(255,46,85,.35);
+    }
+    .statusLight.ok{
+      background: var(--green);
+      box-shadow: 0 0 0 4px rgba(46,229,157,.14), 0 0 18px rgba(46,229,157,.35);
+    }
+
+    /* ✅ اللوغو (صورة) أكبر وأوضح */
     .brand{
-      display:flex; align-items:center; gap:12px;
+      display:flex;
+      justify-content:center;
+      margin-top: 6px;
       margin-bottom: 12px;
     }
     .brand img{
-      width:54px; height:54px;
-      border-radius: 14px;
-      border:1px solid var(--border);
+      width: 320px;
+      max-width: 92%;
+      height: auto;
+      filter: drop-shadow(0 18px 34px rgba(255,35,79,.18));
+      border-radius: 18px;
+      border:1px solid rgba(255,255,255,.08);
       background: rgba(0,0,0,.25);
-      object-fit: cover;
-      box-shadow: 0 0 24px rgba(255,92,122,.15);
     }
-    .brand h1{ margin:0; font-size: 22px; }
-    .brand p{ margin:2px 0 0; color: var(--muted); font-size: 13px; }
-    .muted{ color: var(--muted); }
-    .row{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+
+    .row{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between; }
     .pill{
       display:inline-flex; align-items:center; gap:8px;
       padding: 8px 12px; border-radius: 999px;
       background: rgba(255,255,255,.06);
-      border:1px solid var(--border);
+      border:1px solid rgba(255,255,255,.10);
       font-size: 13px;
+      color: var(--muted);
     }
-    .dot{ width:10px; height:10px; border-radius:999px; background: var(--bad); }
-    .dot.ok{ background: var(--ok); }
 
     .codeBox{
-      margin-top: 12px;
+      margin-top: 10px;
       display:flex; gap:12px; flex-wrap:wrap; align-items:center; justify-content:space-between;
     }
     .code{
-      font-size: 52px;
-      font-weight: 900;
-      letter-spacing: 6px;
-      padding: 10px 16px;
-      border-radius: 14px;
+      font-size: 60px;
+      font-weight: 950;
+      letter-spacing: 8px;
+      padding: 12px 18px;
+      border-radius: 16px;
       background: rgba(0,0,0,.25);
-      border:1px solid var(--border);
-      min-width: 260px;
+      border:1px solid rgba(255,255,255,.10);
+      min-width: 280px;
       text-align:center;
     }
-    button{
+
+    /* 🔥 زر ثيم + تأثير */
+    .btn{
       border:0;
-      border-radius: 14px;
-      padding: 12px 14px;
-      font-weight: 800;
+      border-radius: 16px;
+      padding: 14px 14px;
+      font-weight: 950;
       cursor:pointer;
-      color: var(--text);
-      background: var(--btn);
-      transition: transform .05s ease, opacity .15s ease;
+      color: #fff;
+      background: linear-gradient(135deg, var(--btn1), var(--btn2));
+      position: relative;
+      overflow:hidden;
+      box-shadow: 0 12px 26px rgba(255,35,79,.22);
+      transition: transform .08s ease, filter .15s ease, opacity .15s ease;
+      letter-spacing: .4px;
       white-space: nowrap;
     }
-    button:active{ transform: scale(.99); }
-    button.secondary{ background: var(--btn2); border:1px solid var(--border); }
-    button:disabled{ opacity:.45; cursor:not-allowed; }
+    .btn:active{ transform: scale(.99); }
+    .btn:hover{ filter: brightness(1.05); }
+    .btn:disabled{ opacity:.55; cursor:not-allowed; box-shadow:none; }
+
+    .btn::after{
+      content:"";
+      position:absolute;
+      top:-40%;
+      left:-60%;
+      width: 40%;
+      height: 180%;
+      transform: rotate(25deg);
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.22), transparent);
+      animation: shine 2.2s infinite;
+    }
+    @keyframes shine{
+      0%{ left:-60%; }
+      55%{ left:120%; }
+      100%{ left:120%; }
+    }
+
+    .btn.secondary{
+      background: rgba(255,255,255,.07);
+      border:1px solid rgba(255,255,255,.12);
+      box-shadow: none;
+    }
+    .btn.secondary::after{ display:none; }
+
+    .btnGroup{ display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end; }
 
     .hint{
       margin-top:10px;
       padding: 10px 12px;
-      border-radius: 14px;
+      border-radius: 16px;
       border:1px dashed rgba(255,255,255,.18);
-      color: var(--muted);
+      color: rgba(167,176,214,.90);
       background: rgba(255,255,255,.03);
       line-height: 1.7;
-    }
-
-    .grid{
-      margin-top: 14px;
-      display:grid;
-      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
-      gap: 12px;
-    }
-    .player{
-      padding: 12px;
-      border-radius: 14px;
-      border:1px solid var(--border);
-      background: rgba(255,255,255,.04);
-      display:flex; justify-content:space-between; gap:10px; align-items:center;
-    }
-    .player .name{ font-weight: 900; }
-    .player .score{ color: var(--muted); font-weight: 800; }
-
-    .toast{
-      margin-top: 10px;
-      padding: 10px 12px;
-      border-radius: 14px;
-      border:1px solid var(--border);
-      background: rgba(255,255,255,.04);
-      color: var(--muted);
-      display:none;
-      white-space: pre-wrap;
     }
 
     .qrWrap{
@@ -138,19 +166,19 @@
       gap:12px;
       align-items:center;
       padding: 12px;
-      border-radius: 14px;
-      border:1px solid var(--border);
+      border-radius: 16px;
+      border:1px solid rgba(255,255,255,.10);
       background: rgba(255,255,255,.04);
-      flex: 1 1 420px;
+      flex: 1 1 520px;
       min-width: 320px;
     }
     #qrcode{
-      width: 128px;
-      height: 128px;
-      border-radius: 14px;
+      width: 160px;
+      height: 160px;
+      border-radius: 16px;
       overflow:hidden;
       background: rgba(0,0,0,.25);
-      border:1px solid var(--border);
+      border:1px solid rgba(255,255,255,.10);
       display:flex;
       align-items:center;
       justify-content:center;
@@ -158,76 +186,100 @@
     .qrText{
       flex:1;
       min-width: 180px;
-      line-height: 1.7;
-      color: var(--muted);
+      line-height: 1.8;
+      color: rgba(167,176,214,.92);
       font-size: 14px;
+      word-break: break-word;
     }
+    .qrText strong{ color: var(--text); }
+
+    .toast{
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 16px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      color: rgba(167,176,214,.92);
+      display:none;
+      white-space: pre-wrap;
+    }
+
+    .grid{
+      margin-top: 14px;
+      display:grid;
+      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+      gap: 12px;
+    }
+    .player{
+      padding: 12px;
+      border-radius: 16px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      display:flex; justify-content:space-between; gap:10px; align-items:center;
+    }
+    .player .name{ font-weight: 950; }
+    .player .score{ color: rgba(167,176,214,.92); font-weight: 900; }
 
     a{ color:#9ab3ff; text-decoration:none; }
   </style>
 </head>
 <body>
   <div class="wrap">
+
     <div class="card">
+      <span id="light" class="statusLight" aria-hidden="true"></span>
+
       <div class="brand">
-        <!-- ✅ GIF بدل اللوقو -->
-        <img src="/brand.gif" alt="GameHub4u" />
-        <div>
-          <h1>GameHub4u — Host</h1>
-          <p>أنشئ غرفة وخل اللاعبين يمسحون الـ QR أو يدخلون من الصفحة الرئيسية</p>
-        </div>
+        <!-- ✅ استبدال كلمة/عنوان بصورة -->
+        <img src="/brand.png" alt="GameHub4u" />
       </div>
 
       <div class="row">
-        <div class="pill"><span id="dot" class="dot"></span> <span id="conn">جاري الاتصال…</span></div>
-        <div class="pill">عدد اللاعبين: <strong id="count">0</strong></div>
+        <div class="pill">Players: <strong id="count">0</strong></div>
+        <div class="btnGroup">
+          <!-- ✅ زر يوديك للصفحة الرئيسية -->
+          <a class="btn secondary" href="/">Players</a>
+          <button id="reconnect" class="btn secondary" type="button">Reconnect</button>
+          <button id="create" class="btn" type="button" disabled>Create Room</button>
+          <button id="copyCode" class="btn secondary" type="button" disabled>Copy Code</button>
+          <button id="copyLink" class="btn secondary" type="button" disabled>Copy Link</button>
+        </div>
       </div>
 
       <div class="codeBox">
         <div>
-          <div class="muted" style="margin-bottom:6px;">كود الغرفة</div>
+          <div class="pill" style="display:inline-flex;">ROOM CODE</div>
           <div id="code" class="code">— — — —</div>
-        </div>
-
-        <div class="row" style="justify-content:flex-end;">
-          <button id="reconnect" class="secondary">إعادة اتصال</button>
-          <button id="create" disabled>إنشاء غرفة</button>
-          <button id="copyCode" class="secondary" disabled>نسخ الكود</button>
-          <button id="copyLink" class="secondary" disabled>نسخ رابط اللاعبين</button>
         </div>
       </div>
 
-      <!-- ✅ QR يظهر بعد إنشاء الغرفة -->
       <div class="qrWrap">
         <div class="qrCard">
           <div id="qrcode">
-            <span class="muted" style="font-size:12px;">QR بعد إنشاء الغرفة</span>
+            <span style="color:rgba(167,176,214,.85); font-size:12px;">QR بعد إنشاء الغرفة</span>
           </div>
           <div class="qrText">
-            <div><strong style="color:var(--text);">دخول سريع</strong></div>
-            <div>خل اللاعبين يمسحون الكود من الجوال ويدخلون تلقائيًا مع كود الغرفة.</div>
-            <div class="muted" style="margin-top:6px;">الرابط: <span id="joinLink">—</span></div>
+            <div><strong>Scan to Join</strong></div>
+            <div>يمدي اللاعبين يمسحون الـ QR ويدخلون تلقائيًا.</div>
+            <div style="margin-top:6px;">Link: <span id="joinLink">—</span></div>
           </div>
         </div>
 
         <div class="hint" style="flex:1 1 320px; min-width:320px;">
-          📌 رابط الموقع للاعبين: <strong id="domainHint">—</strong><br/>
-          اللاعب يدخل من الصفحة الرئيسية ويكتب الكود + اسمه
+          افتح الصفحة الرئيسية على جوال اللاعب أو امسح الـ QR.<br/>
+          بعدها يدخل اللاعب اسمه فقط (الكود يجي جاهز).
         </div>
       </div>
 
       <div id="toast" class="toast"></div>
-
-      <div style="margin-top:14px;">
-        <a href="/">رجوع للصفحة الرئيسية</a>
-      </div>
     </div>
 
     <div class="card" style="margin-top:14px;">
-      <h2 style="margin:0 0 10px;">👥 اللاعبين</h2>
+      <h2 style="margin:0 0 10px;">Players</h2>
       <div id="players" class="grid"></div>
-      <div id="empty" class="muted" style="margin-top:10px;">لا يوجد لاعبين بعد…</div>
+      <div id="empty" style="margin-top:10px; color:rgba(167,176,214,.9);">No players yet…</div>
     </div>
+
   </div>
 
   <!-- Socket.IO من CDN -->
@@ -238,8 +290,7 @@
   <script>
     const SERVER_URL = "https://jackbox-server-pwtr.onrender.com";
 
-    const connEl = document.getElementById("conn");
-    const dotEl = document.getElementById("dot");
+    const light = document.getElementById("light");
     const codeEl = document.getElementById("code");
     const countEl = document.getElementById("count");
     const playersEl = document.getElementById("players");
@@ -250,65 +301,68 @@
     const createBtn = document.getElementById("create");
     const copyCodeBtn = document.getElementById("copyCode");
     const copyLinkBtn = document.getElementById("copyLink");
-    const domainHintEl = document.getElementById("domainHint");
 
     const qrBox = document.getElementById("qrcode");
     const joinLinkEl = document.getElementById("joinLink");
 
     const siteOrigin = location.origin;
-    domainHintEl.textContent = siteOrigin;
 
     let currentRoomCode = "";
     let socket = null;
-    let qr = null;
 
     function showToast(msg){
       toastEl.textContent = msg;
       toastEl.style.display = "block";
       clearTimeout(toastEl._t);
-      toastEl._t = setTimeout(() => toastEl.style.display = "none", 2500);
+      toastEl._t = setTimeout(() => toastEl.style.display = "none", 2200);
     }
 
     async function copyText(text){
       try{
         await navigator.clipboard.writeText(text);
-        showToast("تم النسخ ✅");
+        showToast("✅ Copied");
       } catch(e){
-        showToast("ما قدرت أنسخ — انسخه يدويًا");
+        showToast("Copy failed — copy manually");
       }
     }
 
-    function setConnected(isOk, text){
-      connEl.textContent = text;
-      dotEl.classList.toggle("ok", !!isOk);
+    function setConnected(isOk){
+      light.classList.toggle("ok", !!isOk);
       createBtn.disabled = !isOk;
+      if (!isOk){
+        copyCodeBtn.disabled = true;
+        copyLinkBtn.disabled = true;
+      }
     }
 
     function renderQR(link){
-      // امسح أي QR قديم
       qrBox.innerHTML = "";
-      qr = new QRCode(qrBox, {
+      new QRCode(qrBox, {
         text: link,
-        width: 128,
-        height: 128,
+        width: 160,
+        height: 160,
         correctLevel: QRCode.CorrectLevel.M
       });
       joinLinkEl.textContent = link;
     }
 
+    function escapeHtml(s){
+      return String(s).replace(/[&<>"']/g, (c) => ({
+        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+      }[c]));
+    }
+
     function startSocket(){
-      if (socket) {
+      if (socket){
         socket.removeAllListeners();
         socket.disconnect();
       }
 
-      setConnected(false, "جاري الاتصال…");
-      copyCodeBtn.disabled = true;
-      copyLinkBtn.disabled = true;
+      setConnected(false);
 
       socket = io(SERVER_URL, {
         path: "/socket.io",
-        transports: ["websocket", "polling"],
+        transports: ["websocket","polling"],
         timeout: 15000,
         reconnection: true,
         reconnectionAttempts: 10,
@@ -316,36 +370,37 @@
       });
 
       socket.on("connect", () => {
-        setConnected(true, "متصل ✅");
-        showToast("اتصال جاهز");
+        setConnected(true);
+        showToast("✅ Ready");
       });
 
       socket.on("disconnect", () => {
-        setConnected(false, "غير متصل ❌");
-        showToast("انقطع الاتصال");
+        setConnected(false);
+        showToast("❌ Disconnected");
       });
 
       socket.on("connect_error", (err) => {
-        setConnected(false, "فشل الاتصال ❌");
+        setConnected(false);
         console.log("connect_error:", err);
-        showToast("فشل الاتصال بالسيرفر:\n" + (err?.message || err));
+        showToast("❌ Connection failed");
       });
 
       socket.on("room:created", ({ roomCode }) => {
         currentRoomCode = roomCode;
         codeEl.textContent = roomCode;
+
         copyCodeBtn.disabled = false;
         copyLinkBtn.disabled = false;
 
-        // ✅ رابط دخول اللاعبين للصفحة الرئيسية مع room
-        const link = `${siteOrigin}/?room=${encodeURIComponent(currentRoomCode)}`;
+        // ✅ الصفحة الرئيسية + تعبئة room
+        const link = `${siteOrigin}/?room=${encodeURIComponent(roomCode)}`;
         renderQR(link);
 
-        showToast("تم إنشاء الغرفة ✅");
+        showToast("✅ Room created");
       });
 
       socket.on("room:state", ({ roomCode, players }) => {
-        if (roomCode) {
+        if (roomCode){
           currentRoomCode = roomCode;
           codeEl.textContent = roomCode;
           copyCodeBtn.disabled = false;
@@ -356,31 +411,33 @@
         countEl.textContent = list.length;
 
         playersEl.innerHTML = "";
-        if (list.length === 0) {
+        if (list.length === 0){
           emptyEl.style.display = "block";
         } else {
           emptyEl.style.display = "none";
           list.forEach(p => {
             const div = document.createElement("div");
             div.className = "player";
-            div.innerHTML = `<div class="name">${escapeHtml(p.name)}</div><div class="score">${p.score} نقطة</div>`;
+            div.innerHTML = `<div class="name">${escapeHtml(p.name)}</div><div class="score">${p.score} pts</div>`;
             playersEl.appendChild(div);
           });
         }
       });
 
-      socket.on("room:error", ({ message }) => showToast(message || "صار خطأ"));
+      socket.on("room:error", ({ message }) => {
+        showToast(message || "Error");
+      });
     }
 
     reconnectBtn.onclick = () => {
-      showToast("إعادة الاتصال…");
+      showToast("…");
       startSocket();
     };
 
     createBtn.onclick = () => {
-      if (!socket || !socket.connected) return showToast("السيرفر غير متصل");
+      if (!socket || !socket.connected) return showToast("Server offline");
       socket.emit("host:createRoom");
-      showToast("جاري إنشاء غرفة…");
+      showToast("Creating…");
     };
 
     copyCodeBtn.onclick = () => {
@@ -393,12 +450,6 @@
       const link = `${siteOrigin}/?room=${encodeURIComponent(currentRoomCode)}`;
       copyText(link);
     };
-
-    function escapeHtml(s){
-      return String(s).replace(/[&<>"']/g, (c) => ({
-        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
-      }[c]));
-    }
 
     startSocket();
   </script>
