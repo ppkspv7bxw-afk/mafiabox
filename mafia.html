@@ -1,310 +1,449 @@
 <!doctype html>
-<html lang="ar" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Mafia</title>
   <style>
-    :root{--bg:#0b1020;--text:#eef1ff;--muted:#a7b0d6;--border:rgba(255,255,255,.10);--shadow:0 14px 40px rgba(0,0,0,.45);--red:#ff2e55;--green:#2ee59d;--btn1:#ff3b6a;--btn2:#ff1f4f;--radius:18px;}
+    :root{
+      --bg:#0b1020; --text:#eef1ff; --muted:#a7b0d6;
+      --border:rgba(255,255,255,.10);
+      --shadow:0 14px 40px rgba(0,0,0,.45);
+      --red:#ff2e55; --green:#2ee59d;
+      --btn1:#ff3b6a; --btn2:#ff1f4f;
+      --radius:18px;
+    }
     *{box-sizing:border-box}
-    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:radial-gradient(1100px 760px at 70% 0%,#1a2350 0%,var(--bg) 55%);color:var(--text)}
+    body{
+      margin:0;
+      font-family: system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+      background: radial-gradient(1200px 800px at 20% 0%, #19214a 0%, var(--bg) 55%);
+      color:var(--text);
+    }
     .wrap{max-width:1100px;margin:0 auto;padding:22px}
-    .card{background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.03));border:1px solid var(--border);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);position:relative}
-    .statusLight{position:absolute;top:14px;left:14px;width:14px;height:14px;border-radius:999px;background:var(--red);box-shadow:0 0 0 4px rgba(255,46,85,.12),0 0 18px rgba(255,46,85,.35)}
-    .statusLight.ok{background:var(--green);box-shadow:0 0 0 4px rgba(46,229,157,.14),0 0 18px rgba(46,229,157,.35)}
-    .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:space-between}
-    .pill{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.10);font-size:13px;color:var(--muted)}
-    .big{margin-top:10px;font-size:44px;font-weight:950;letter-spacing:2px;padding:12px 16px;border-radius:16px;background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.10);text-align:center}
-    .hint{margin-top:10px;padding:12px;border-radius:16px;border:1px dashed rgba(255,255,255,.18);color:rgba(167,176,214,.92);background:rgba(255,255,255,.03);text-align:center;font-weight:900}
-    .grid{margin-top:14px;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
-    .player{padding:12px;border-radius:16px;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.04);display:flex;justify-content:space-between;align-items:center;gap:10px;cursor:pointer}
-    .player.dead{opacity:.45;cursor:not-allowed}
-    .player .name{font-weight:950;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-    .badge{font-weight:950;font-size:12px;padding:6px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.06);color:rgba(167,176,214,.95)}
-    .btn{border:0;border-radius:16px;padding:14px 18px;font-weight:950;cursor:pointer;color:#fff;background:linear-gradient(135deg,var(--btn1),var(--btn2));box-shadow:0 12px 26px rgba(255,35,79,.22)}
-    .btn.secondary{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);box-shadow:none;color:var(--text)}
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
+      border:1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: var(--shadow);
+      position: relative;
+    }
+    .statusLight{
+      position:absolute; top:14px; left:14px;
+      width:14px; height:14px; border-radius:999px;
+      background: var(--red);
+      box-shadow: 0 0 0 4px rgba(255,46,85,.12), 0 0 18px rgba(255,46,85,.35);
+    }
+    .statusLight.ok{
+      background: var(--green);
+      box-shadow: 0 0 0 4px rgba(46,229,157,.14), 0 0 18px rgba(46,229,157,.35);
+    }
+    .brand{display:flex;justify-content:center;margin:6px 0 10px}
+    .brand img{
+      width:260px;max-width:92%;height:auto;
+      filter: drop-shadow(0 18px 34px rgba(255,35,79,.18));
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,.08);
+      background: rgba(0,0,0,.25);
+    }
+    .topRow{
+      display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;
+      margin-top:8px;
+    }
+    .pill{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:8px 12px;border-radius:999px;
+      background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.10);
+      font-size:13px;color:var(--muted);
+    }
+    .roomCode{font-weight:950;letter-spacing:4px;color:#fff}
+    .btn{
+      border:0;border-radius:16px;padding:14px 14px;
+      font-weight:950;cursor:pointer;color:#fff;
+      background: linear-gradient(135deg, var(--btn1), var(--btn2));
+      box-shadow: 0 12px 26px rgba(255,35,79,.22);
+      display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;
+      transition: transform .08s ease, filter .15s ease, opacity .15s ease;
+      position:relative;overflow:hidden;
+    }
+    .btn:hover{filter:brightness(1.05)}
+    .btn:active{transform:scale(.99)}
     .btn:disabled{opacity:.55;cursor:not-allowed;box-shadow:none}
-    .actions{margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
-    .two{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
-    @media (max-width: 860px){.two{grid-template-columns:1fr}}
-    .box{border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.03);border-radius:18px;padding:14px}
-    .title{font-weight:950;margin-bottom:8px;color:rgba(238,241,255,.92)}
-    .small{color:rgba(167,176,214,.9);line-height:1.7}
+    .btn.secondary{
+      background: rgba(255,255,255,.07);
+      border:1px solid rgba(255,255,255,.12);
+      box-shadow:none;color:var(--text);
+    }
+    .btn::after{
+      content:"";position:absolute;top:-40%;left:-60%;
+      width:40%;height:180%;transform:rotate(25deg);
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.22), transparent);
+      animation: shine 2.2s infinite;
+    }
+    .btn.secondary::after{display:none}
+    @keyframes shine{0%{left:-60%}55%{left:120%}100%{left:120%}}
+
+    .hero{
+      margin-top:12px;
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.18);
+      padding:14px;
+    }
+    .roleBox{
+      display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center;
+    }
+    .roleName{font-size:20px;font-weight:1000}
+    .phase{font-weight:950;letter-spacing:1px}
+    .grid{
+      margin-top:12px;
+      display:grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap:10px;
+    }
+    .player{
+      padding:12px;border-radius:16px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      display:flex;justify-content:space-between;align-items:center;gap:10px;
+      overflow:hidden;
+    }
+    .name{font-weight:950;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .badge{
+      font-weight:950;font-size:12px;padding:6px 10px;border-radius:999px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.06);
+      color: rgba(167,176,214,.95);
+      white-space:nowrap;
+    }
+    .badge.dead{
+      border-color: rgba(255,46,85,.25);
+      color: rgba(255,46,85,.95);
+      background: rgba(255,46,85,.10);
+    }
+    .panel{
+      margin-top:12px;
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.18);
+      padding:14px;
+    }
+    .panel h3{margin:0 0 10px;font-size:16px}
+    .small{font-size:12px;color:var(--muted)}
+    .hostBox{
+      display:none;
+      margin-top:10px;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      padding:12px;
+    }
+    .hostRow{
+      display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between;
+      margin-top:8px;
+    }
+    .kpi{display:flex; gap:10px; flex-wrap:wrap}
+    .kpi .pill strong{color:#fff}
+    .toast{
+      position: fixed;left: 16px;bottom: 16px;
+      background: rgba(0,0,0,.55);
+      border: 1px solid rgba(255,255,255,.12);
+      color: var(--text);
+      padding: 10px 12px;border-radius: 14px;font-weight: 900;
+      display:none;z-index: 9999;box-shadow: var(--shadow);
+    }
   </style>
 </head>
 <body>
   <div class="wrap">
     <div class="card">
       <span id="light" class="statusLight"></span>
+      <div class="brand"><img src="/brand.png" alt="brand"></div>
 
-      <div class="row">
-        <div class="pill">Room: <strong id="roomPill">—</strong></div>
-        <div class="pill">Mode: <strong id="modePill">player</strong></div>
-        <div class="pill">Phase: <strong id="phasePill">—</strong></div>
-        <div class="pill">Day: <strong id="dayPill">—</strong></div>
+      <div class="topRow">
+        <div class="pill">Room: <span id="roomCode" class="roomCode">----</span></div>
+        <div class="pill">Round: <strong id="round">1</strong></div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end;">
+          <button id="nextBtn" class="btn secondary" type="button" disabled>Next</button>
+          <button id="backBtn" class="btn secondary" type="button" disabled>Back to Lobby</button>
+        </div>
       </div>
 
-      <div id="bigTitle" class="big">MAFIA</div>
-      <div id="hint" class="hint">Loading…</div>
-
-      <div class="two">
-        <div class="box">
-          <div class="title">Players</div>
-          <div id="players" class="grid"></div>
-          <div class="small" id="voteStats"></div>
-        </div>
-
-        <div class="box">
-          <div class="title">You</div>
-          <div class="small" id="youBox">—</div>
-          <div class="actions" id="playerActions"></div>
-
-          <hr style="border:0;border-top:1px solid rgba(255,255,255,.10);margin:14px 0;">
-
-          <div class="title">Host Controls (Display)</div>
-          <div class="small">إذا أنت جهاز عرض: اضغط Next للتنقل بين المراحل.</div>
-          <div class="actions">
-            <button id="nextBtn" class="btn secondary" type="button">Next Phase</button>
-            <button id="backBtn" class="btn secondary" type="button">Back to Lobby</button>
+      <div class="hero">
+        <div class="roleBox">
+          <div>
+            <div class="small">Your role</div>
+            <div id="role" class="roleName">—</div>
+            <div class="small" id="investigation"></div>
+          </div>
+          <div>
+            <div class="small">Phase</div>
+            <div id="phase" class="phase">—</div>
           </div>
         </div>
+
+        <div id="result" class="small" style="margin-top:10px;"></div>
+        <div id="winner" style="margin-top:8px;font-weight:1000;"></div>
+
+        <div id="hostBox" class="hostBox">
+          <div style="font-weight:1000;">Host Console</div>
+          <div class="kpi" style="margin-top:8px;">
+            <div class="pill">Alive: <strong id="kAlive">0</strong></div>
+            <div class="pill">Votes: <strong id="kVotes">0</strong></div>
+            <div class="pill">Mafia picked: <strong id="kMafia">—</strong></div>
+            <div class="pill">Doctor picked: <strong id="kDoc">—</strong></div>
+            <div class="pill">Detective picked: <strong id="kDet">—</strong></div>
+          </div>
+          <div class="hostRow">
+            <button id="resolveNightBtn" class="btn secondary" type="button" disabled>Resolve Night Now</button>
+            <button id="resolveDayBtn" class="btn secondary" type="button" disabled>Resolve Day Now</button>
+          </div>
+          <div class="small" style="margin-top:8px;">Force-resolve if someone is AFK.</div>
+        </div>
       </div>
+
+      <div class="panel">
+        <h3>Action</h3>
+        <div id="actionHint" class="small">Waiting…</div>
+      </div>
+
+      <div id="players" class="grid"></div>
     </div>
   </div>
+
+  <div id="toast" class="toast">OK</div>
 
   <script src="https://jackbox-server-pwtr.onrender.com/socket.io/socket.io.js"></script>
   <script>
     const SERVER_URL = "https://jackbox-server-pwtr.onrender.com";
+    const WEB_ORIGIN = "https://www.gamehub4u.com";
 
-    const clientId = localStorage.getItem("clientId") || (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random());
+    function uuidFallback(){
+      return "id-" + Date.now().toString(16) + "-" + Math.random().toString(16).slice(2);
+    }
+    const clientId = localStorage.getItem("clientId") || (crypto && crypto.randomUUID ? crypto.randomUUID() : uuidFallback());
     localStorage.setItem("clientId", clientId);
 
-    const hostMode = localStorage.getItem("hostMode") || "player"; // display | player
-    const isDisplay = hostMode === "display";
+    const qs = new URLSearchParams(location.search);
+    let roomCode = (qs.get("room") || "").trim().toUpperCase();
+
+    const light = document.getElementById("light");
+    const roomCodeEl = document.getElementById("roomCode");
+    const roundEl = document.getElementById("round");
+    const roleEl = document.getElementById("role");
+    const phaseEl = document.getElementById("phase");
+    const playersEl = document.getElementById("players");
+    const actionHint = document.getElementById("actionHint");
+    const investigationEl = document.getElementById("investigation");
+    const resultEl = document.getElementById("result");
+    const winnerEl = document.getElementById("winner");
+
+    const nextBtn = document.getElementById("nextBtn");
+    const backBtn = document.getElementById("backBtn");
+    const toast = document.getElementById("toast");
+
+    const hostBox = document.getElementById("hostBox");
+    const kAlive = document.getElementById("kAlive");
+    const kVotes = document.getElementById("kVotes");
+    const kMafia = document.getElementById("kMafia");
+    const kDoc = document.getElementById("kDoc");
+    const kDet = document.getElementById("kDet");
+    const resolveNightBtn = document.getElementById("resolveNightBtn");
+    const resolveDayBtn = document.getElementById("resolveDayBtn");
 
     const socket = io(SERVER_URL, { transports:["websocket","polling"], auth:{ clientId } });
 
-    const light = document.getElementById("light");
-    const roomPill = document.getElementById("roomPill");
-    const modePill = document.getElementById("modePill");
-    const phasePill = document.getElementById("phasePill");
-    const dayPill = document.getElementById("dayPill");
-    const hint = document.getElementById("hint");
-    const playersEl = document.getElementById("players");
-    const youBox = document.getElementById("youBox");
-    const playerActions = document.getElementById("playerActions");
-    const voteStats = document.getElementById("voteStats");
-    const nextBtn = document.getElementById("nextBtn");
-    const backBtn = document.getElementById("backBtn");
+    let state = null;
 
-    modePill.textContent = isDisplay ? "display" : "player";
-
-    function normalizeRoom(text){
-      return String(text || "").trim().toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 8);
+    function showToast(text){
+      toast.textContent = text;
+      toast.style.display = "block";
+      clearTimeout(toast._t);
+      toast._t = setTimeout(() => toast.style.display = "none", 1200);
     }
-    function escapeHtml(s){
-      return String(s).replace(/[&<>"']/g, (c) => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+    function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c])); }
+
+    function labelRole(r){
+      if (r === "mafia") return "MAFIA";
+      if (r === "doctor") return "DOCTOR";
+      if (r === "detective") return "DETECTIVE";
+      if (r === "villager") return "VILLAGER";
+      return "—";
     }
-
-    const params = new URLSearchParams(location.search);
-    const roomCode = normalizeRoom(params.get("room") || "");
-    roomPill.textContent = roomCode || "—";
-
-    let me = { role: "spectator", isAlive: false, name: "" };
-    let lastState = null;
-    let selectedTarget = null;
-
-    function setHint(text){
-      hint.textContent = text;
+    function labelPhase(p){
+      if (p === "role") return "ROLE REVEAL";
+      if (p === "night") return "NIGHT";
+      if (p === "day") return "DAY VOTE";
+      return p || "—";
     }
 
-    function renderPlayers(state){
+    function renderPlayers(list){
       playersEl.innerHTML = "";
-      const aliveSet = new Set(state.aliveNames || []);
-      (state.aliveNames || []).forEach(nm => {
+      (list||[]).forEach(p => {
         const div = document.createElement("div");
         div.className = "player";
-        div.innerHTML = `<div class="name">${escapeHtml(nm)}</div><div class="badge">ALIVE</div>`;
-        div.onclick = () => { selectedTarget = nm; renderActions(state); };
+        div.dataset.id = p.clientId;
+        div.innerHTML = `
+          <div class="name">${escapeHtml(p.name||"Player")}${p.clientId===clientId ? " (You)" : ""}</div>
+          <div class="badge ${p.alive ? "" : "dead"}">${p.alive ? "ALIVE" : "DEAD"}</div>
+        `;
+        if (p.alive && state && state.winnerTeam === null){
+          div.style.cursor = "pointer";
+          div.onclick = () => onPickTarget(p.clientId);
+        }
         playersEl.appendChild(div);
       });
+    }
 
-      // dead players (from lastState lastEvent only): optional
-      voteStats.textContent = "";
-      if (state.phase === "vote" && state.voteCountsByName) {
-        const lines = Object.entries(state.voteCountsByName).map(([n,c]) => `${n}: ${c}`);
-        voteStats.textContent = lines.length ? ("Votes: " + lines.join(" | ")) : "";
+    function amIDead(){
+      const me = state?.alive?.find(x => x.clientId === clientId);
+      return me ? !me.alive : false;
+    }
+
+    function onPickTarget(targetId){
+      if (!state || !state.myRole) return;
+      if (amIDead()) { showToast("You are dead"); return; }
+
+      if (state.phase === "night"){
+        if (state.myRole === "mafia"){
+          socket.emit("mafia:nightAction", { roomCode, clientId, action: "kill", targetId });
+          showToast("Kill selected");
+        } else if (state.myRole === "doctor"){
+          socket.emit("mafia:nightAction", { roomCode, clientId, action: "save", targetId });
+          showToast("Save selected");
+        } else if (state.myRole === "detective"){
+          socket.emit("mafia:nightAction", { roomCode, clientId, action: "check", targetId });
+          showToast("Investigate selected");
+        } else {
+          showToast("No night action");
+        }
+      } else if (state.phase === "day"){
+        socket.emit("mafia:vote", { roomCode, clientId, targetId });
+        showToast("Vote cast");
       }
     }
 
-    function renderActions(state){
-      playerActions.innerHTML = "";
+    function renderHostStats(){
+      const hs = state?.hostStats;
+      const isHost = !!state?.canAdvance;
 
-      const isAlive = !!me.isAlive;
-      if (isDisplay) {
-        youBox.innerHTML = `<div class="small">Display mode — no player actions.</div>`;
-        return;
-      }
+      hostBox.style.display = isHost ? "block" : "none";
+      if (!isHost || !hs) return;
 
-      let txt = `Name: <b>${escapeHtml(me.name||"")}</b><br>Role: <b>${escapeHtml(me.role||"")}</b><br>Status: <b>${isAlive ? "ALIVE" : "DEAD"}</b>`;
-      if (me.role === "mafia" && me.mafiaNames) {
-        txt += `<br>Mafia: <b>${escapeHtml(me.mafiaNames.join(", "))}</b>`;
-      }
-      youBox.innerHTML = txt;
+      kAlive.textContent = hs.aliveCount;
+      kVotes.textContent = hs.votedCount;
+      kMafia.textContent = hs.mafiaPicked ? "YES" : "NO";
+      kDoc.textContent = hs.doctorPicked ? "YES" : "NO";
+      kDet.textContent = hs.detectivePicked ? "YES" : "NO";
 
-      if (!isAlive) {
-        const b = document.createElement("button");
-        b.className = "btn secondary";
-        b.textContent = "You're out";
-        b.disabled = true;
-        playerActions.appendChild(b);
-        return;
-      }
-
-      // Based on phase + role
-      const phase = state.phase;
-
-      const needPick = (label, action, enabled) => {
-        const btn = document.createElement("button");
-        btn.className = "btn";
-        btn.textContent = selectedTarget ? `${label}: ${selectedTarget}` : `${label}: اختر لاعب`;
-        btn.disabled = !enabled || !selectedTarget;
-        btn.onclick = () => {
-          socket.emit("mafia:act", { roomCode, clientId, action, targetName: selectedTarget });
-          setHint("تم الإرسال ✅");
-        };
-        playerActions.appendChild(btn);
-      };
-
-      if (phase === "night_mafia") {
-        if (me.role === "mafia") {
-          needPick("Kill", "kill", true);
-        } else {
-          const b = document.createElement("button");
-          b.className = "btn secondary";
-          b.textContent = "Night… wait";
-          b.disabled = true;
-          playerActions.appendChild(b);
-        }
-      }
-
-      if (phase === "night_doctor") {
-        if (me.role === "doctor") {
-          needPick("Save", "save", true);
-        } else {
-          const b = document.createElement("button");
-          b.className = "btn secondary";
-          b.textContent = "Doctor turn… wait";
-          b.disabled = true;
-          playerActions.appendChild(b);
-        }
-      }
-
-      if (phase === "night_detective") {
-        if (me.role === "detective") {
-          needPick("Inspect", "inspect", true);
-        } else {
-          const b = document.createElement("button");
-          b.className = "btn secondary";
-          b.textContent = "Detective turn… wait";
-          b.disabled = true;
-          playerActions.appendChild(b);
-        }
-      }
-
-      if (phase === "day") {
-        const b = document.createElement("button");
-        b.className = "btn secondary";
-        b.textContent = "Day discussion…";
-        b.disabled = true;
-        playerActions.appendChild(b);
-      }
-
-      if (phase === "vote") {
-        const btn = document.createElement("button");
-        btn.className = "btn";
-        btn.textContent = selectedTarget ? `Vote: ${selectedTarget}` : "Vote: اختر لاعب";
-        btn.disabled = !selectedTarget;
-        btn.onclick = () => {
-          socket.emit("mafia:vote", { roomCode, clientId, targetName: selectedTarget });
-          setHint("تم التصويت ✅");
-        };
-        playerActions.appendChild(btn);
-      }
-
-      if (phase === "ended") {
-        const b = document.createElement("button");
-        b.className = "btn secondary";
-        b.textContent = "Game ended";
-        b.disabled = true;
-        playerActions.appendChild(b);
-      }
+      resolveNightBtn.disabled = state.winnerTeam || state.phase !== "night";
+      resolveDayBtn.disabled = state.winnerTeam || state.phase !== "day";
     }
 
-    function phaseText(state){
-      const p = state.phase;
-      if (p === "night_mafia") return "🌙 Night: Mafia";
-      if (p === "night_doctor") return "🌙 Night: Doctor";
-      if (p === "night_detective") return "🌙 Night: Detective";
-      if (p === "day") return "☀️ Day";
-      if (p === "vote") return "🗳️ Vote";
-      if (p === "ended") return "🏁 Ended";
-      return p;
-    }
+    function renderState(s){
+      state = s;
+      if (!state) return;
 
-    function render(state){
-      lastState = state;
-      phasePill.textContent = state.phase;
-      dayPill.textContent = String(state.day || "—");
-      setHint(phaseText(state));
+      roomCodeEl.textContent = roomCode || "----";
+      roundEl.textContent = state.round || 1;
+      roleEl.textContent = labelRole(state.myRole);
+      phaseEl.textContent = labelPhase(state.phase);
 
-      if (state.lastEvent) {
-        if (state.lastEvent.type === "night_result") {
-          const dn = state.lastEvent.deadName;
-          setHint(dn ? `🌙 Result: ${dn} died` : "🌙 Result: no one died");
-        }
-        if (state.lastEvent.type === "vote_result") {
-          const out = state.lastEvent.outName;
-          setHint(out ? `🗳️ Out: ${out}` : `🗳️ No majority`);
-        }
-        if (state.lastEvent.type === "win") {
-          setHint(state.lastEvent.winner === "mafia" ? "🏴 Mafia wins" : "👨‍👩‍👧 Town wins");
-        }
+      nextBtn.disabled = !state.canAdvance || !!state.winnerTeam;
+      backBtn.disabled = !!state.winnerTeam ? false : true;
+
+      if (state.investigationResult && state.myRole === "detective"){
+        const t = state.investigationResult.targetId;
+        const isM = state.investigationResult.isMafia;
+        const nm = (state.alive.find(x=>x.clientId===t)?.name) || "Player";
+        investigationEl.textContent = `Investigation: ${nm} is ${isM ? "MAFIA" : "NOT MAFIA"}`;
+      } else {
+        investigationEl.textContent = "";
       }
 
-      renderPlayers(state);
-      renderActions(state);
+      if (state.lastResult){
+        if (state.lastResult.type === "night"){
+          const died = state.lastResult.died ? state.lastResult.died.name : "No one";
+          resultEl.textContent = `Night result: ${died} died.`;
+        } else if (state.lastResult.type === "day"){
+          if (state.lastResult.tie){
+            resultEl.textContent = "Day result: Tie vote — no one eliminated.";
+          } else {
+            const el = state.lastResult.eliminated ? state.lastResult.eliminated.name : "No one";
+            resultEl.textContent = `Day result: ${el} eliminated.`;
+          }
+        }
+      } else resultEl.textContent = "";
+
+      if (state.winnerTeam){
+        winnerEl.textContent = state.winnerTeam === "mafia" ? "🏆 MAFIA WINS (+10)" : "🏆 TOWN WINS (+10)";
+        backBtn.disabled = false;
+      } else {
+        winnerEl.textContent = "";
+      }
+
+      if (state.winnerTeam){
+        actionHint.textContent = "Game over. Back to lobby.";
+      } else if (state.phase === "role"){
+        actionHint.textContent = "Host: press Next to start the Night.";
+      } else if (state.phase === "night"){
+        if (amIDead()) actionHint.textContent = "You are dead — wait.";
+        else if (state.myRole === "mafia") actionHint.textContent = "Pick someone to KILL (click a player).";
+        else if (state.myRole === "doctor") actionHint.textContent = "Pick someone to SAVE (click a player).";
+        else if (state.myRole === "detective") actionHint.textContent = "Pick someone to INVESTIGATE (click a player).";
+        else actionHint.textContent = "Wait for the night to end.";
+      } else if (state.phase === "day"){
+        if (amIDead()) actionHint.textContent = "You are dead — wait.";
+        else actionHint.textContent = "Vote: click a player to eliminate.";
+      } else {
+        actionHint.textContent = "Waiting…";
+      }
+
+      renderPlayers(state.alive || []);
+      renderHostStats();
     }
 
     socket.on("connect", () => {
       light.classList.add("ok");
-      if (roomCode) socket.emit("player:attach", { roomCode, clientId });
-    });
-    socket.on("disconnect", () => light.classList.remove("ok"));
+      if (!roomCode){ showToast("Missing room"); return; }
 
-    socket.on("mafia:me", (payload) => {
-      me = payload || me;
-      if (lastState) renderActions(lastState);
+      socket.emit("player:attach", { roomCode, clientId });
+      socket.emit("host:attach", { roomCode });
+      socket.emit("mafia:getState", { roomCode, clientId });
     });
 
-    socket.on("mafia:detectiveResult", ({ targetName, isMafia } = {}) => {
-      setHint(`🔎 ${targetName}: ${isMafia ? "MAFIA" : "NOT mafia"}`);
+    socket.on("disconnect", () => {
+      light.classList.remove("ok");
+      nextBtn.disabled = true;
+      backBtn.disabled = true;
+      resolveNightBtn.disabled = true;
+      resolveDayBtn.disabled = true;
     });
 
-    socket.on("mafia:state", (state) => {
-      render(state);
+    socket.on("mafia:role", ({ role } = {}) => {
+      if (role) roleEl.textContent = labelRole(role);
     });
 
-    // Host Next
-    nextBtn.disabled = !isDisplay;
-    nextBtn.onclick = () => {
-      if (!isDisplay) return;
-      socket.emit("mafia:next", { roomCode });
-    };
+    socket.on("mafia:state", (s) => renderState(s));
+    socket.on("mafia:tick", () => socket.emit("mafia:getState", { roomCode, clientId }));
 
-    backBtn.onclick = () => {
-      window.location.href = `/lobby.html?room=${encodeURIComponent(roomCode)}`;
-    };
+    nextBtn.onclick = () => socket.emit("mafia:next", { roomCode });
+    backBtn.onclick = () => socket.emit("mafia:backToLobby", { roomCode });
+
+    resolveNightBtn.onclick = () => socket.emit("mafia:forceResolveNight", { roomCode });
+    resolveDayBtn.onclick = () => socket.emit("mafia:forceResolveDay", { roomCode });
+
+    socket.on("hub:lobby", ({ roomCode: rc } = {}) => {
+      const code = (rc || roomCode || "").trim().toUpperCase();
+      location.href = `${WEB_ORIGIN}/lobby.html?room=${encodeURIComponent(code)}`;
+    });
+
+    socket.on("room:closed", () => {
+      showToast("Room closed");
+      setTimeout(() => location.href = `${WEB_ORIGIN}/`, 600);
+    });
   </script>
 </body>
 </html>
