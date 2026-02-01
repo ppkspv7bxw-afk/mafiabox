@@ -7,7 +7,6 @@
   <style>
     :root{
       --bg:#0b1020;
-      --card:#121a33;
       --muted:#a7b0d6;
       --text:#eef1ff;
       --ok:#2ee59d;
@@ -26,7 +25,6 @@
       color:var(--text);
     }
     .wrap{ max-width: 980px; margin: 0 auto; padding: 22px; }
-    .top{ display:flex; gap:14px; flex-wrap:wrap; align-items:stretch; }
     .card{
       background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
       border:1px solid var(--border);
@@ -34,8 +32,6 @@
       padding: 16px;
       box-shadow: var(--shadow);
     }
-    .grow{ flex: 1 1 520px; }
-    .small{ flex: 1 1 280px; min-width: 280px; }
     .brand{
       display:flex; align-items:center; gap:12px;
       margin-bottom: 12px;
@@ -61,6 +57,7 @@
     }
     .dot{ width:10px; height:10px; border-radius:999px; background: var(--bad); }
     .dot.ok{ background: var(--ok); }
+
     .codeBox{
       margin-top: 12px;
       display:flex; gap:12px; flex-wrap:wrap; align-items:center; justify-content:space-between;
@@ -90,6 +87,7 @@
     button:active{ transform: scale(.99); }
     button.secondary{ background: var(--btn2); border:1px solid var(--border); }
     button:disabled{ opacity:.45; cursor:not-allowed; }
+
     .hint{
       margin-top:10px;
       padding: 10px 12px;
@@ -99,6 +97,7 @@
       background: rgba(255,255,255,.03);
       line-height: 1.7;
     }
+
     .grid{
       margin-top: 14px;
       display:grid;
@@ -114,6 +113,7 @@
     }
     .player .name{ font-weight: 900; }
     .player .score{ color: var(--muted); font-weight: 800; }
+
     .toast{
       margin-top: 10px;
       padding: 10px 12px;
@@ -122,69 +122,61 @@
       background: rgba(255,255,255,.04);
       color: var(--muted);
       display:none;
+      white-space: pre-wrap;
     }
     a{ color:#9ab3ff; text-decoration:none; }
-    .footer{ margin-top: 14px; font-size: 13px; color: var(--muted); }
   </style>
 </head>
 <body>
   <div class="wrap">
-    <div class="top">
-      <div class="card grow">
-        <div class="brand">
-          <img src="/logo.jpeg" alt="GameHub4u Logo" />
-          <div>
-            <h1>GameHub4u — Host</h1>
-            <p>أنشئ غرفة وخل اللاعبين يدخلون من الصفحة الرئيسية</p>
-          </div>
+    <div class="card">
+      <div class="brand">
+        <img src="/logo.jpeg" alt="GameHub4u Logo" />
+        <div>
+          <h1>GameHub4u — Host</h1>
+          <p>أنشئ غرفة وشارك رابط الدخول للاعبين</p>
         </div>
-
-        <div class="row">
-          <div class="pill"><span id="dot" class="dot"></span> <span id="conn">جاري الاتصال…</span></div>
-          <div class="pill">عدد اللاعبين: <strong id="count">0</strong></div>
-        </div>
-
-        <div class="codeBox">
-          <div>
-            <div class="muted" style="margin-bottom:6px;">كود الغرفة</div>
-            <div id="code" class="code">— — — —</div>
-          </div>
-
-          <div class="row" style="justify-content:flex-end;">
-            <button id="create" disabled>إنشاء غرفة</button>
-            <button id="copyCode" class="secondary" disabled>نسخ الكود</button>
-            <button id="copyLink" class="secondary" disabled>نسخ رابط اللاعبين</button>
-          </div>
-        </div>
-
-        <div class="hint">
-          📌 رابط الموقع للاعبين: <strong id="domainHint">—</strong><br/>
-          (اللاعب يدخل ويكتب الكود + اسمه)
-        </div>
-
-        <div id="toast" class="toast"></div>
       </div>
 
-      <div class="card small">
-        <h1>⚙️ ملاحظات</h1>
-        <p class="muted" style="margin-top:8px; line-height:1.7;">
-          الآن هذا نظام غرف + دخول لاعبين.<br/>
-          الخطوة الجاية: سؤال → إجابة → تصويت → نقاط.
-        </p>
-        <div class="footer">
-          <a href="/">رجوع للصفحة الرئيسية</a>
+      <div class="row">
+        <div class="pill"><span id="dot" class="dot"></span> <span id="conn">جاري الاتصال…</span></div>
+        <div class="pill">عدد اللاعبين: <strong id="count">0</strong></div>
+      </div>
+
+      <div class="codeBox">
+        <div>
+          <div class="muted" style="margin-bottom:6px;">كود الغرفة</div>
+          <div id="code" class="code">— — — —</div>
         </div>
+
+        <div class="row" style="justify-content:flex-end;">
+          <button id="reconnect" class="secondary">إعادة اتصال</button>
+          <button id="create" disabled>إنشاء غرفة</button>
+          <button id="copyCode" class="secondary" disabled>نسخ الكود</button>
+          <button id="copyLink" class="secondary" disabled>نسخ رابط اللاعبين</button>
+        </div>
+      </div>
+
+      <div class="hint">
+        📌 رابط الموقع للاعبين: <strong id="domainHint">—</strong><br/>
+        (اللاعب يدخل من الصفحة الرئيسية ويكتب الكود + اسمه)
+      </div>
+
+      <div id="toast" class="toast"></div>
+      <div style="margin-top:14px;">
+        <a href="/">رجوع للصفحة الرئيسية</a>
       </div>
     </div>
 
     <div class="card" style="margin-top:14px;">
-      <h1>👥 اللاعبين</h1>
+      <h2 style="margin:0 0 10px;">👥 اللاعبين</h2>
       <div id="players" class="grid"></div>
       <div id="empty" class="muted" style="margin-top:10px;">لا يوجد لاعبين بعد…</div>
     </div>
   </div>
 
-  <script src="https://jackbox-server-pwtr.onrender.com/socket.io/socket.io.js"></script>
+  <!-- ✅ Socket.IO client من CDN (أضمن من تحميلها من السيرفر) -->
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
   <script>
     const SERVER_URL = "https://jackbox-server-pwtr.onrender.com";
 
@@ -196,63 +188,123 @@
     const emptyEl = document.getElementById("empty");
     const toastEl = document.getElementById("toast");
 
+    const reconnectBtn = document.getElementById("reconnect");
     const createBtn = document.getElementById("create");
     const copyCodeBtn = document.getElementById("copyCode");
     const copyLinkBtn = document.getElementById("copyLink");
     const domainHintEl = document.getElementById("domainHint");
 
-    const socket = io(SERVER_URL, { transports: ["websocket", "polling"] });
-
-    let currentRoomCode = "";
     const siteOrigin = location.origin;
     domainHintEl.textContent = siteOrigin;
 
-    function toast(msg){
+    let currentRoomCode = "";
+
+    function showToast(msg){
       toastEl.textContent = msg;
       toastEl.style.display = "block";
       clearTimeout(toastEl._t);
-      toastEl._t = setTimeout(() => toastEl.style.display = "none", 1800);
+      toastEl._t = setTimeout(() => toastEl.style.display = "none", 2500);
     }
 
     async function copyText(text){
       try{
         await navigator.clipboard.writeText(text);
-        toast("تم النسخ ✅");
+        showToast("تم النسخ ✅");
       } catch(e){
-        toast("ما قدرت أنسخ — انسخه يدويًا");
+        showToast("ما قدرت أنسخ — انسخه يدويًا");
       }
     }
 
-    socket.on("connect", () => {
-      connEl.textContent = "متصل ✅";
-      dotEl.classList.add("ok");
-      createBtn.disabled = false;
-      toast("اتصال جاهز");
-    });
+    function setConnected(isOk, text){
+      connEl.textContent = text;
+      dotEl.classList.toggle("ok", !!isOk);
+      createBtn.disabled = !isOk;
+    }
 
-    socket.on("disconnect", () => {
-      connEl.textContent = "غير متصل ❌";
-      dotEl.classList.remove("ok");
-      createBtn.disabled = true;
+    // ✅ إنشاء Socket مع إعدادات أوضح + محاولات اتصال
+    let socket = null;
+    function startSocket(){
+      if (socket) {
+        socket.removeAllListeners();
+        socket.disconnect();
+      }
+
+      setConnected(false, "جاري الاتصال…");
       copyCodeBtn.disabled = true;
       copyLinkBtn.disabled = true;
-      toast("انقطع الاتصال");
-    });
 
-    socket.on("connect_error", (err) => {
-      connEl.textContent = "فشل الاتصال ❌";
-      dotEl.classList.remove("ok");
-      createBtn.disabled = true;
-      copyCodeBtn.disabled = true;
-      copyLinkBtn.disabled = true;
-      console.log("connect_error:", err);
-      toast("فشل الاتصال بالسيرفر");
-    });
+      socket = io(SERVER_URL, {
+        path: "/socket.io",
+        transports: ["websocket", "polling"],
+        timeout: 15000,
+        reconnection: true,
+        reconnectionAttempts: 10,
+        reconnectionDelay: 800
+      });
+
+      socket.on("connect", () => {
+        setConnected(true, "متصل ✅");
+        showToast("اتصال جاهز");
+      });
+
+      socket.on("disconnect", () => {
+        setConnected(false, "غير متصل ❌");
+        showToast("انقطع الاتصال");
+      });
+
+      socket.on("connect_error", (err) => {
+        setConnected(false, "فشل الاتصال ❌");
+        showToast("فشل الاتصال بالسيرفر:\n" + (err?.message || err));
+        console.log("connect_error:", err);
+      });
+
+      socket.on("room:created", ({ roomCode }) => {
+        currentRoomCode = roomCode;
+        codeEl.textContent = roomCode;
+        copyCodeBtn.disabled = false;
+        copyLinkBtn.disabled = false;
+        showToast("تم إنشاء الغرفة ✅");
+      });
+
+      socket.on("room:state", ({ roomCode, players }) => {
+        if (roomCode) {
+          currentRoomCode = roomCode;
+          codeEl.textContent = roomCode;
+          copyCodeBtn.disabled = false;
+          copyLinkBtn.disabled = false;
+        }
+
+        const list = players || [];
+        countEl.textContent = list.length;
+
+        playersEl.innerHTML = "";
+        if (list.length === 0) {
+          emptyEl.style.display = "block";
+        } else {
+          emptyEl.style.display = "none";
+          list.forEach(p => {
+            const div = document.createElement("div");
+            div.className = "player";
+            div.innerHTML = `<div class="name">${escapeHtml(p.name)}</div><div class="score">${p.score} نقطة</div>`;
+            playersEl.appendChild(div);
+          });
+        }
+      });
+
+      socket.on("room:error", ({ message }) => {
+        showToast(message || "صار خطأ");
+      });
+    }
+
+    reconnectBtn.onclick = () => {
+      showToast("إعادة الاتصال…");
+      startSocket();
+    };
 
     createBtn.onclick = () => {
-      if (!socket.connected) return toast("السيرفر غير متصل");
+      if (!socket || !socket.connected) return showToast("السيرفر غير متصل");
       socket.emit("host:createRoom");
-      toast("جاري إنشاء غرفة…");
+      showToast("جاري إنشاء غرفة…");
     };
 
     copyCodeBtn.onclick = () => {
@@ -260,13 +312,21 @@
       copyText(currentRoomCode);
     };
 
-    // ✅ مهم: لأن الصفحة الرئيسية صارت هي دخول اللاعبين
+    // ✅ رابط اللاعبين للصفحة الرئيسية (لأنها Play)
     copyLinkBtn.onclick = () => {
       if (!currentRoomCode) return;
       const link = `${siteOrigin}/?room=${encodeURIComponent(currentRoomCode)}`;
       copyText(link);
     };
 
-    socket.on("room:created", ({ roomCode }) => {
-      currentRoomCode = roomCode;
-      code
+    function escapeHtml(s){
+      return String(s).replace(/[&<>"']/g, (c) => ({
+        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+      }[c]));
+    }
+
+    // ابدأ الاتصال
+    startSocket();
+  </script>
+</body>
+</html>
