@@ -37,7 +37,6 @@
       position: relative;
     }
 
-    /* 🔴🟢 لمبة اتصال فقط */
     .statusLight{
       position:absolute;
       top:14px;
@@ -53,7 +52,6 @@
       box-shadow: 0 0 0 4px rgba(46,229,157,.14), 0 0 18px rgba(46,229,157,.35);
     }
 
-    /* ✅ الشعار */
     .brand{
       display:flex;
       justify-content:center;
@@ -93,7 +91,6 @@
       box-shadow: 0 0 0 4px rgba(255,35,79,.14);
     }
 
-    /* 🔥 زر ثيم + لمعان */
     .btn{
       width: 100%;
       margin-top: 14px;
@@ -162,7 +159,6 @@
       100%{ transform: translateX(0); }
     }
 
-    /* ✅ زر Host كبير مثل قبل */
     .hostWrap{ margin-top: 14px; display:flex; justify-content:center; }
     .hostBtn{
       width: 100%;
@@ -182,7 +178,6 @@
     .hostBtn:hover{ background: rgba(255,255,255,.10); }
     .hostBtn:active{ transform: scale(.99); }
 
-    /* ===== Lobby ===== */
     .hidden{ display:none !important; }
 
     .lobbyHeader{
@@ -295,7 +290,7 @@
         <img src="/brand.png" alt="brand" />
       </div>
 
-      <!-- ===== Join View (نفس قبل) ===== -->
+      <!-- Join View -->
       <div id="joinView">
         <label>كود الغرفة</label>
         <input id="room" placeholder="ABCD" inputmode="latin" autocomplete="off" />
@@ -312,7 +307,7 @@
         </div>
       </div>
 
-      <!-- ===== Lobby View (Ready + Leave) ===== -->
+      <!-- Lobby View -->
       <div id="lobbyView" class="hidden">
         <div class="lobbyHeader">
           <div class="pill">You: <strong id="meName">—</strong></div>
@@ -437,7 +432,7 @@
       });
     }
 
-    // ✅ QR: ?room=ABCD
+    // QR: ?room=ABCD
     (function(){
       const params = new URLSearchParams(location.search);
       const room = normalizeRoom(params.get("room") || "");
@@ -486,7 +481,6 @@
       socket.emit("player:join", { roomCode, name });
     };
 
-    // ✅ Ready toggle
     readyBtn.onclick = () => {
       if (!joined || !myRoom) return;
       myReady = !myReady;
@@ -494,7 +488,6 @@
       socket.emit("player:ready", { roomCode: myRoom, ready: myReady });
     };
 
-    // ✅ Leave (يرجع شاشة الدخول + يرسل للسيرفر)
     leaveBtn.onclick = () => {
       if (myRoom) socket.emit("player:leave", { roomCode: myRoom });
       exitLobbyUI();
@@ -509,21 +502,23 @@
     });
 
     socket.on("room:state", ({ roomCode, players }) => {
-      // إذا اللاعب انضم بنجاح: ندخله اللوبي
       if (!joined && roomCode && roomCode === myRoom){
         enterLobby(roomCode, myName);
       }
-
-      // تحديث القائمة داخل اللوبي فقط
       if (joined && roomCode === myRoom){
         renderPlayers(players || []);
       }
-
-      // رجّع زر الدخول (احتياط)
       if (!joined){
         joinBtn.disabled = !socket.connected;
         joinBtn.textContent = "دخول";
       }
+    });
+
+    // ✅ أهم جزء: عند Start من الهوست -> تحويل لـ lobby.html
+    socket.on("game:started", ({ roomCode } = {}) => {
+      const code = (roomCode || myRoom || "").trim().toUpperCase();
+      if (!code) return;
+      window.location.href = `/lobby.html?room=${encodeURIComponent(code)}`;
     });
   </script>
 </body>
