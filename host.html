@@ -13,9 +13,9 @@
       --btn1:#ff3b6a; --btn2:#ff1f4f;
       --radius:18px;
 
-      /* QR readability */
-      --qr-bg: rgba(255,255,255,.10); /* ✅ very light, NOT white box */
-      --qr-fg: #0b0b12;               /* dark modules */
+      /* QR colors */
+      --qr-bg: #ffffff; /* ✅ solid white for scan reliability */
+      --qr-fg: #000000;
     }
     *{ box-sizing:border-box }
     body{
@@ -196,18 +196,22 @@
       text-align:center;
     }
     .qrPad{
-      /* ✅ Not a white box, but enough contrast to scan */
       display:inline-block;
-      padding: 16px;                 /* quiet-zone cushion */
-      border-radius: 22px;
-      background: var(--qr-bg);      /* very light translucent */
-      border: 1px solid rgba(255,255,255,.12);
-      backdrop-filter: blur(6px);
+      padding: 10px;          /* slight outer spacing */
+      border-radius: 18px;
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.10);
+    }
+    .qrWhite{
+      /* ✅ real white background area for scanning */
+      background: var(--qr-bg);
+      border-radius: 16px;
+      padding: 14px;          /* ✅ ensures quiet-zone stays white */
     }
     .qrCard canvas{
       width: 320px !important;
       height: 320px !important;
-      border-radius: 14px;
+      border-radius: 10px;
       background: transparent;
       padding: 0;
       display:block;
@@ -314,7 +318,9 @@
       <div class="qrWrap">
         <div class="qrCard">
           <div class="qrPad">
-            <canvas id="qr" width="720" height="720"></canvas>
+            <div class="qrWhite">
+              <canvas id="qr" width="720" height="720"></canvas>
+            </div>
           </div>
         </div>
       </div>
@@ -489,7 +495,6 @@
         }
       }
 
-      // mask 0
       function applyMask(m){
         const n = m.length;
         for (let r = 0; r < n; r++){
@@ -535,9 +540,9 @@
         const n = matrix.length;
         const ctx = canvas.getContext("2d");
 
-        // ✅ paint a VERY LIGHT translucent background (scan-friendly)
+        // ✅ solid white background (scan reliable)
         ctx.clearRect(0,0,canvas.width,canvas.height);
-        ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue("--qr-bg").trim() || "rgba(255,255,255,.10)";
+        ctx.fillStyle = "#fff";
         ctx.fillRect(0,0,canvas.width,canvas.height);
 
         const total = n + quiet * 2;
@@ -545,7 +550,7 @@
         const offset = Math.floor((canvas.width - scale * total) / 2);
 
         // modules
-        ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue("--qr-fg").trim() || "#0b0b12";
+        ctx.fillStyle = "#000";
         for (let r = 0; r < n; r++){
           for (let c = 0; c < n; c++){
             if (matrix[r][c]) {
