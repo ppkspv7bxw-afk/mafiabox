@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mafia</title>
+  <style>
+    :root{--bg:#0b1020;--text:#eef1ff;--muted:#a7b0d6;--border:rgba(255,255,255,.10);--shadow:0 14px 40px rgba(0,0,0,.45);--red:#ff2e55;--green:#2ee59d;--btn1:#ff3b6a;--btn2:#ff1f4f;--radius:18px;}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:radial-gradient(1100px 760px at 70% 0%,#1a2350 0%,var(--bg) 55%);color:var(--text)}
+    .wrap{max-width:1100px;margin:0 auto;padding:22px}
+    .card{background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.03));border:1px solid var(--border);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);position:relative}
+    .statusLight{position:absolute;top:14px;left:14px;width:14px;height:14px;border-radius:999px;background:var(--red);box-shadow:0 0 0 4px rgba(255,46,85,.12),0 0 18px rgba(255,46,85,.35)}
+    .statusLight.ok{background:var(--green);box-shadow:0 0 0 4px rgba(46,229,157,.14),0 0 18px rgba(46,229,157,.35)}
+    .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+    .pill{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.10);font-size:13px;color:var(--muted)}
+    .big{margin-top:10px;font-size:44px;font-weight:950;letter-spacing:2px;padding:12px 16px;border-radius:16px;background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.10);text-align:center}
+    .hint{margin-top:10px;padding:12px;border-radius:16px;border:1px dashed rgba(255,255,255,.18);color:rgba(167,176,214,.92);background:rgba(255,255,255,.03);text-align:center;font-weight:900}
+    .grid{margin-top:14px;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+    .player{padding:12px;border-radius:16px;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.04);display:flex;justify-content:space-between;align-items:center;gap:10px;cursor:pointer}
+    .player.dead{opacity:.45;cursor:not-allowed}
+    .player .name{font-weight:950;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .badge{font-weight:950;font-size:12px;padding:6px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.06);color:rgba(167,176,214,.95)}
+    .btn{border:0;border-radius:16px;padding:14px 18px;font-weight:950;cursor:pointer;color:#fff;background:linear-gradient(135deg,var(--btn1),var(--btn2));box-shadow:0 12px 26px rgba(255,35,79,.22)}
+    .btn.secondary{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);box-shadow:none;color:var(--text)}
+    .btn:disabled{opacity:.55;cursor:not-allowed;box-shadow:none}
+    .actions{margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+    .two{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+    @media (max-width: 860px){.two{grid-template-columns:1fr}}
+    .box{border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.03);border-radius:18px;padding:14px}
+    .title{font-weight:950;margin-bottom:8px;color:rgba(238,241,255,.92)}
+    .small{color:rgba(167,176,214,.9);line-height:1.7}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <span id="light" class="statusLight"></span>
+
+      <div class="row">
+        <div class="pill">Room: <strong id="roomPill">—</strong></div>
+        <div class="pill">Mode: <strong id="modePill">player</strong></div>
+        <div class="pill">Phase: <strong id="phasePill">—</strong></div>
+        <div class="pill">Day: <strong id="dayPill">—</strong></div>
+      </div>
+
+      <div id="bigTitle" class="big">MAFIA</div>
+      <div id="hint" class="hint">Loading…</div>
+
+      <div class="two">
+        <div class="box">
+          <div class="title">Players</div>
+          <div id="players" class="grid"></div>
+          <div class="small" id="voteStats"></div>
+        </div>
+
+        <div class="box">
+          <div class="title">You</div>
+          <div class="small" id="youBox">—</div>
+          <div class="actions" id="playerActions"></div>
+
+          <hr style="border:0;border-top:1px solid rgba(255,255,255,.10);margin:14px 0;">
+
+          <div class="title">Host Controls (Display)</div>
+          <div class="small">إذا أنت جهاز عرض: اضغط Next للتنقل بين المراحل.</div>
+          <div class="actions">
+            <button id="nextBtn" class="btn secondary" type="button">Next Phase</button>
+            <button id="backBtn" class="btn secondary" type="button">Back to Lobby</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://jackbox-server-pwtr.onrender.com/socket.io/socket.io.js"></script>
+  <script>
+    const SERVER_URL = "https://jackbox-server-pwtr.onrender.com";
+
+    const clientId = localStorage.getItem("clientId") || (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random());
+    localStorage.setItem("clientId", clientId);
+
+    const hostMode = localStorage.getItem("hostMode") || "player"; // display | player
+    const isDisplay = hostMode === "display";
+
+    const socket = io(SERVER_URL, { transports:["websocket","polling"], auth:{ clientId } });
+
+    const light = document.getElementById("light");
+    const roomPill = document.getElementById("roomPill");
+    const modePill = document.getElementById("modePill");
+    const phasePill = document.getElementById("phasePill");
+    const dayPill = document.getElementById("dayPill");
+    const hint = document.getElementById("hint");
+    const playersEl = document.getElementById("players");
+    const youBox = document.getElementById("youBox");
+    const playerActions = document.getElementById("playerActions");
+    const voteStats = document.getElementById("voteStats");
+    const nextBtn = document.getElementById("nextBtn");
+    const backBtn = document.getElementById("backBtn");
+
+    modePill.textContent = isDisplay ? "display" : "player";
+
+    function normalizeRoom(text){
+      return String(text || "").trim().toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 8);
+    }
+    function escapeHtml(s){
+      return String(s).replace(/[&<>"']/g, (c) => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+    }
+
+    const params = new URLSearchParams(location.search);
+    const roomCode = normalizeRoom(params.get("room") || "");
+    roomPill.textContent = roomCode || "—";
+
+    let me = { role: "spectator", isAlive: false, name: "" };
+    let lastState = null;
+    let selectedTarget = null;
+
+    function setHint(text){
+      hint.textContent = text;
+    }
+
+    function renderPlayers(state){
+      playersEl.innerHTML = "";
+      const aliveSet = new Set(state.aliveNames || []);
+      (state.aliveNames || []).forEach(nm => {
+        const div = document.createElement("div");
+        div.className = "player";
+        div.innerHTML = `<div class="name">${escapeHtml(nm)}</div><div class="badge">ALIVE</div>`;
+        div.onclick = () => { selectedTarget = nm; renderActions(state); };
+        playersEl.appendChild(div);
+      });
+
+      // dead players (from lastState lastEvent only): optional
+      voteStats.textContent = "";
+      if (state.phase === "vote" && state.voteCountsByName) {
+        const lines = Object.entries(state.voteCountsByName).map(([n,c]) => `${n}: ${c}`);
+        voteStats.textContent = lines.length ? ("Votes: " + lines.join(" | ")) : "";
+      }
+    }
+
+    function renderActions(state){
+      playerActions.innerHTML = "";
+
+      const isAlive = !!me.isAlive;
+      if (isDisplay) {
+        youBox.innerHTML = `<div class="small">Display mode — no player actions.</div>`;
+        return;
+      }
+
+      let txt = `Name: <b>${escapeHtml(me.name||"")}</b><br>Role: <b>${escapeHtml(me.role||"")}</b><br>Status: <b>${isAlive ? "ALIVE" : "DEAD"}</b>`;
+      if (me.role === "mafia" && me.mafiaNames) {
+        txt += `<br>Mafia: <b>${escapeHtml(me.mafiaNames.join(", "))}</b>`;
+      }
+      youBox.innerHTML = txt;
+
+      if (!isAlive) {
+        const b = document.createElement("button");
+        b.className = "btn secondary";
+        b.textContent = "You're out";
+        b.disabled = true;
+        playerActions.appendChild(b);
+        return;
+      }
+
+      // Based on phase + role
+      const phase = state.phase;
+
+      const needPick = (label, action, enabled) => {
+        const btn = document.createElement("button");
+        btn.className = "btn";
+        btn.textContent = selectedTarget ? `${label}: ${selectedTarget}` : `${label}: اختر لاعب`;
+        btn.disabled = !enabled || !selectedTarget;
+        btn.onclick = () => {
+          socket.emit("mafia:act", { roomCode, clientId, action, targetName: selectedTarget });
+          setHint("تم الإرسال ✅");
+        };
+        playerActions.appendChild(btn);
+      };
+
+      if (phase === "night_mafia") {
+        if (me.role === "mafia") {
+          needPick("Kill", "kill", true);
+        } else {
+          const b = document.createElement("button");
+          b.className = "btn secondary";
+          b.textContent = "Night… wait";
+          b.disabled = true;
+          playerActions.appendChild(b);
+        }
+      }
+
+      if (phase === "night_doctor") {
+        if (me.role === "doctor") {
+          needPick("Save", "save", true);
+        } else {
+          const b = document.createElement("button");
+          b.className = "btn secondary";
+          b.textContent = "Doctor turn… wait";
+          b.disabled = true;
+          playerActions.appendChild(b);
+        }
+      }
+
+      if (phase === "night_detective") {
+        if (me.role === "detective") {
+          needPick("Inspect", "inspect", true);
+        } else {
+          const b = document.createElement("button");
+          b.className = "btn secondary";
+          b.textContent = "Detective turn… wait";
+          b.disabled = true;
+          playerActions.appendChild(b);
+        }
+      }
+
+      if (phase === "day") {
+        const b = document.createElement("button");
+        b.className = "btn secondary";
+        b.textContent = "Day discussion…";
+        b.disabled = true;
+        playerActions.appendChild(b);
+      }
+
+      if (phase === "vote") {
+        const btn = document.createElement("button");
+        btn.className = "btn";
+        btn.textContent = selectedTarget ? `Vote: ${selectedTarget}` : "Vote: اختر لاعب";
+        btn.disabled = !selectedTarget;
+        btn.onclick = () => {
+          socket.emit("mafia:vote", { roomCode, clientId, targetName: selectedTarget });
+          setHint("تم التصويت ✅");
+        };
+        playerActions.appendChild(btn);
+      }
+
+      if (phase === "ended") {
+        const b = document.createElement("button");
+        b.className = "btn secondary";
+        b.textContent = "Game ended";
+        b.disabled = true;
+        playerActions.appendChild(b);
+      }
+    }
+
+    function phaseText(state){
+      const p = state.phase;
+      if (p === "night_mafia") return "🌙 Night: Mafia";
+      if (p === "night_doctor") return "🌙 Night: Doctor";
+      if (p === "night_detective") return "🌙 Night: Detective";
+      if (p === "day") return "☀️ Day";
+      if (p === "vote") return "🗳️ Vote";
+      if (p === "ended") return "🏁 Ended";
+      return p;
+    }
+
+    function render(state){
+      lastState = state;
+      phasePill.textContent = state.phase;
+      dayPill.textContent = String(state.day || "—");
+      setHint(phaseText(state));
+
+      if (state.lastEvent) {
+        if (state.lastEvent.type === "night_result") {
+          const dn = state.lastEvent.deadName;
+          setHint(dn ? `🌙 Result: ${dn} died` : "🌙 Result: no one died");
+        }
+        if (state.lastEvent.type === "vote_result") {
+          const out = state.lastEvent.outName;
+          setHint(out ? `🗳️ Out: ${out}` : `🗳️ No majority`);
+        }
+        if (state.lastEvent.type === "win") {
+          setHint(state.lastEvent.winner === "mafia" ? "🏴 Mafia wins" : "👨‍👩‍👧 Town wins");
+        }
+      }
+
+      renderPlayers(state);
+      renderActions(state);
+    }
+
+    socket.on("connect", () => {
+      light.classList.add("ok");
+      if (roomCode) socket.emit("player:attach", { roomCode, clientId });
+    });
+    socket.on("disconnect", () => light.classList.remove("ok"));
+
+    socket.on("mafia:me", (payload) => {
+      me = payload || me;
+      if (lastState) renderActions(lastState);
+    });
+
+    socket.on("mafia:detectiveResult", ({ targetName, isMafia } = {}) => {
+      setHint(`🔎 ${targetName}: ${isMafia ? "MAFIA" : "NOT mafia"}`);
+    });
+
+    socket.on("mafia:state", (state) => {
+      render(state);
+    });
+
+    // Host Next
+    nextBtn.disabled = !isDisplay;
+    nextBtn.onclick = () => {
+      if (!isDisplay) return;
+      socket.emit("mafia:next", { roomCode });
+    };
+
+    backBtn.onclick = () => {
+      window.location.href = `/lobby.html?room=${encodeURIComponent(roomCode)}`;
+    };
+  </script>
+</body>
+</html>
