@@ -1,14 +1,335 @@
-<button id="start" class="btn" disabled>Start</button>
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Host</title>
+  <style>
+    :root{
+      --bg:#0b1020;
+      --text:#eef1ff;
+      --muted:#a7b0d6;
+      --border:rgba(255,255,255,.10);
+      --shadow: 0 14px 40px rgba(0,0,0,.45);
 
-<script>
-const startBtn=document.getElementById("start");
+      --red:#ff2e55;
+      --green:#2ee59d;
 
-socket.on("room:state",({players})=>{
-  const allReady = players.length>0 && players.every(p=>p.ready);
-  startBtn.disabled = !allReady;
-});
+      --btn1:#ff3b6a;
+      --btn2:#ff1f4f;
+      --radius: 18px;
+    }
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      background: radial-gradient(1200px 800px at 20% 0%, #19214a 0%, var(--bg) 55%);
+      color:var(--text);
+      overflow-x:hidden;
+    }
+    .wrap{ max-width: 980px; margin: 0 auto; padding: 22px; }
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
+      border:1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: var(--shadow);
+      position: relative;
+    }
 
-startBtn.onclick=()=>{
-  socket.emit("host:startGame");
-};
-</script>
+    /* 🔴🟢 لمبة الاتصال فقط */
+    .statusLight{
+      position:absolute;
+      top:14px;
+      left:14px;
+      width: 14px;
+      height: 14px;
+      border-radius: 999px;
+      background: var(--red);
+      box-shadow: 0 0 0 4px rgba(255,46,85,.12), 0 0 18px rgba(255,46,85,.35);
+    }
+    .statusLight.ok{
+      background: var(--green);
+      box-shadow: 0 0 0 4px rgba(46,229,157,.14), 0 0 18px rgba(46,229,157,.35);
+    }
+
+    /* ✅ اللوغو */
+    .brand{
+      display:flex;
+      justify-content:center;
+      margin-top: 6px;
+      margin-bottom: 12px;
+    }
+    .brand img{
+      width: 340px;
+      max-width: 92%;
+      height: auto;
+      filter: drop-shadow(0 18px 34px rgba(255,35,79,.18));
+      border-radius: 18px;
+      border:1px solid rgba(255,255,255,.08);
+      background: rgba(0,0,0,.25);
+    }
+
+    .row{
+      display:flex; gap:10px; flex-wrap:wrap;
+      align-items:center; justify-content:space-between;
+    }
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding: 8px 12px; border-radius: 999px;
+      background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.10);
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    /* زر ثيم + لمعان */
+    .btn{
+      border:0;
+      border-radius: 16px;
+      padding: 14px 14px;
+      font-weight: 950;
+      cursor:pointer;
+      color: #fff;
+      background: linear-gradient(135deg, var(--btn1), var(--btn2));
+      position: relative;
+      overflow:hidden;
+      box-shadow: 0 12px 26px rgba(255,35,79,.22);
+      transition: transform .08s ease, filter .15s ease, opacity .15s ease;
+      letter-spacing: .4px;
+      white-space: nowrap;
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .btn:active{ transform: scale(.99); }
+    .btn:hover{ filter: brightness(1.05); }
+    .btn:disabled{ opacity:.55; cursor:not-allowed; box-shadow:none; }
+
+    .btn::after{
+      content:"";
+      position:absolute;
+      top:-40%;
+      left:-60%;
+      width: 40%;
+      height: 180%;
+      transform: rotate(25deg);
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.22), transparent);
+      animation: shine 2.2s infinite;
+    }
+    @keyframes shine{
+      0%{ left:-60%; }
+      55%{ left:120%; }
+      100%{ left:120%; }
+    }
+
+    .btn.secondary{
+      background: rgba(255,255,255,.07);
+      border:1px solid rgba(255,255,255,.12);
+      box-shadow: none;
+    }
+    .btn.secondary::after{ display:none; }
+
+    .btnGroup{ display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end; }
+
+    /* ✅ مربع الكود + أيقونة نسخ داخل المربع */
+    .codeRow{
+      margin-top: 10px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .codeBox{
+      position: relative;
+      width: min(520px, 100%);
+    }
+    .code{
+      font-size: 62px;
+      font-weight: 950;
+      letter-spacing: 8px;
+      padding: 12px 18px;
+      padding-left: 70px; /* مساحة للأيقونة */
+      border-radius: 16px;
+      background: rgba(0,0,0,.25);
+      border:1px solid rgba(255,255,255,.10);
+      text-align:center;
+      user-select: none;
+    }
+    .copyInside{
+      position:absolute;
+      top: 50%;
+      left: 10px;
+      transform: translateY(-50%);
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.06);
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      opacity: .72; /* شبه شفاف */
+      transition: opacity .15s ease, background .15s ease, transform .08s ease;
+    }
+    .copyInside:hover{ opacity:.92; background: rgba(255,255,255,.10); }
+    .copyInside:active{ transform: translateY(-50%) scale(.99); }
+    .copyInside:disabled{ opacity:.35; cursor:not-allowed; }
+    .copyInside svg{ width: 20px; height: 20px; fill: rgba(238,241,255,.92); }
+
+    /* ✅ QR بدون نصوص */
+    .qrWrap{
+      margin-top: 14px;
+      display:flex;
+      justify-content:center;
+    }
+    #qrcode{
+      width: 210px;
+      height: 210px;
+      border-radius: 18px;
+      overflow:hidden;
+      background: rgba(0,0,0,.25);
+      border:1px solid rgba(255,255,255,.10);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .toast{
+      margin-top: 12px;
+      padding: 10px 12px;
+      border-radius: 16px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      color: rgba(167,176,214,.92);
+      display:none;
+      text-align:center;
+      white-space: pre-wrap;
+    }
+
+    .grid{
+      margin-top: 14px;
+      display:grid;
+      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+      gap: 12px;
+    }
+    .player{
+      padding: 12px;
+      border-radius: 16px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      display:flex; justify-content:space-between; gap:10px; align-items:center;
+    }
+    .player .name{ font-weight: 950; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .badge{
+      font-weight: 950;
+      font-size: 12px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.06);
+      color: rgba(167,176,214,.95);
+      white-space:nowrap;
+    }
+    .badge.ready{
+      border-color: rgba(46,229,157,.25);
+      color: rgba(46,229,157,.95);
+      background: rgba(46,229,157,.10);
+    }
+
+    h2{ margin:0 0 10px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <span id="light" class="statusLight" aria-hidden="true"></span>
+
+      <div class="brand">
+        <img src="/brand.png" alt="brand" />
+      </div>
+
+      <div class="row">
+        <div class="pill">Players: <strong id="count">0</strong></div>
+
+        <div class="btnGroup">
+          <a class="btn secondary" href="/">Players</a>
+          <button id="reconnect" class="btn secondary" type="button">Reconnect</button>
+          <button id="create" class="btn" type="button" disabled>Create Room</button>
+          <!-- ✅ زر Start -->
+          <button id="start" class="btn secondary" type="button" disabled>Start</button>
+        </div>
+      </div>
+
+      <div class="codeRow">
+        <div class="codeBox">
+          <!-- ✅ نسخ الرابط فقط -->
+          <button id="copyLinkInside" class="copyInside" type="button" disabled aria-label="Copy link">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M16 1H6a2 2 0 0 0-2 2v12h2V3h10V1zm3 4H10a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zm0 16h-9V7h9v14z"/>
+            </svg>
+          </button>
+
+          <div id="code" class="code">— — — —</div>
+        </div>
+      </div>
+
+      <div class="qrWrap">
+        <div id="qrcode">
+          <span style="color:rgba(167,176,214,.85); font-size:12px;">QR</span>
+        </div>
+      </div>
+
+      <div id="toast" class="toast"></div>
+    </div>
+
+    <div class="card" style="margin-top:14px;">
+      <h2>Players</h2>
+      <div id="players" class="grid"></div>
+      <div id="empty" style="margin-top:10px; color:rgba(167,176,214,.9);">No players yet…</div>
+    </div>
+  </div>
+
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <script>
+    const SERVER_URL = "https://jackbox-server-pwtr.onrender.com";
+
+    const light = document.getElementById("light");
+    const codeEl = document.getElementById("code");
+    const countEl = document.getElementById("count");
+    const playersEl = document.getElementById("players");
+    const emptyEl = document.getElementById("empty");
+    const toastEl = document.getElementById("toast");
+
+    const reconnectBtn = document.getElementById("reconnect");
+    const createBtn = document.getElementById("create");
+    const startBtn = document.getElementById("start");
+    const copyInsideBtn = document.getElementById("copyLinkInside");
+
+    const qrBox = document.getElementById("qrcode");
+    const siteOrigin = location.origin;
+
+    let currentRoomCode = "";
+    let socket = null;
+
+    function showToast(msg){
+      toastEl.textContent = msg;
+      toastEl.style.display = "block";
+      clearTimeout(toastEl._t);
+      toastEl._t = setTimeout(() => toastEl.style.display = "none", 1600);
+    }
+
+    async function copyText(text){
+      try{
+        await navigator.clipboard.writeText(text);
+        showToast("✅ Copied");
+      } catch(e){
+        showToast("Copy failed");
+      }
+    }
+
+    function setConnected(isOk){
+      light.classList.toggle("ok", !!is
