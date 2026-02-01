@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ar" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -41,7 +41,7 @@
     }
     .brand{ display:flex; justify-content:center; margin-top:6px; margin-bottom:12px; }
     .brand img{
-      width:340px; max-width:92%; height:auto;
+      width:360px; max-width:92%; height:auto;
       filter: drop-shadow(0 18px 34px rgba(255,35,79,.18));
       border-radius:18px;
       border:1px solid rgba(255,255,255,.08);
@@ -136,14 +136,14 @@
       font-size:58px;
       font-weight:950;
       letter-spacing:8px;
-      padding:18px 64px 18px 18px; /* space for copy icon */
+      padding:18px 18px 18px 64px; /* space LEFT for copy icon */
       text-align:center;
       user-select:none;
     }
     .copyInside{
       position:absolute;
       top:50%;
-      right:12px;
+      left:12px;  /* ✅ left */
       transform: translateY(-50%);
       width:44px;
       height:44px;
@@ -182,7 +182,7 @@
 
     /* QR */
     .qrWrap{
-      margin-top:12px;
+      margin-top:14px;
       display:flex;
       gap:12px;
       flex-wrap:wrap;
@@ -190,26 +190,21 @@
       justify-content:center;
     }
     .qrCard{
-      width: 240px;
+      width: 360px; /* bigger */
       border-radius: 18px;
       border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.04);
-      padding: 12px;
+      background: rgba(255,255,255,.03);
+      padding: 14px;
       text-align:center;
     }
     .qrCard canvas{
-      width: 200px !important;
-      height: 200px !important;
-      border-radius: 14px;
-      background: #fff;
-      padding: 10px;
-    }
-    .qrHint{
-      margin-top:10px;
-      color: rgba(167,176,214,.92);
-      font-weight: 900;
-      line-height:1.6;
-      font-size: 13px;
+      width: 320px !important;
+      height: 320px !important;
+      border-radius: 18px;
+      background: transparent; /* ✅ no white background */
+      padding: 0;
+      display:block;
+      margin: 0 auto;
     }
 
     /* Players list */
@@ -274,6 +269,8 @@
 
     @media (max-width:520px){
       .code{ font-size:52px; }
+      .qrCard{ width: 100%; }
+      .qrCard canvas{ width: 280px !important; height: 280px !important; }
     }
   </style>
 </head>
@@ -286,8 +283,8 @@
       <div class="brand"><img src="/brand.png" alt="brand"></div>
 
       <div class="modeWrap">
-        <button id="modeDisplay" class="btn modeBtn" type="button">جهاز عرض</button>
-        <button id="modePlayer" class="btn modeBtn" type="button">أنا لاعب + هوست</button>
+        <button id="modeDisplay" class="btn modeBtn" type="button">Display</button>
+        <button id="modePlayer" class="btn modeBtn" type="button">Host &amp; Player</button>
       </div>
 
       <div class="row">
@@ -295,7 +292,6 @@
 
         <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end;">
           <a class="btn secondary" href="/">Players</a>
-          <button id="create" class="btn" type="button" disabled>Create Room</button>
           <button id="start" class="btn secondary" type="button" disabled>Start → Lobby</button>
         </div>
       </div>
@@ -304,7 +300,7 @@
         <div id="code" class="code">— — — —</div>
 
         <!-- Copy icon INSIDE the code box (semi transparent) -->
-        <button id="copyLink" class="copyInside" type="button" title="نسخ رابط الغرفة" aria-label="نسخ رابط الغرفة">
+        <button id="copyLink" class="copyInside" type="button" title="Copy room link" aria-label="Copy room link" disabled>
           <svg viewBox="0 0 24 24" fill="none">
             <path d="M9 9h10v10H9V9Z" stroke="currentColor" stroke-width="2" opacity=".95"/>
             <path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1" stroke="currentColor" stroke-width="2" opacity=".85"/>
@@ -314,13 +310,12 @@
 
       <div class="qrWrap">
         <div class="qrCard">
-          <canvas id="qr" width="220" height="220"></canvas>
-          <div class="qrHint">امسح الـ QR للدخول مباشرة</div>
+          <canvas id="qr" width="640" height="640"></canvas>
         </div>
       </div>
 
       <div id="hostAsPlayerBox" class="hostAsPlayerBox">
-        <input id="myName" placeholder="اسمك كـ لاعب" />
+        <input id="myName" placeholder="Your name (as player)" />
         <button id="joinAsPlayer" class="btn secondary" type="button" disabled>Join as Player</button>
         <button id="readyMe" class="btn" type="button" disabled>Ready</button>
         <button id="leaveMe" class="btn secondary" type="button" disabled>Leave</button>
@@ -336,20 +331,14 @@
 
   <script>
     // ======= QR (LOCAL) - minimal QR generator (Byte mode, ECC M) =======
-    // This is a compact, self-contained QR generator (no network, no libs).
-    // It supports the length we need (your join URL).
-
-    // ---- Reed-Solomon + QR helpers (compact) ----
     const QR = (() => {
       const gfExp = new Uint8Array(512);
       const gfLog = new Uint8Array(256);
       (function initGF(){
         let x = 1;
         for (let i = 0; i < 255; i++){
-          gfExp[i] = x;
-          gfLog[x] = i;
-          x <<= 1;
-          if (x & 0x100) x ^= 0x11d;
+          gfExp[i] = x; gfLog[x] = i;
+          x <<= 1; if (x & 0x100) x ^= 0x11d;
         }
         for (let i = 255; i < 512; i++) gfExp[i] = gfExp[i - 255];
       })();
@@ -358,67 +347,52 @@
         if (a === 0 || b === 0) return 0;
         return gfExp[gfLog[a] + gfLog[b]];
       }
-
       function rsPolyMul(p, q){
         const out = new Uint8Array(p.length + q.length - 1);
         for (let i = 0; i < p.length; i++){
-          for (let j = 0; j < q.length; j++){
-            out[i + j] ^= gfMul(p[i], q[j]);
-          }
+          for (let j = 0; j < q.length; j++) out[i + j] ^= gfMul(p[i], q[j]);
         }
         return out;
       }
-
-      function rsGeneratorPoly(degree){
+      function rsGeneratorPoly(deg){
         let g = new Uint8Array([1]);
-        for (let i = 0; i < degree; i++){
-          g = rsPolyMul(g, new Uint8Array([1, gfExp[i]]));
-        }
+        for (let i = 0; i < deg; i++) g = rsPolyMul(g, new Uint8Array([1, gfExp[i]]));
         return g;
       }
-
       function rsComputeRemainder(data, gen){
         const res = new Uint8Array(gen.length - 1);
         for (let i = 0; i < data.length; i++){
           const factor = data[i] ^ res[0];
           res.copyWithin(0, 1);
           res[res.length - 1] = 0;
-          for (let j = 0; j < res.length; j++){
-            res[j] ^= gfMul(gen[j + 1], factor);
-          }
+          for (let j = 0; j < res.length; j++) res[j] ^= gfMul(gen[j + 1], factor);
         }
         return res;
       }
 
-      // Choose minimal version that fits in byte mode (ECC M)
-      // Version capacities (approx for Byte mode, ECC M): v1=14, v2=26, v3=42, v4=62, v5=84, v6=106, v7=122, v8=152, v9=180, v10=213
-      // We'll compute precisely with tables for ECC M: (data codewords, ecc codewords) for versions 1..10
+      // versions 1..10 for ECC M
       const V = [
         null,
-        { size: 21, dataCW: 16, eccCW: 10 }, // v1-M: 16 data cw, 10 ecc cw
-        { size: 25, dataCW: 28, eccCW: 16 }, // v2-M
-        { size: 29, dataCW: 44, eccCW: 26 }, // v3-M
-        { size: 33, dataCW: 64, eccCW: 36 }, // v4-M
-        { size: 37, dataCW: 86, eccCW: 48 }, // v5-M
-        { size: 41, dataCW: 108, eccCW: 64 },// v6-M
-        { size: 45, dataCW: 124, eccCW: 72 },// v7-M
-        { size: 49, dataCW: 154, eccCW: 88 },// v8-M
-        { size: 53, dataCW: 182, eccCW: 110 },// v9-M
-        { size: 57, dataCW: 216, eccCW: 130 },// v10-M
+        { size: 21, dataCW: 16, eccCW: 10 },
+        { size: 25, dataCW: 28, eccCW: 16 },
+        { size: 29, dataCW: 44, eccCW: 26 },
+        { size: 33, dataCW: 64, eccCW: 36 },
+        { size: 37, dataCW: 86, eccCW: 48 },
+        { size: 41, dataCW: 108, eccCW: 64 },
+        { size: 45, dataCW: 124, eccCW: 72 },
+        { size: 49, dataCW: 154, eccCW: 88 },
+        { size: 53, dataCW: 182, eccCW: 110 },
+        { size: 57, dataCW: 216, eccCW: 130 },
       ];
-
       function pickVersion(byteLen){
-        // Byte mode header: mode(4)+count(8 for v1-9, 16 for v10+)
-        // We'll only use up to v10, so v1-9 count is 8 bits, v10 is 16 bits.
         for (let ver = 1; ver <= 10; ver++){
           const countBits = (ver <= 9) ? 8 : 16;
           const totalBits = V[ver].dataCW * 8;
-          const usedBits = 4 + countBits + (byteLen * 8) + 4; // + terminator
+          const usedBits = 4 + countBits + (byteLen * 8) + 4;
           if (usedBits <= totalBits) return ver;
         }
         return 10;
       }
-
       function makeBitBuffer(){
         const bits = [];
         return {
@@ -430,49 +404,35 @@
             const out = [];
             for (let i = 0; i < bits.length; i += 8){
               let b = 0;
-              for (let j = 0; j < 8; j++){
-                b = (b << 1) | (bits[i + j] || 0);
-              }
+              for (let j = 0; j < 8; j++) b = (b << 1) | (bits[i + j] || 0);
               out.push(b);
             }
             return new Uint8Array(out);
           }
         };
       }
-
       function encodeBytes(text, ver){
         const enc = new TextEncoder().encode(text);
         const bb = makeBitBuffer();
-        bb.put(0b0100, 4); // byte mode
+        bb.put(0b0100, 4);
         if (ver <= 9) bb.put(enc.length, 8);
         else bb.put(enc.length, 16);
         for (const b of enc) bb.put(b, 8);
-        bb.put(0, 4); // terminator
-
-        // pad to byte boundary
+        bb.put(0, 4);
         while (bb.length % 8 !== 0) bb.put(0, 1);
 
         const dataCW = V[ver].dataCW;
         let bytes = bb.toBytes();
         if (bytes.length > dataCW) bytes = bytes.slice(0, dataCW);
 
-        // pad bytes 0xEC 0x11
         const out = new Uint8Array(dataCW);
         out.set(bytes);
         let pad = 0;
-        for (let i = bytes.length; i < dataCW; i++){
-          out[i] = (pad++ % 2 === 0) ? 0xEC : 0x11;
-        }
+        for (let i = bytes.length; i < dataCW; i++) out[i] = (pad++ % 2 === 0) ? 0xEC : 0x11;
         return out;
       }
 
-      // Matrix helpers
-      function makeMatrix(n){
-        const m = Array.from({length:n}, () => Array(n).fill(null)); // null=unset, 0 white, 1 black
-        return m;
-      }
-      function setMod(m, r, c, v){ m[r][c] = v; }
-
+      function makeMatrix(n){ return Array.from({length:n}, () => Array(n).fill(null)); }
       function addFinder(m, r, c){
         for (let y = -1; y <= 7; y++){
           for (let x = -1; x <= 7; x++){
@@ -481,11 +441,10 @@
             const onBorder = (y === -1 || y === 7 || x === -1 || x === 7);
             const inRing = (y === 0 || y === 6 || x === 0 || x === 6);
             const inCore = (y >= 2 && y <= 4 && x >= 2 && x <= 4);
-            setMod(m, rr, cc, onBorder ? 0 : (inRing || inCore ? 1 : 0));
+            m[rr][cc] = onBorder ? 0 : (inRing || inCore ? 1 : 0);
           }
         }
       }
-
       function addTiming(m){
         const n = m.length;
         for (let i = 8; i < n - 8; i++){
@@ -494,13 +453,6 @@
           if (m[i][6] === null) m[i][6] = v;
         }
       }
-
-      function addDarkModule(m, ver){
-        // version-specific dark module
-        const n = m.length;
-        m[4 * ver + 9][8] = 1;
-      }
-
       function reserveFormat(m){
         const n = m.length;
         for (let i = 0; i < 9; i++){
@@ -513,108 +465,75 @@
         }
         m[8][n - 8] = 0;
       }
+      function addDarkModule(m, ver){ m[4 * ver + 9][8] = 1; }
 
-      // Place data bits in zigzag
       function placeData(m, dataBits){
         const n = m.length;
         let i = 0;
-        let dirUp = true;
+        let up = true;
         for (let x = n - 1; x > 0; x -= 2){
-          if (x === 6) x--; // skip timing column
+          if (x === 6) x--;
           for (let yOff = 0; yOff < n; yOff++){
-            const y = dirUp ? (n - 1 - yOff) : yOff;
+            const y = up ? (n - 1 - yOff) : yOff;
             for (let dx = 0; dx < 2; dx++){
               const xx = x - dx;
               if (m[y][xx] !== null) continue;
               m[y][xx] = dataBits[i++] ? 1 : 0;
             }
           }
-          dirUp = !dirUp;
+          up = !up;
         }
       }
-
-      function maskBit(mask, r, c){
-        switch(mask){
-          case 0: return ((r + c) % 2) === 0;
-          case 1: return (r % 2) === 0;
-          case 2: return (c % 3) === 0;
-          case 3: return ((r + c) % 3) === 0;
-          case 4: return ((Math.floor(r/2) + Math.floor(c/3)) % 2) === 0;
-          case 5: return (((r*c) % 2) + ((r*c) % 3)) === 0;
-          case 6: return ((((r*c) % 2) + ((r*c) % 3)) % 2) === 0;
-          case 7: return ((((r+c) % 2) + ((r*c) % 3)) % 2) === 0;
-          default: return false;
-        }
-      }
-
+      function maskBit(mask, r, c){ return ((r + c) % 2) === 0; } // mask 0
       function applyMask(m, mask){
         const n = m.length;
         for (let r = 0; r < n; r++){
           for (let c = 0; c < n; c++){
-            // Skip function patterns (we mark them by using 0/1 already but need a better heuristic):
-            // We'll skip if it's in finder/timing/format areas by coordinates
             const inFinder =
               (r <= 8 && c <= 8) ||
               (r <= 8 && c >= n - 9) ||
               (r >= n - 9 && c <= 8);
             const inTiming = (r === 6 || c === 6);
             const inFormat = (r === 8 || c === 8);
-            const isDarkModule = (c === 8 && r === (n - 8)); // close enough
-            if (inFinder || inTiming || inFormat || isDarkModule) continue;
+            if (inFinder || inTiming || inFormat) continue;
             if (m[r][c] === null) continue;
             if (maskBit(mask, r, c)) m[r][c] ^= 1;
           }
         }
       }
-
-      // Format info for ECC M (01) + mask (0..7)
-      // We'll hardcode format strings for (ECC M, mask X) from spec.
-      const FORMAT_M = [
-        0b101010000010010,
-        0b101000100100101,
-        0b101111001111100,
-        0b101101101001011,
-        0b100010111111001,
-        0b100000011001110,
-        0b100111110010111,
-        0b100101010100000
-      ];
-
-      function writeFormat(m, mask){
+      const FORMAT_M_MASK0 = 0b101010000010010; // ECC M + mask 0
+      function writeFormat(m){
         const n = m.length;
-        const bits = FORMAT_M[mask];
-        function bit(i){ return (bits >>> i) & 1; }
-        // around top-left
+        const bits = FORMAT_M_MASK0;
+        const bit = (i) => (bits >>> i) & 1;
+
         for (let i = 0; i <= 5; i++) m[8][i] = bit(14 - i);
         m[8][7] = bit(8);
         m[8][8] = bit(7);
         m[7][8] = bit(6);
         for (let i = 9; i <= 14; i++) m[14 - i][8] = bit(14 - i);
 
-        // top-right / bottom-left
         for (let i = 0; i < 8; i++) m[8][n - 1 - i] = bit(i);
         for (let i = 0; i < 7; i++) m[n - 1 - i][8] = bit(8 + i);
       }
-
-      function toBits(dataAndEcc){
+      function toBits(bytes){
         const bits = [];
-        for (const b of dataAndEcc){
+        for (const b of bytes){
           for (let i = 7; i >= 0; i--) bits.push((b >>> i) & 1);
         }
         return bits;
       }
-
       function drawToCanvas(matrix, canvas, quiet = 4){
         const n = matrix.length;
         const ctx = canvas.getContext("2d");
-        const size = canvas.width;
         ctx.clearRect(0,0,canvas.width,canvas.height);
-        ctx.fillStyle = "#fff";
-        ctx.fillRect(0,0,size,size);
+
+        // Transparent background: do NOT paint white
+        ctx.clearRect(0,0,canvas.width,canvas.height);
 
         const total = n + quiet * 2;
-        const scale = Math.floor(size / total);
-        const offset = Math.floor((size - scale * total) / 2);
+        const scale = Math.floor(canvas.width / total);
+        const offset = Math.floor((canvas.width - scale * total) / 2);
 
         ctx.fillStyle = "#000";
         for (let r = 0; r < n; r++){
@@ -641,9 +560,7 @@
 
         const bits = toBits(codewords);
 
-        // Build matrix
         const m = makeMatrix(size);
-
         addFinder(m, 0, 0);
         addFinder(m, 0, size - 7);
         addFinder(m, size - 7, 0);
@@ -651,15 +568,10 @@
         reserveFormat(m);
         addDarkModule(m, ver);
 
-        // Place data
         placeData(m, bits);
+        applyMask(m, 0);
+        writeFormat(m);
 
-        // Choose a fixed mask (0) for simplicity (looks good enough and stable)
-        const mask = 0;
-        applyMask(m, mask);
-        writeFormat(m, mask);
-
-        // Convert null -> 0
         for (let r = 0; r < size; r++){
           for (let c = 0; c < size; c++){
             if (m[r][c] === null) m[r][c] = 0;
@@ -673,7 +585,7 @@
 
     // ======= App logic =======
     const SERVER_URL = "https://jackbox-server-pwtr.onrender.com";
-    const SITE_ORIGIN = "https://www.gamehub4u.com"; // الرابط اللي يننسخ ويظهر بالـ QR
+    const SITE_ORIGIN = "https://www.gamehub4u.com";
 
     function uuidFallback(){
       return "id-" + Date.now().toString(16) + "-" + Math.random().toString(16).slice(2);
@@ -683,7 +595,6 @@
 
     const light = document.getElementById("light");
     const countEl = document.getElementById("count");
-    const createBtn = document.getElementById("create");
     const startBtn = document.getElementById("start");
     const codeEl = document.getElementById("code");
     const playersEl = document.getElementById("players");
@@ -739,7 +650,6 @@
       document.body.removeChild(ta);
     }
 
-    // ✅ LOCAL QR render
     function renderQR(link){
       const matrix = QR.generate(link);
       QR.drawToCanvas(matrix, qrCanvas, 4);
@@ -791,20 +701,19 @@
       startBtn.disabled = !roomCode || !allReady;
     }
 
+    // ✅ Auto-create room when host page opens
     socket.on("connect", () => {
       light.classList.add("ok");
-      createBtn.disabled = false;
+      socket.emit("host:createRoom");
     });
     socket.on("disconnect", () => {
       light.classList.remove("ok");
-      createBtn.disabled = true;
       startBtn.disabled = true;
       joinAsPlayerBtn.disabled = true;
       readyMeBtn.disabled = true;
       leaveMeBtn.disabled = true;
+      copyBtn.disabled = true;
     });
-
-    createBtn.onclick = () => socket.emit("host:createRoom");
 
     socket.on("room:created", ({ roomCode: rc }) => {
       roomCode = normalizeRoom(rc);
@@ -839,13 +748,13 @@
       window.location.href = `/lobby.html?room=${encodeURIComponent(code)}`;
     });
 
-    // Copy link (icon inside)
+    // Copy link (icon inside - left)
     copyBtn.onclick = () => {
       if (!roomCode) return;
       copyToClipboard(roomLink(roomCode));
     };
 
-    // Host as player
+    // Host & Player
     joinAsPlayerBtn.onclick = () => {
       if (!roomCode) return;
       const nm = (myNameEl.value || "").trim();
