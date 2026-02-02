@@ -1,651 +1,429 @@
-<!doctype html>
-<html lang="en" dir="ltr">
-<head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Lobby</title>
-  <style>
-    :root{
-      --bg:#0b1020; --text:#eef1ff; --muted:#a7b0d6;
-      --border:rgba(255,255,255,.10);
-      --shadow:0 14px 40px rgba(0,0,0,.45);
-      --red:#ff2e55; --green:#2ee59d;
-      --btn1:#ff3b6a; --btn2:#ff1f4f;
-      --radius:18px;
+‏<!doctype html>
+‏<html lang="en" dir="ltr">
+‏<head>
+‏  <meta charset="utf-8" />
+‏  <meta name="viewport" content="width=device-width, initial-scale=1" />
+‏  <title>Lobby</title>
+‏  <style>
+‏    :root{
+‏      --bg:#0b1020; --text:#eef1ff; --muted:#a7b0d6;
+‏      --border:rgba(255,255,255,.10);
+‏      --shadow:0 14px 40px rgba(0,0,0,.45);
+‏      --red:#ff2e55; --green:#2ee59d;
+‏      --btn1:#ff3b6a; --btn2:#ff1f4f;
+‏      --radius:18px;
     }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family: system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
-      background: radial-gradient(1200px 800px at 20% 0%, #19214a 0%, var(--bg) 55%);
-      color:var(--text);
+‏    *{box-sizing:border-box}
+‏    body{
+‏      margin:0;
+‏      font-family: system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+‏      background: radial-gradient(1200px 800px at 20% 0%, #19214a 0%, var(--bg) 55%);
+‏      color:var(--text);
     }
-    .wrap{max-width:980px;margin:0 auto;padding:22px}
-    .card{
-      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
-      border:1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 18px;
-      box-shadow: var(--shadow);
-      position: relative;
-      overflow:hidden;
+‏    .wrap{max-width:1100px;margin:0 auto;padding:22px}
+‏    .card{
+‏      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
+‏      border:1px solid var(--border);
+‏      border-radius: var(--radius);
+‏      padding: 18px;
+‏      box-shadow: var(--shadow);
+‏      position: relative;
     }
-    .statusLight{
-      position:absolute; top:14px; left:14px;
-      width:14px; height:14px; border-radius:999px;
-      background: var(--red);
-      box-shadow: 0 0 0 4px rgba(255,46,85,.12), 0 0 18px rgba(255,46,85,.35);
+‏    .statusLight{
+‏      position:absolute; top:14px; left:14px;
+‏      width:14px; height:14px; border-radius:999px;
+‏      background: var(--red);
+‏      box-shadow: 0 0 0 4px rgba(255,46,85,.12), 0 0 18px rgba(255,46,85,.35);
     }
-    .statusLight.ok{
-      background: var(--green);
-      box-shadow: 0 0 0 4px rgba(46,229,157,.14), 0 0 18px rgba(46,229,157,.35);
+‏    .statusLight.ok{
+‏      background: var(--green);
+‏      box-shadow: 0 0 0 4px rgba(46,229,157,.14), 0 0 18px rgba(46,229,157,.35);
     }
-    .brand{display:flex;justify-content:center;margin:6px 0 12px}
-    .brand img{
-      width:260px;max-width:90%;height:auto;
-      filter: drop-shadow(0 18px 34px rgba(255,35,79,.18));
-      border-radius:18px;
-      border:1px solid rgba(255,255,255,.08);
-      background: rgba(0,0,0,.25);
+‏    .brand{display:flex;justify-content:center;margin:6px 0 10px}
+‏    .brand img{
+‏      width:300px;max-width:92%;height:auto;
+‏      filter: drop-shadow(0 18px 34px rgba(255,35,79,.18));
+‏      border-radius:18px;
+‏      border:1px solid rgba(255,255,255,.08);
+‏      background: rgba(0,0,0,.25);
     }
-    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between}
-    .pill{
-      display:inline-flex;align-items:center;gap:8px;
-      padding:8px 12px;border-radius:999px;
-      background: rgba(255,255,255,.06);
-      border:1px solid rgba(255,255,255,.10);
-      font-size:13px;color:var(--muted);
+‏    .topRow{
+‏      display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;
+‏      margin-top:8px;
     }
-    .roomCode{font-weight:950;letter-spacing:4px;color:#fff}
-    .tabs{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
-    .tab{
-      padding:10px 12px;border-radius:14px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.18);
-      color: var(--text);
-      font-weight:950;
-      cursor:pointer;
-      opacity:.85;
+‏    .pill{
+‏      display:inline-flex;align-items:center;gap:8px;
+‏      padding:8px 12px;border-radius:999px;
+‏      background: rgba(255,255,255,.06);
+‏      border:1px solid rgba(255,255,255,.10);
+‏      font-size:13px;color:var(--muted);
     }
-    .tab.active{opacity:1;border-color:rgba(255,59,106,.35);background:rgba(255,59,106,.10)}
-    .grid{display:grid;grid-template-columns:1fr;gap:12px;margin-top:12px}
-    .box{
-      border-radius:18px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.18);
-      padding:14px;
+‏    .roomCode{font-weight:950;letter-spacing:4px;color:#fff}
+‏    .btn{
+‏      border:0;border-radius:16px;padding:14px 14px;
+‏      font-weight:950;cursor:pointer;color:#fff;
+‏      background: linear-gradient(135deg, var(--btn1), var(--btn2));
+‏      box-shadow: 0 12px 26px rgba(255,35,79,.22);
+‏      display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;
+‏      transition: transform .08s ease, filter .15s ease, opacity .15s ease;
+‏      position:relative;overflow:hidden;
     }
-    .title{font-weight:1000;margin-bottom:10px}
-    .small{font-size:12px;color:var(--muted)}
-    .player{
-      padding:12px;border-radius:16px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.04);
-      display:flex;justify-content:space-between;align-items:center;gap:10px;
-      margin-bottom:8px;
+‏    .btn:hover{filter:brightness(1.05)}
+‏    .btn:active{transform:scale(.99)}
+‏    .btn:disabled{opacity:.55;cursor:not-allowed;box-shadow:none}
+‏    .btn.secondary{
+‏      background: rgba(255,255,255,.07);
+‏      border:1px solid rgba(255,255,255,.12);
+‏      box-shadow:none;color:var(--text);
     }
-    .badge{
-      font-weight:950;font-size:12px;padding:6px 10px;border-radius:999px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.06);
-      color: rgba(167,176,214,.95);
-      white-space:nowrap;
+‏    .btn::after{
+‏      content:"";position:absolute;top:-40%;left:-60%;
+‏      width:40%;height:180%;transform:rotate(25deg);
+‏      background: linear-gradient(90deg, transparent, rgba(255,255,255,.22), transparent);
+‏      animation: shine 2.2s infinite;
     }
-    .badge.ready{
-      border-color: rgba(46,229,157,.25);
-      color: rgba(46,229,157,.95);
-      background: rgba(46,229,157,.10);
+‏    .btn.secondary::after{display:none}
+‏    @keyframes shine{0%{left:-60%}55%{left:120%}100%{left:120%}}
+
+‏    .tabs{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+‏    .tab{
+‏      padding:10px 12px;border-radius:14px;
+‏      border:1px solid rgba(255,255,255,.12);
+‏      background: rgba(255,255,255,.06);
+‏      font-weight:950;cursor:pointer;
+‏      color: var(--text);
+‏      user-select:none;
     }
-    .btnRow{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
-    .btn{
-      border:0;border-radius:16px;padding:12px 14px;
-      font-weight:950;cursor:pointer;color:#fff;
-      background: linear-gradient(135deg, var(--btn1), var(--btn2));
-      box-shadow: 0 12px 26px rgba(255,35,79,.22);
-      display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;
-      transition: transform .08s ease, filter .15s ease, opacity .15s ease;
-      position:relative;overflow:hidden;
-    }
-    .btn:hover{filter:brightness(1.05)}
-    .btn:active{transform:scale(.99)}
-    .btn:disabled{opacity:.55;cursor:not-allowed;box-shadow:none}
-    .btn.secondary{
-      background: rgba(255,255,255,.07);
-      border:1px solid rgba(255,255,255,.12);
-      box-shadow:none;color:var(--text);
-    }
-    .btn.small{padding:10px 12px;border-radius:14px}
-    .btn::after{
-      content:"";position:absolute;top:-40%;left:-60%;
-      width:40%;height:180%;transform:rotate(25deg);
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,.22), transparent);
-      animation: shine 2.2s infinite;
-    }
-    .btn.secondary::after{display:none}
-    @keyframes shine{0%{left:-60%}55%{left:120%}100%{left:120%}}
-
-    .select, .input{
-      width:100%;
-      padding:12px 12px;
-      border-radius:14px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.06);
-      color: var(--text);
-      outline:none;
-      font-weight:900;
-      font-size:14px;
-    }
-    .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-    @media (max-width:720px){ .row2{grid-template-columns:1fr} }
-
-    .toast{
-      position: fixed;left: 16px;bottom: 16px;
-      background: rgba(0,0,0,.55);
-      border: 1px solid rgba(255,255,255,.12);
-      color: var(--text);
-      padding: 10px 12px;border-radius: 14px;font-weight: 900;
-      display:none;z-index: 9999;box-shadow: var(--shadow);
-    }
-    .devBadge{
-      display:none;
-      margin-left:8px;
-      padding:6px 10px;border-radius:999px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.08);
-      font-weight:1000;
-      color: rgba(255,210,218,.95);
-    }
-    .devBadge.on{display:inline-flex}
-    .hr{height:1px;background:rgba(255,255,255,.10);margin:12px 0}
-    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, monospace}
-  </style>
-</head>
-<body>
-  <div class="wrap">
-    <div class="card">
-      <span id="light" class="statusLight"></span>
-      <div class="brand"><img src="/brand.png" alt="brand"></div>
-
-      <div class="row">
-        <div class="pill">
-          Room: <span id="roomCode" class="roomCode">----</span>
-          <span id="devBadge" class="devBadge">DEV</span>
-        </div>
-        <div class="pill">Players: <strong id="pCount">0</strong></div>
-        <div class="pill">You: <strong id="meName">—</strong></div>
-      </div>
-
-      <div class="tabs">
-        <button class="tab active" data-tab="players">Players</button>
-        <button class="tab" data-tab="mafia">Mafia</button>
-        <button class="tab" data-tab="score">Scoreboard</button>
-      </div>
-
-      <div class="grid">
-        <!-- PLAYERS -->
-        <div id="tab-players" class="box">
-          <div class="title">Players</div>
-          <div id="playersList"></div>
-
-          <div class="btnRow">
-            <button id="readyBtn" class="btn secondary" type="button">Ready</button>
-            <button id="leaveBtn" class="btn secondary" type="button">Leave</button>
-          </div>
-
-          <div class="small" style="margin-top:10px;">
-            Ready affects UI only (for now). Host can start Mafia anytime.
-          </div>
-        </div>
-
-        <!-- MAFIA -->
-        <div id="tab-mafia" class="box" style="display:none;">
-          <div class="title">Mafia</div>
-
-          <div class="row">
-            <div class="pill">Phase: <strong id="phase">—</strong></div>
-            <div class="pill">Round: <strong id="round">—</strong></div>
-            <div class="pill">Winner: <strong id="winner">—</strong></div>
-          </div>
-
-          <div class="hr"></div>
-
-          <div class="small">Your Role</div>
-          <div class="pill" style="margin-top:8px;"><strong id="myRole">—</strong></div>
-
-          <div id="investigationBox" class="small" style="margin-top:10px;display:none;"></div>
-
-          <div class="hr"></div>
-
-          <div class="title" style="margin-bottom:8px;">Actions</div>
-          <div class="row2">
-            <div>
-              <div class="small">Target</div>
-              <select id="targetSelect" class="select"></select>
-            </div>
-            <div>
-              <div class="small">Action</div>
-              <select id="actionSelect" class="select">
-                <option value="kill">Kill (Mafia)</option>
-                <option value="save">Save (Doctor)</option>
-                <option value="check">Check (Detective)</option>
-                <option value="vote">Vote (Day)</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="btnRow">
-            <button id="doActionBtn" class="btn" type="button">Submit</button>
-          </div>
-
-          <div class="hr"></div>
-
-          <div id="hostControls" style="display:none;">
-            <div class="title">Host Controls</div>
-            <div class="btnRow">
-              <button id="startMafiaBtn" class="btn" type="button">Start Mafia</button>
-              <button id="nextBtn" class="btn secondary" type="button">Next Phase</button>
-              <button id="forceNightBtn" class="btn secondary small" type="button">Force Resolve Night</button>
-              <button id="forceDayBtn" class="btn secondary small" type="button">Force Resolve Day</button>
-            </div>
-
-            <div id="devPanel" style="display:none;margin-top:14px;">
-              <div class="title">Dev Tools (Test)</div>
-              <div class="small">
-                Dev mode starts from <b>2 players</b> and allows role controls.
-              </div>
-
-              <div class="btnRow" style="margin-top:10px;">
-                <button id="revealBtn" class="btn secondary" type="button">Reveal Roles</button>
-              </div>
-
-              <div class="row2" style="margin-top:10px;">
-                <div>
-                  <div class="small">Pick Player</div>
-                  <select id="devPlayerSelect" class="select"></select>
-                </div>
-                <div>
-                  <div class="small">Set Role</div>
-                  <select id="devRoleSelect" class="select">
-                    <option value="mafia">mafia</option>
-                    <option value="detective">detective</option>
-                    <option value="doctor">doctor</option>
-                    <option value="villager">villager</option>
-                  </select>
-                </div>
-              </div>
-
-              <div class="btnRow">
-                <button id="setRoleBtn" class="btn secondary" type="button">Apply Role</button>
-                <button id="toggleAliveBtn" class="btn secondary" type="button">Toggle Alive/Dead</button>
-              </div>
-
-              <div id="revealBox" class="box" style="margin-top:10px;">
-                <div class="small">Revealed Roles (Host only)</div>
-                <div id="revealList" class="small mono" style="margin-top:8px;">—</div>
-              </div>
-            </div>
-          </div>
-
-          <div class="hr"></div>
-
-          <div class="title">Last Result</div>
-          <div id="lastResult" class="small">—</div>
-        </div>
-
-        <!-- SCORE -->
-        <div id="tab-score" class="box" style="display:none;">
-          <div class="title">Scoreboard</div>
-          <div id="scoreList"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div id="toast" class="toast">OK</div>
-
-  <script src="https://jackbox-server-pwtr.onrender.com/socket.io/socket.io.js"></script>
-  <script>
-    const SERVER_URL = "https://jackbox-server-pwtr.onrender.com";
-
-    const qs = new URLSearchParams(location.search);
-    const roomCode = (qs.get("room") || "").trim().toUpperCase();
-    const dev = qs.get("dev") === "1";
-
-    function uuidFallback(){
-      return "id-" + Date.now().toString(16) + "-" + Math.random().toString(16).slice(2);
-    }
-    const clientId = localStorage.getItem("clientId") || (crypto && crypto.randomUUID ? crypto.randomUUID() : uuidFallback());
-    localStorage.setItem("clientId", clientId);
-
-    const light = document.getElementById("light");
-    const roomCodeEl = document.getElementById("roomCode");
-    const devBadge = document.getElementById("devBadge");
-    const pCount = document.getElementById("pCount");
-    const meName = document.getElementById("meName");
-    const toast = document.getElementById("toast");
-
-    const playersList = document.getElementById("playersList");
-    const readyBtn = document.getElementById("readyBtn");
-    const leaveBtn = document.getElementById("leaveBtn");
-
-    const phaseEl = document.getElementById("phase");
-    const roundEl = document.getElementById("round");
-    const winnerEl = document.getElementById("winner");
-    const myRoleEl = document.getElementById("myRole");
-    const lastResultEl = document.getElementById("lastResult");
-    const investigationBox = document.getElementById("investigationBox");
-
-    const targetSelect = document.getElementById("targetSelect");
-    const actionSelect = document.getElementById("actionSelect");
-    const doActionBtn = document.getElementById("doActionBtn");
-
-    const hostControls = document.getElementById("hostControls");
-    const startMafiaBtn = document.getElementById("startMafiaBtn");
-    const nextBtn = document.getElementById("nextBtn");
-    const forceNightBtn = document.getElementById("forceNightBtn");
-    const forceDayBtn = document.getElementById("forceDayBtn");
-
-    const devPanel = document.getElementById("devPanel");
-    const revealBtn = document.getElementById("revealBtn");
-    const revealList = document.getElementById("revealList");
-    const devPlayerSelect = document.getElementById("devPlayerSelect");
-    const devRoleSelect = document.getElementById("devRoleSelect");
-    const setRoleBtn = document.getElementById("setRoleBtn");
-    const toggleAliveBtn = document.getElementById("toggleAliveBtn");
-
-    const scoreList = document.getElementById("scoreList");
-
-    roomCodeEl.textContent = roomCode || "----";
-    if (dev) devBadge.classList.add("on");
-
-    function showToast(text){
-      toast.textContent = text;
-      toast.style.display = "block";
-      clearTimeout(toast._t);
-      toast._t = setTimeout(() => toast.style.display = "none", 1500);
+‏    .tab.active{
+‏      background: rgba(255,35,79,.16);
+‏      border-color: rgba(255,35,79,.28);
     }
 
-    function escapeHtml(s){
-      return String(s).replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+‏    .section{display:none;margin-top:12px}
+‏    .section.active{display:block}
+
+‏    .grid{
+‏      display:grid;
+‏      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+‏      gap:10px;
+    }
+‏    .player, .gameCard, .scoreCard{
+‏      padding:12px;border-radius:16px;
+‏      border:1px solid rgba(255,255,255,.10);
+‏      background: rgba(255,255,255,.04);
+‏      display:flex;justify-content:space-between;align-items:center;gap:10px;
+‏      overflow:hidden;
+    }
+‏    .name{font-weight:950;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+‏    .badge{
+‏      font-weight:950;font-size:12px;padding:6px 10px;border-radius:999px;
+‏      border:1px solid rgba(255,255,255,.10);
+‏      background: rgba(255,255,255,.06);
+‏      color: rgba(167,176,214,.95);
+‏      white-space:nowrap;
+    }
+‏    .badge.ready{
+‏      border-color: rgba(46,229,157,.25);
+‏      color: rgba(46,229,157,.95);
+‏      background: rgba(46,229,157,.10);
     }
 
-    let isHost = false;
-    let myReady = false;
-    let currentPlayers = [];
-    let mafiaState = null;
+‏    .gameLeft{display:flex;flex-direction:column;gap:2px}
+‏    .gameTitle{font-weight:950}
+‏    .gameMeta{font-size:12px;color:var(--muted)}
+‏    .small{font-size:12px;color:var(--muted)}
 
-    const socket = io(SERVER_URL, { transports:["websocket","polling"], auth:{ clientId } });
+‏    .toast{
+‏      position: fixed;left: 16px;bottom: 16px;
+‏      background: rgba(0,0,0,.55);
+‏      border: 1px solid rgba(255,255,255,.12);
+‏      color: var(--text);
+‏      padding: 10px 12px;border-radius: 14px;font-weight: 900;
+‏      display:none;z-index: 9999;box-shadow: var(--shadow);
+    }
+‏  </style>
+‏</head>
+‏<body>
+‏  <div class="wrap">
+‏    <div class="card">
+‏      <span id="light" class="statusLight"></span>
+‏      <div class="brand"><img src="/brand.png" alt="brand"></div>
 
-    socket.on("connect", () => {
-      light.classList.add("ok");
-      if (!roomCode) return;
+‏      <div class="topRow">
+‏        <div class="pill">Room: <span id="roomCode" class="roomCode">----</span></div>
+‏        <div class="pill">Players: <strong id="count">0</strong></div>
+‏        <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end;">
+‏          <button id="readyBtn" class="btn" type="button" disabled>Ready</button>
+‏          <button id="leaveBtn" class="btn secondary" type="button" disabled>Leave</button>
+‏          <button id="startMafiaBtn" class="btn secondary" type="button" disabled>Start Mafia</button>
+‏        </div>
+‏      </div>
 
-      // Try attach as host; if fails, attach as player
-      socket.emit("host:attach", { roomCode });
+‏      <div class="tabs">
+‏        <div id="tabPlayers" class="tab active">Players</div>
+‏        <div id="tabGames" class="tab">Games</div>
+‏        <div id="tabBoard" class="tab">Leaderboard</div>
+‏      </div>
 
-      // Always fetch latest
-      socket.emit("room:getState", { roomCode });
-      socket.emit("hub:getState", { roomCode });
-      socket.emit("mafia:getState", { roomCode, clientId });
+‏      <div id="secPlayers" class="section active">
+‏        <div id="players" class="grid"></div>
+‏      </div>
 
-      // If dev=1 and you are host, enable dev mode on server
-      // We'll do it after we know isHost from room:state
-    });
+‏      <div id="secGames" class="section">
+‏        <div class="grid">
+‏          <div class="gameCard">
+‏            <div class="gameLeft">
+‏              <div class="gameTitle">Mafia</div>
+‏              <div class="gameMeta">5–12 players • Roles • Voting • Rounds</div>
+‏            </div>
+‏            <button id="gameMafia" class="btn secondary" type="button">Select</button>
+‏          </div>
 
-    socket.on("disconnect", () => light.classList.remove("ok"));
+‏          <div class="gameCard">
+‏            <div class="gameLeft">
+‏              <div class="gameTitle">Secret Hitler</div>
+‏              <div class="gameMeta">Coming soon</div>
+‏            </div>
+‏            <span class="badge">SOON</span>
+‏          </div>
 
-    socket.on("host:attached", () => {
-      // ok
-    });
+‏          <div class="gameCard">
+‏            <div class="gameLeft">
+‏              <div class="gameTitle">Werewolf</div>
+‏              <div class="gameMeta">Coming soon</div>
+‏            </div>
+‏            <span class="badge">SOON</span>
+‏          </div>
 
-    socket.on("host:attach:error", () => {
-      // Not host, attach as player (if exists)
-      socket.emit("player:attach", { roomCode, clientId });
-    });
+‏          <div class="gameCard">
+‏            <div class="gameLeft">
+‏              <div class="gameTitle">Resident</div>
+‏              <div class="gameMeta">Coming soon</div>
+‏            </div>
+‏            <span class="badge">SOON</span>
+‏          </div>
 
-    // Tabs
-    document.querySelectorAll(".tab").forEach(btn => {
-      btn.onclick = () => {
-        document.querySelectorAll(".tab").forEach(b => b.classList.remove("active"));
-        btn.classList.add("active");
+‏          <div class="gameCard">
+‏            <div class="gameLeft">
+‏              <div class="gameTitle">Out of the Loop</div>
+‏              <div class="gameMeta">Coming soon</div>
+‏            </div>
+‏            <span class="badge">SOON</span>
+‏          </div>
+‏        </div>
 
-        const key = btn.dataset.tab;
-        document.getElementById("tab-players").style.display = (key === "players") ? "block" : "none";
-        document.getElementById("tab-mafia").style.display   = (key === "mafia")   ? "block" : "none";
-        document.getElementById("tab-score").style.display   = (key === "score")   ? "block" : "none";
-      };
-    });
+‏        <div style="margin-top:10px" class="small">
+‏          Host selects a game, then starts it when all players are READY.
+‏        </div>
+‏      </div>
 
-    function renderPlayers(players){
-      playersList.innerHTML = "";
-      currentPlayers = players || [];
-      pCount.textContent = String(currentPlayers.length);
+‏      <div id="secBoard" class="section">
+‏        <div id="board" class="grid"></div>
+‏      </div>
+‏    </div>
+‏  </div>
 
-      const me = currentPlayers.find(p => p.clientId === clientId);
-      meName.textContent = me ? me.name : "—";
-      myReady = !!(me && me.ready);
-      readyBtn.textContent = myReady ? "Unready" : "Ready";
+‏  <div id="toast" class="toast">OK</div>
 
-      // Targets dropdown (alive only if mafia state exists)
-      targetSelect.innerHTML = "";
-      devPlayerSelect.innerHTML = "";
+‏  <script src="https://jackbox-server-pwtr.onrender.com/socket.io/socket.io.js"></script>
+‏  <script>
+‏    const SERVER_URL = "https://jackbox-server-pwtr.onrender.com";
+‏    const WEB_ORIGIN = "https://www.gamehub4u.com";
 
-      const addOpt = (sel, p) => {
-        const opt = document.createElement("option");
-        opt.value = p.clientId;
-        opt.textContent = p.name + (p.clientId === clientId ? " (you)" : "");
-        sel.appendChild(opt);
-      };
+‏    function uuidFallback(){
+‏      return "id-" + Date.now().toString(16) + "-" + Math.random().toString(16).slice(2);
+    }
+‏    const clientId = localStorage.getItem("clientId") || (crypto && crypto.randomUUID ? crypto.randomUUID() : uuidFallback());
+‏    localStorage.setItem("clientId", clientId);
 
-      currentPlayers.forEach(p => addOpt(devPlayerSelect, p));
+‏    const qs = new URLSearchParams(location.search);
+‏    let roomCode = (qs.get("room") || "").trim().toUpperCase();
 
-      // For action targets: use mafiaState.alive if exists, otherwise all players
-      const aliveMap = new Map();
-      if (mafiaState && mafiaState.alive) {
-        mafiaState.alive.forEach(a => aliveMap.set(a.clientId, !!a.alive));
-      }
-      const candidates = (mafiaState && mafiaState.alive) ? mafiaState.alive.filter(a => a.alive) : currentPlayers;
+‏    const light = document.getElementById("light");
+‏    const roomCodeEl = document.getElementById("roomCode");
+‏    const countEl = document.getElementById("count");
+‏    const playersEl = document.getElementById("players");
+‏    const boardEl = document.getElementById("board");
 
-      candidates.forEach(p => addOpt(targetSelect, p));
+‏    const readyBtn = document.getElementById("readyBtn");
+‏    const leaveBtn = document.getElementById("leaveBtn");
+‏    const startMafiaBtn = document.getElementById("startMafiaBtn");
+‏    const gameMafiaBtn = document.getElementById("gameMafia");
 
-      currentPlayers.forEach(p => {
-        const div = document.createElement("div");
-        div.className = "player";
-        div.innerHTML = `
-          <div style="font-weight:950; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
-            ${escapeHtml(p.name)}
-          </div>
-          <div class="badge ${p.ready ? "ready" : ""}">${p.ready ? "READY" : "WAIT"}</div>
+‏    const tabPlayers = document.getElementById("tabPlayers");
+‏    const tabGames = document.getElementById("tabGames");
+‏    const tabBoard = document.getElementById("tabBoard");
+‏    const secPlayers = document.getElementById("secPlayers");
+‏    const secGames = document.getElementById("secGames");
+‏    const secBoard = document.getElementById("secBoard");
+
+‏    const toast = document.getElementById("toast");
+
+‏    const socket = io(SERVER_URL, { transports:["websocket","polling"], auth:{ clientId } });
+
+‏    let joined = false;
+‏    let ready = false;
+‏    let isHost = false;
+‏    let currentGame = null;
+
+‏    function showToast(text){
+‏      toast.textContent = text;
+‏      toast.style.display = "block";
+‏      clearTimeout(toast._t);
+‏      toast._t = setTimeout(() => toast.style.display = "none", 1200);
+    }
+‏    function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c])); }
+
+‏    function setTab(which){
+‏      tabPlayers.classList.toggle("active", which==="players");
+‏      tabGames.classList.toggle("active", which==="games");
+‏      tabBoard.classList.toggle("active", which==="board");
+‏      secPlayers.classList.toggle("active", which==="players");
+‏      secGames.classList.toggle("active", which==="games");
+‏      secBoard.classList.toggle("active", which==="board");
+    }
+‏    tabPlayers.onclick = () => setTab("players");
+‏    tabGames.onclick = () => setTab("games");
+‏    tabBoard.onclick = () => setTab("board");
+
+‏    function renderPlayers(players){
+‏      playersEl.innerHTML = "";
+‏      const list = players || [];
+‏      countEl.textContent = list.length;
+
+‏      list.forEach(p => {
+‏        const div = document.createElement("div");
+‏        const rdy = !!p.ready;
+‏        const me = (p.clientId === clientId);
+‏        div.className = "player";
+‏        div.innerHTML = `
+‏          <div class="name">${escapeHtml(p.name||"")}${me ? " (You)" : ""}</div>
+‏          <div class="badge ${rdy ? "ready" : ""}">${rdy ? "READY" : "WAIT"}</div>
         `;
-        playersList.appendChild(div);
+‏        playersEl.appendChild(div);
       });
 
-      if (!currentPlayers.length) {
-        const div = document.createElement("div");
-        div.className = "small";
-        div.textContent = "No players yet";
-        playersList.appendChild(div);
-      }
+‏      const me = list.find(x => x.clientId === clientId);
+‏      joined = !!me;
+‏      ready = !!(me && me.ready);
+
+‏      readyBtn.disabled = !joined;
+‏      leaveBtn.disabled = !joined;
+‏      readyBtn.textContent = ready ? "Unready" : "Ready";
+
+‏      const allReady = list.length > 0 && list.every(x => !!x.ready);
+‏      startMafiaBtn.disabled = !(isHost && allReady && currentGame === "mafia");
     }
 
-    function labelPhase(p){
-      if (p === "role") return "ROLE";
-      if (p === "night") return "NIGHT";
-      if (p === "day") return "DAY";
-      return p || "—";
-    }
-
-    function renderLastResult(s){
-      if (!s || !s.lastResult){ lastResultEl.textContent = "—"; return; }
-      const r = s.lastResult;
-
-      if (r.type === "night") {
-        const died = r.died ? r.died.name : "No one";
-        lastResultEl.textContent = `Night: ${died} died.`;
-        return;
+‏    function renderBoard(leaderboard){
+‏      boardEl.innerHTML = "";
+‏      const list = leaderboard || [];
+‏      if (list.length === 0){
+‏        const empty = document.createElement("div");
+‏        empty.className = "scoreCard";
+‏        empty.innerHTML = `<div class="name">No scores yet</div><div class="badge">0</div>`;
+‏        boardEl.appendChild(empty);
+‏        return;
       }
-      if (r.type === "day") {
-        if (r.tie) lastResultEl.textContent = "Day: Tie — no one eliminated.";
-        else {
-          const el = r.eliminated ? r.eliminated.name : "No one";
-          lastResultEl.textContent = `Day: ${el} eliminated.`;
-        }
-        return;
-      }
-      lastResultEl.textContent = "—";
-    }
 
-    function renderScoreboard(state){
-      scoreList.innerHTML = "";
-      const list = (state && state.leaderboard) ? state.leaderboard : [];
-      if (!list.length) {
-        const div = document.createElement("div");
-        div.className = "small";
-        div.textContent = "No scores yet";
-        scoreList.appendChild(div);
-        return;
-      }
-      list.forEach((x, idx) => {
-        const div = document.createElement("div");
-        div.className = "player";
-        div.innerHTML = `
-          <div>
-            <div style="font-weight:1000;">#${idx+1} ${escapeHtml(x.name || "Player")}</div>
-            <div class="small">wins: ${x.wins || 0} • played: ${x.gamesPlayed || 0}</div>
-          </div>
-          <div class="badge ready">${x.points || 0} pts</div>
+‏      list.forEach((p, idx) => {
+‏        const div = document.createElement("div");
+‏        div.className = "scoreCard";
+‏        div.innerHTML = `
+‏          <div class="name">#${idx+1} ${escapeHtml(p.name||"Player")}</div>
+‏          <div class="badge">${p.points} pts • ${p.wins} wins • ${p.gamesPlayed} games</div>
         `;
-        scoreList.appendChild(div);
+‏        boardEl.appendChild(div);
       });
     }
 
-    socket.on("room:state", (st) => {
-      if (!st) return;
-
-      isHost = (st.hostClientId && st.hostClientId === clientId);
-      hostControls.style.display = isHost ? "block" : "none";
-
-      // enable server dev mode if dev=1 and host
-      if (dev && isHost) {
-        devPanel.style.display = "block";
-        socket.emit("host:setDevMode", { roomCode, enabled: true });
-      } else {
-        devPanel.style.display = "none";
+‏    socket.on("connect", () => {
+‏      light.classList.add("ok");
+‏      if (!roomCode){
+‏        showToast("Missing room");
+‏        return;
       }
+‏      roomCodeEl.textContent = roomCode;
 
-      renderPlayers(st.players || []);
+‏      socket.emit("host:attach", { roomCode });
+‏      socket.emit("player:attach", { roomCode, clientId });
+
+‏      socket.emit("room:getState", { roomCode });
+‏      socket.emit("hub:getState", { roomCode });
     });
 
-    socket.on("hub:state", (st) => {
-      renderScoreboard(st);
-      // if dev toggled server-side, keep badge visible
-      if (st && st.devMode) devBadge.classList.add("on");
+‏    socket.on("disconnect", () => {
+‏      light.classList.remove("ok");
+‏      readyBtn.disabled = true;
+‏      leaveBtn.disabled = true;
+‏      startMafiaBtn.disabled = true;
     });
 
-    socket.on("start:error", ({ message, minPlayers } = {}) => {
-      if (message === "NEED_MIN_PLAYERS") {
-        showToast(`Need ${minPlayers} players`);
-      } else {
-        showToast(message || "Start error");
-      }
+‏    socket.on("host:attached", () => {
+‏      isHost = true;
+‏      showToast("Host OK");
+‏      socket.emit("hub:getState", { roomCode });
+‏      socket.emit("room:getState", { roomCode });
     });
 
-    socket.on("mafia:role", ({ role } = {}) => {
-      myRoleEl.textContent = role ? String(role).toUpperCase() : "—";
+‏    socket.on("host:attach:error", () => {
+‏      isHost = false;
     });
 
-    socket.on("mafia:state", (s) => {
-      if (!s) return;
-      mafiaState = s;
-
-      phaseEl.textContent = labelPhase(s.phase);
-      roundEl.textContent = s.round || "—";
-      winnerEl.textContent = s.winnerTeam ? s.winnerTeam.toUpperCase() : "—";
-      myRoleEl.textContent = s.myRole ? String(s.myRole).toUpperCase() : (myRoleEl.textContent || "—");
-
-      if (s.investigationResult) {
-        investigationBox.style.display = "block";
-        const tgt = s.investigationResult.targetId;
-        const isMafia = !!s.investigationResult.isMafia;
-        const tgtName = (currentPlayers.find(p => p.clientId === tgt)?.name) || "Player";
-        investigationBox.textContent = `Detective: ${tgtName} is ${isMafia ? "MAFIA" : "NOT mafia"}.`;
-      } else {
-        investigationBox.style.display = "none";
-      }
-
-      // refresh targets based on alive list
-      renderPlayers(currentPlayers);
-
-      renderLastResult(s);
+‏    socket.on("room:state", ({ roomCode: rc, players } = {}) => {
+‏      if (rc) roomCode = rc;
+‏      roomCodeEl.textContent = roomCode || "----";
+‏      renderPlayers(players || []);
     });
 
-    // DEV reveal list
-    socket.on("mafia:reveal", ({ list } = {}) => {
-      if (!list || !list.length) { revealList.textContent = "—"; return; }
-      revealList.textContent = list.map(x => `${x.name} = ${x.role}${x.alive ? "" : " (dead)"}`).join("\n");
-      showToast("Roles revealed");
+‏    socket.on("hub:state", ({ currentGame: cg, leaderboard } = {}) => {
+‏      currentGame = cg || null;
+‏      renderBoard(leaderboard || []);
+‏      socket.emit("room:getState", { roomCode });
     });
 
-    // Buttons
-    readyBtn.onclick = () => {
-      if (!roomCode) return;
-      myReady = !myReady;
-      socket.emit("player:ready", { roomCode, ready: myReady, clientId });
+‏    socket.on("join:error", ({ message } = {}) => showToast(message || "Join error"));
+‏    socket.on("start:error", ({ message } = {}) => showToast(message || "Cannot start"));
+
+‏    readyBtn.onclick = () => {
+‏      if (!joined) return;
+‏      ready = !ready;
+‏      readyBtn.textContent = ready ? "Unready" : "Ready";
+‏      socket.emit("player:ready", { roomCode, ready, clientId });
     };
 
-    leaveBtn.onclick = () => {
-      if (!roomCode) return;
-      socket.emit("player:leave", { roomCode, clientId });
-      showToast("Left");
-      setTimeout(() => location.href = "/", 300);
+‏    leaveBtn.onclick = () => {
+‏      if (!joined) return;
+‏      socket.emit("player:leave", { roomCode, clientId });
+‏      setTimeout(() => location.href = `${WEB_ORIGIN}/`, 250);
     };
 
-    startMafiaBtn.onclick = () => socket.emit("mafia:start", { roomCode });
-    nextBtn.onclick = () => socket.emit("mafia:next", { roomCode });
-    forceNightBtn.onclick = () => socket.emit("mafia:forceResolveNight", { roomCode });
-    forceDayBtn.onclick = () => socket.emit("mafia:forceResolveDay", { roomCode });
-
-    doActionBtn.onclick = () => {
-      const tgt = targetSelect.value;
-      const act = actionSelect.value;
-
-      if (!tgt) return showToast("Pick target");
-
-      if (act === "vote") {
-        socket.emit("mafia:vote", { roomCode, clientId, targetId: tgt });
-        showToast("Voted");
-        return;
-      }
-
-      socket.emit("mafia:nightAction", { roomCode, clientId, action: act, targetId: tgt });
-      showToast("Sent");
+‏    gameMafiaBtn.onclick = () => {
+‏      if (!isHost) { showToast("Host only"); return; }
+‏      socket.emit("hub:setGame", { roomCode, game: "mafia" });
+‏      showToast("Mafia selected");
     };
 
-    // Dev tools
-    revealBtn.onclick = () => socket.emit("mafia:revealAll", { roomCode });
-
-    setRoleBtn.onclick = () => {
-      const p = devPlayerSelect.value;
-      const r = devRoleSelect.value;
-      if (!p) return;
-      socket.emit("mafia:setRole", { roomCode, targetId: p, role: r });
-      showToast("Role applied");
+‏    startMafiaBtn.onclick = () => {
+‏      if (!isHost) return;
+‏      socket.emit("mafia:start", { roomCode });
     };
 
-    toggleAliveBtn.onclick = () => {
-      const p = devPlayerSelect.value;
-      if (!p) return;
-      socket.emit("mafia:toggleAlive", { roomCode, targetId: p });
-      showToast("Toggled");
-    };
+‏    socket.on("mafia:started", ({ roomCode: rc } = {}) => {
+‏      const code = (rc || roomCode || "").trim().toUpperCase();
+‏      if (!code) return;
+‏      location.href = `${WEB_ORIGIN}/mafia.html?room=${encodeURIComponent(code)}`;
+    });
 
-    // keep fresh
-    setInterval(() => {
-      if (!roomCode) return;
-      socket.emit("room:getState", { roomCode });
-      socket.emit("hub:getState", { roomCode });
-      socket.emit("mafia:getState", { roomCode, clientId });
-    }, 1200);
-  </script>
-</body>
-</html>
+‏    socket.on("hub:lobby", ({ roomCode: rc } = {}) => {
+‏      const code = (rc || roomCode || "").trim().toUpperCase();
+‏      location.href = `${WEB_ORIGIN}/lobby.html?room=${encodeURIComponent(code)}`;
+    });
+
+‏    socket.on("room:closed", () => {
+‏      showToast("Room closed");
+‏      setTimeout(() => location.href = `${WEB_ORIGIN}/`, 600);
+    });
+‏  </script>
+‏</body>
+‏</html>
