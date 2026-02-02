@@ -3,166 +3,16 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Mafia</title>
-  <style>
-    :root{
-      --bg:#0b1020; --text:#eef1ff; --muted:#a7b0d6;
-      --border:rgba(255,255,255,.10);
-      --shadow:0 14px 40px rgba(0,0,0,.45);
-      --red:#ff2e55; --green:#2ee59d;
-      --btn1:#ff3b6a; --btn2:#ff1f4f;
-      --radius:18px;
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family: system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
-      background: radial-gradient(1200px 800px at 20% 0%, #19214a 0%, var(--bg) 55%);
-      color:var(--text);
-    }
-    .wrap{max-width:1100px;margin:0 auto;padding:22px}
-    .card{
-      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
-      border:1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 18px;
-      box-shadow: var(--shadow);
-      position: relative;
-    }
-    .statusLight{
-      position:absolute; top:14px; left:14px;
-      width:14px; height:14px; border-radius:999px;
-      background: var(--red);
-      box-shadow: 0 0 0 4px rgba(255,46,85,.12), 0 0 18px rgba(255,46,85,.35);
-    }
-    .statusLight.ok{
-      background: var(--green);
-      box-shadow: 0 0 0 4px rgba(46,229,157,.14), 0 0 18px rgba(46,229,157,.35);
-    }
-    .brand{display:flex;justify-content:center;margin:6px 0 10px}
-    .brand img{
-      width:260px;max-width:92%;height:auto;
-      filter: drop-shadow(0 18px 34px rgba(255,35,79,.18));
-      border-radius:18px;
-      border:1px solid rgba(255,255,255,.08);
-      background: rgba(0,0,0,.25);
-    }
-    .topRow{
-      display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;
-      margin-top:8px;
-    }
-    .pill{
-      display:inline-flex;align-items:center;gap:8px;
-      padding:8px 12px;border-radius:999px;
-      background: rgba(255,255,255,.06);
-      border:1px solid rgba(255,255,255,.10);
-      font-size:13px;color:var(--muted);
-    }
-    .roomCode{font-weight:950;letter-spacing:4px;color:#fff}
-    .btn{
-      border:0;border-radius:16px;padding:14px 14px;
-      font-weight:950;cursor:pointer;color:#fff;
-      background: linear-gradient(135deg, var(--btn1), var(--btn2));
-      box-shadow: 0 12px 26px rgba(255,35,79,.22);
-      display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;
-      transition: transform .08s ease, filter .15s ease, opacity .15s ease;
-      position:relative;overflow:hidden;
-    }
-    .btn:hover{filter:brightness(1.05)}
-    .btn:active{transform:scale(.99)}
-    .btn:disabled{opacity:.55;cursor:not-allowed;box-shadow:none}
-    .btn.secondary{
-      background: rgba(255,255,255,.07);
-      border:1px solid rgba(255,255,255,.12);
-      box-shadow:none;color:var(--text);
-    }
-    .btn::after{
-      content:"";position:absolute;top:-40%;left:-60%;
-      width:40%;height:180%;transform:rotate(25deg);
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,.22), transparent);
-      animation: shine 2.2s infinite;
-    }
-    .btn.secondary::after{display:none}
-    @keyframes shine{0%{left:-60%}55%{left:120%}100%{left:120%}}
-
-    .hero{
-      margin-top:12px;
-      border-radius:18px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.18);
-      padding:14px;
-    }
-    .roleBox{
-      display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center;
-    }
-    .roleName{font-size:20px;font-weight:1000}
-    .phase{font-weight:950;letter-spacing:1px}
-    .grid{
-      margin-top:12px;
-      display:grid;
-      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-      gap:10px;
-    }
-    .player{
-      padding:12px;border-radius:16px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.04);
-      display:flex;justify-content:space-between;align-items:center;gap:10px;
-      overflow:hidden;
-    }
-    .name{font-weight:950;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .badge{
-      font-weight:950;font-size:12px;padding:6px 10px;border-radius:999px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.06);
-      color: rgba(167,176,214,.95);
-      white-space:nowrap;
-    }
-    .badge.dead{
-      border-color: rgba(255,46,85,.25);
-      color: rgba(255,46,85,.95);
-      background: rgba(255,46,85,.10);
-    }
-    .panel{
-      margin-top:12px;
-      border-radius:18px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.18);
-      padding:14px;
-    }
-    .panel h3{margin:0 0 10px;font-size:16px}
-    .small{font-size:12px;color:var(--muted)}
-    .hostBox{
-      display:none;
-      margin-top:10px;
-      border-radius:16px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.04);
-      padding:12px;
-    }
-    .hostRow{
-      display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between;
-      margin-top:8px;
-    }
-    .kpi{display:flex; gap:10px; flex-wrap:wrap}
-    .kpi .pill strong{color:#fff}
-    .toast{
-      position: fixed;left: 16px;bottom: 16px;
-      background: rgba(0,0,0,.55);
-      border: 1px solid rgba(255,255,255,.12);
-      color: var(--text);
-      padding: 10px 12px;border-radius: 14px;font-weight: 900;
-      display:none;z-index: 9999;box-shadow: var(--shadow);
-    }
-  </style>
+  <title>Mafia — GameHub4u</title>
+  <link rel="stylesheet" href="/common.css"/>
 </head>
 <body>
-  <div class="wrap">
+  <div class="wrap wrap--wide">
     <div class="card">
       <span id="light" class="statusLight"></span>
       <div class="brand"><img src="/brand.png" alt="brand"></div>
 
-      <div class="topRow">
+      <div class="row">
         <div class="pill">Room: <span id="roomCode" class="roomCode">----</span></div>
         <div class="pill">Round: <strong id="round">1</strong></div>
         <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end;">
@@ -175,12 +25,12 @@
         <div class="roleBox">
           <div>
             <div class="small">Your role</div>
-            <div id="role" class="roleName">—</div>
+            <div id="role" class="roleName">&mdash;</div>
             <div class="small" id="investigation"></div>
           </div>
           <div>
             <div class="small">Phase</div>
-            <div id="phase" class="phase">—</div>
+            <div id="phase" class="phase">&mdash;</div>
           </div>
         </div>
 
@@ -192,9 +42,9 @@
           <div class="kpi" style="margin-top:8px;">
             <div class="pill">Alive: <strong id="kAlive">0</strong></div>
             <div class="pill">Votes: <strong id="kVotes">0</strong></div>
-            <div class="pill">Mafia picked: <strong id="kMafia">—</strong></div>
-            <div class="pill">Doctor picked: <strong id="kDoc">—</strong></div>
-            <div class="pill">Detective picked: <strong id="kDet">—</strong></div>
+            <div class="pill">Mafia picked: <strong id="kMafia">&mdash;</strong></div>
+            <div class="pill">Doctor picked: <strong id="kDoc">&mdash;</strong></div>
+            <div class="pill">Detective picked: <strong id="kDet">&mdash;</strong></div>
           </div>
           <div class="hostRow">
             <button id="resolveNightBtn" class="btn secondary" type="button" disabled>Resolve Night Now</button>
@@ -206,7 +56,7 @@
 
       <div class="panel">
         <h3>Action</h3>
-        <div id="actionHint" class="small">Waiting…</div>
+        <div id="actionHint" class="small">Waiting&hellip;</div>
       </div>
 
       <div id="players" class="grid"></div>
@@ -216,89 +66,40 @@
   <div id="toast" class="toast">OK</div>
 
   <script src="https://jackbox-server-pwtr.onrender.com/socket.io/socket.io.js"></script>
+  <script src="/common.js"></script>
   <script>
-    const SERVER_URL = "https://jackbox-server-pwtr.onrender.com";
-    const WEB_ORIGIN = "https://www.gamehub4u.com";
+    let roomCode = (getParam("room") || "").trim().toUpperCase();
 
-    function uuidFallback(){
-      return "id-" + Date.now().toString(16) + "-" + Math.random().toString(16).slice(2);
-    }
-    const clientId = localStorage.getItem("clientId") || (crypto && crypto.randomUUID ? crypto.randomUUID() : uuidFallback());
-    localStorage.setItem("clientId", clientId);
+    const light            = document.getElementById("light");
+    const roomCodeEl       = document.getElementById("roomCode");
+    const roundEl          = document.getElementById("round");
+    const roleEl           = document.getElementById("role");
+    const phaseEl          = document.getElementById("phase");
+    const playersEl        = document.getElementById("players");
+    const actionHint       = document.getElementById("actionHint");
+    const investigationEl  = document.getElementById("investigation");
+    const resultEl         = document.getElementById("result");
+    const winnerEl         = document.getElementById("winner");
+    const nextBtn          = document.getElementById("nextBtn");
+    const backBtn          = document.getElementById("backBtn");
+    const hostBox          = document.getElementById("hostBox");
+    const kAlive           = document.getElementById("kAlive");
+    const kVotes           = document.getElementById("kVotes");
+    const kMafia           = document.getElementById("kMafia");
+    const kDoc             = document.getElementById("kDoc");
+    const kDet             = document.getElementById("kDet");
+    const resolveNightBtn  = document.getElementById("resolveNightBtn");
+    const resolveDayBtn    = document.getElementById("resolveDayBtn");
 
-    const qs = new URLSearchParams(location.search);
-    let roomCode = (qs.get("room") || "").trim().toUpperCase();
-
-    const light = document.getElementById("light");
-    const roomCodeEl = document.getElementById("roomCode");
-    const roundEl = document.getElementById("round");
-    const roleEl = document.getElementById("role");
-    const phaseEl = document.getElementById("phase");
-    const playersEl = document.getElementById("players");
-    const actionHint = document.getElementById("actionHint");
-    const investigationEl = document.getElementById("investigation");
-    const resultEl = document.getElementById("result");
-    const winnerEl = document.getElementById("winner");
-
-    const nextBtn = document.getElementById("nextBtn");
-    const backBtn = document.getElementById("backBtn");
-    const toast = document.getElementById("toast");
-
-    const hostBox = document.getElementById("hostBox");
-    const kAlive = document.getElementById("kAlive");
-    const kVotes = document.getElementById("kVotes");
-    const kMafia = document.getElementById("kMafia");
-    const kDoc = document.getElementById("kDoc");
-    const kDet = document.getElementById("kDet");
-    const resolveNightBtn = document.getElementById("resolveNightBtn");
-    const resolveDayBtn = document.getElementById("resolveDayBtn");
-
-    const socket = io(SERVER_URL, { transports:["websocket","polling"], auth:{ clientId } });
+    const socket = createSocket();
+    bindStatusLight(socket, light);
+    setupReconnectOverlay(socket);
 
     let state = null;
-
-    function showToast(text){
-      toast.textContent = text;
-      toast.style.display = "block";
-      clearTimeout(toast._t);
-      toast._t = setTimeout(() => toast.style.display = "none", 1200);
-    }
-    function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c])); }
-
-    function labelRole(r){
-      if (r === "mafia") return "MAFIA";
-      if (r === "doctor") return "DOCTOR";
-      if (r === "detective") return "DETECTIVE";
-      if (r === "villager") return "VILLAGER";
-      return "—";
-    }
-    function labelPhase(p){
-      if (p === "role") return "ROLE REVEAL";
-      if (p === "night") return "NIGHT";
-      if (p === "day") return "DAY VOTE";
-      return p || "—";
-    }
-
-    function renderPlayers(list){
-      playersEl.innerHTML = "";
-      (list||[]).forEach(p => {
-        const div = document.createElement("div");
-        div.className = "player";
-        div.dataset.id = p.clientId;
-        div.innerHTML = `
-          <div class="name">${escapeHtml(p.name||"Player")}${p.clientId===clientId ? " (You)" : ""}</div>
-          <div class="badge ${p.alive ? "" : "dead"}">${p.alive ? "ALIVE" : "DEAD"}</div>
-        `;
-        if (p.alive && state && state.winnerTeam === null){
-          div.style.cursor = "pointer";
-          div.onclick = () => onPickTarget(p.clientId);
-        }
-        playersEl.appendChild(div);
-      });
-    }
+    let lastPhaseVal = null;
 
     function amIDead(){
-      const me = state?.alive?.find(x => x.clientId === clientId);
+      const me = state && state.alive ? state.alive.find(x => x.clientId === clientId) : null;
       return me ? !me.alive : false;
     }
 
@@ -325,9 +126,26 @@
       }
     }
 
+    function renderPlayers(list){
+      playersEl.innerHTML = "";
+      (list||[]).forEach(p => {
+        const div = document.createElement("div");
+        div.className = "player" + (p.alive && state && state.winnerTeam === null ? " clickable" : "");
+        div.dataset.id = p.clientId;
+        div.innerHTML = `
+          <div class="name">${escapeHtml(p.name||"Player")}${p.clientId===clientId ? " (You)" : ""}</div>
+          <div class="badge ${p.alive ? "" : "dead"}">${p.alive ? "ALIVE" : "DEAD"}</div>
+        `;
+        if (p.alive && state && state.winnerTeam === null){
+          div.onclick = () => onPickTarget(p.clientId);
+        }
+        playersEl.appendChild(div);
+      });
+    }
+
     function renderHostStats(){
-      const hs = state?.hostStats;
-      const isHost = !!state?.canAdvance;
+      const hs = state && state.hostStats;
+      const isHost = !!(state && state.canAdvance);
 
       hostBox.style.display = isHost ? "block" : "none";
       if (!isHost || !hs) return;
@@ -349,16 +167,24 @@
       roomCodeEl.textContent = roomCode || "----";
       roundEl.textContent = state.round || 1;
       roleEl.textContent = labelRole(state.myRole);
+
+      /* Phase animation */
+      if (lastPhaseVal !== state.phase && state.phase) {
+        phaseEl.classList.remove("phase-enter");
+        void phaseEl.offsetWidth;
+        phaseEl.classList.add("phase-enter");
+      }
+      lastPhaseVal = state.phase;
       phaseEl.textContent = labelPhase(state.phase);
 
       nextBtn.disabled = !state.canAdvance || !!state.winnerTeam;
-      backBtn.disabled = !!state.winnerTeam ? false : true;
+      backBtn.disabled = !state.winnerTeam;
 
       if (state.investigationResult && state.myRole === "detective"){
         const t = state.investigationResult.targetId;
         const isM = state.investigationResult.isMafia;
-        const nm = (state.alive.find(x=>x.clientId===t)?.name) || "Player";
-        investigationEl.textContent = `Investigation: ${nm} is ${isM ? "MAFIA" : "NOT MAFIA"}`;
+        const nm = (state.alive.find(x => x.clientId === t) || {}).name || "Player";
+        investigationEl.textContent = "Investigation: " + nm + " is " + (isM ? "MAFIA" : "NOT MAFIA");
       } else {
         investigationEl.textContent = "";
       }
@@ -366,19 +192,21 @@
       if (state.lastResult){
         if (state.lastResult.type === "night"){
           const died = state.lastResult.died ? state.lastResult.died.name : "No one";
-          resultEl.textContent = `Night result: ${died} died.`;
+          resultEl.textContent = "Night result: " + died + " died.";
         } else if (state.lastResult.type === "day"){
           if (state.lastResult.tie){
-            resultEl.textContent = "Day result: Tie vote — no one eliminated.";
+            resultEl.textContent = "Day result: Tie vote \u2014 no one eliminated.";
           } else {
             const el = state.lastResult.eliminated ? state.lastResult.eliminated.name : "No one";
-            resultEl.textContent = `Day result: ${el} eliminated.`;
+            resultEl.textContent = "Day result: " + el + " eliminated.";
           }
         }
-      } else resultEl.textContent = "";
+      } else {
+        resultEl.textContent = "";
+      }
 
       if (state.winnerTeam){
-        winnerEl.textContent = state.winnerTeam === "mafia" ? "🏆 MAFIA WINS (+10)" : "🏆 TOWN WINS (+10)";
+        winnerEl.textContent = state.winnerTeam === "mafia" ? "MAFIA WINS (+10)" : "TOWN WINS (+10)";
         backBtn.disabled = false;
       } else {
         winnerEl.textContent = "";
@@ -389,33 +217,31 @@
       } else if (state.phase === "role"){
         actionHint.textContent = "Host: press Next to start the Night.";
       } else if (state.phase === "night"){
-        if (amIDead()) actionHint.textContent = "You are dead — wait.";
+        if (amIDead()) actionHint.textContent = "You are dead \u2014 wait.";
         else if (state.myRole === "mafia") actionHint.textContent = "Pick someone to KILL (click a player).";
         else if (state.myRole === "doctor") actionHint.textContent = "Pick someone to SAVE (click a player).";
         else if (state.myRole === "detective") actionHint.textContent = "Pick someone to INVESTIGATE (click a player).";
         else actionHint.textContent = "Wait for the night to end.";
       } else if (state.phase === "day"){
-        if (amIDead()) actionHint.textContent = "You are dead — wait.";
+        if (amIDead()) actionHint.textContent = "You are dead \u2014 wait.";
         else actionHint.textContent = "Vote: click a player to eliminate.";
       } else {
-        actionHint.textContent = "Waiting…";
+        actionHint.textContent = "Waiting\u2026";
       }
 
       renderPlayers(state.alive || []);
       renderHostStats();
     }
 
+    /* ---- Socket events ---- */
     socket.on("connect", () => {
-      light.classList.add("ok");
       if (!roomCode){ showToast("Missing room"); return; }
-
       socket.emit("player:attach", { roomCode, clientId });
       socket.emit("host:attach", { roomCode });
       socket.emit("mafia:getState", { roomCode, clientId });
     });
 
     socket.on("disconnect", () => {
-      light.classList.remove("ok");
       nextBtn.disabled = true;
       backBtn.disabled = true;
       resolveNightBtn.disabled = true;
@@ -433,16 +259,16 @@
     backBtn.onclick = () => socket.emit("mafia:backToLobby", { roomCode });
 
     resolveNightBtn.onclick = () => socket.emit("mafia:forceResolveNight", { roomCode });
-    resolveDayBtn.onclick = () => socket.emit("mafia:forceResolveDay", { roomCode });
+    resolveDayBtn.onclick   = () => socket.emit("mafia:forceResolveDay", { roomCode });
 
     socket.on("hub:lobby", ({ roomCode: rc } = {}) => {
       const code = (rc || roomCode || "").trim().toUpperCase();
-      location.href = `${WEB_ORIGIN}/lobby.html?room=${encodeURIComponent(code)}`;
+      location.href = WEB_ORIGIN + "/lobby.html?room=" + encodeURIComponent(code);
     });
 
     socket.on("room:closed", () => {
       showToast("Room closed");
-      setTimeout(() => location.href = `${WEB_ORIGIN}/`, 600);
+      setTimeout(() => location.href = WEB_ORIGIN + "/", 600);
     });
   </script>
 </body>

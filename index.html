@@ -4,123 +4,24 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>GameHub4u</title>
-  <style>
-    :root{
-      --bg:#0b1020; --text:#eef1ff; --muted:#a7b0d6;
-      --border:rgba(255,255,255,.10);
-      --shadow:0 14px 40px rgba(0,0,0,.45);
-      --red:#ff2e55; --green:#2ee59d;
-      --btn1:#ff3b6a; --btn2:#ff1f4f;
-      --radius:18px;
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family: system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
-      background: radial-gradient(1200px 800px at 20% 0%, #19214a 0%, var(--bg) 55%);
-      color:var(--text);
-    }
-    .wrap{max-width:780px;margin:0 auto;padding:22px}
-    .card{
-      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
-      border:1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 18px;
-      box-shadow: var(--shadow);
-      position: relative;
-    }
-    .statusLight{
-      position:absolute; top:14px; left:14px;
-      width:14px; height:14px; border-radius:999px;
-      background: var(--red);
-      box-shadow: 0 0 0 4px rgba(255,46,85,.12), 0 0 18px rgba(255,46,85,.35);
-    }
-    .statusLight.ok{
-      background: var(--green);
-      box-shadow: 0 0 0 4px rgba(46,229,157,.14), 0 0 18px rgba(46,229,157,.35);
-    }
-    .brand{display:flex;justify-content:center;margin:6px 0 14px}
-    .brand img{
-      width:320px;max-width:92%;height:auto;
-      filter: drop-shadow(0 18px 34px rgba(255,35,79,.18));
-      border-radius:18px;
-      border:1px solid rgba(255,255,255,.08);
-      background: rgba(0,0,0,.25);
-    }
-    .box{
-      margin-top:10px;
-      border-radius:18px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.18);
-      padding:14px;
-    }
-    .label{font-size:12px;color:var(--muted);font-weight:900;margin:0 0 8px}
-    .input{
-      width:100%;
-      padding:14px 14px;
-      border-radius:16px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.06);
-      color: var(--text);
-      outline:none;
-      font-weight:900;
-      font-size:14px;
-    }
-    .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
-    .btn{
-      border:0;border-radius:16px;padding:14px 14px;
-      font-weight:950;cursor:pointer;color:#fff;
-      background: linear-gradient(135deg, #ff3b6a, #ff1f4f);
-      box-shadow: 0 12px 26px rgba(255,35,79,.22);
-      display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;
-      transition: transform .08s ease, filter .15s ease, opacity .15s ease;
-      position:relative;overflow:hidden;
-      flex:1;
-      min-width:160px;
-    }
-    .btn:hover{filter:brightness(1.05)}
-    .btn:active{transform:scale(.99)}
-    .btn:disabled{opacity:.55;cursor:not-allowed;box-shadow:none}
-    .btn.secondary{
-      background: rgba(255,255,255,.07);
-      border:1px solid rgba(255,255,255,.12);
-      box-shadow:none;color:var(--text);
-    }
-    .btn::after{
-      content:"";position:absolute;top:-40%;left:-60%;
-      width:40%;height:180%;transform:rotate(25deg);
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,.22), transparent);
-      animation: shine 2.2s infinite;
-    }
-    .btn.secondary::after{display:none}
-    @keyframes shine{0%{left:-60%}55%{left:120%}100%{left:120%}}
-    .toast{
-      position: fixed;left: 16px;bottom: 16px;
-      background: rgba(0,0,0,.55);
-      border: 1px solid rgba(255,255,255,.12);
-      color: var(--text);
-      padding: 10px 12px;border-radius: 14px;font-weight: 900;
-      display:none;z-index: 9999;box-shadow: var(--shadow);
-    }
-    .hint{font-size:12px;color:var(--muted);margin-top:10px}
-  </style>
+  <link rel="stylesheet" href="/common.css"/>
 </head>
 <body>
-  <div class="wrap">
+  <div class="wrap wrap--narrow">
     <div class="card">
       <span id="light" class="statusLight"></span>
       <div class="brand"><img src="/brand.png" alt="brand"></div>
 
       <div class="box">
         <div class="label">Room Code</div>
-        <input id="room" class="input" placeholder="e.g. 6F3J" autocomplete="off" />
+        <input id="room" class="input" placeholder="e.g. 6F3J" maxlength="6" autocomplete="off"/>
 
         <div class="label" style="margin-top:12px;">Your Name</div>
-        <input id="name" class="input" placeholder="Your name" autocomplete="off" />
+        <input id="name" class="input" placeholder="Your name" maxlength="20" autocomplete="off"/>
 
-        <div class="row">
-          <button id="joinBtn" class="btn" type="button">Join</button>
-          <button id="hostBtn" class="btn secondary" type="button">Host</button>
+        <div class="row" style="margin-top:10px;">
+          <button id="joinBtn" class="btn" type="button" style="flex:1;min-width:160px;">Join</button>
+          <button id="hostBtn" class="btn secondary" type="button" style="flex:1;min-width:160px;">Host</button>
         </div>
 
         <div class="hint">
@@ -133,49 +34,46 @@
   <div id="toast" class="toast">OK</div>
 
   <script src="https://jackbox-server-pwtr.onrender.com/socket.io/socket.io.js"></script>
+  <script src="/common.js"></script>
   <script>
-    const SERVER_URL = "https://jackbox-server-pwtr.onrender.com";
-    const WEB_ORIGIN = location.origin;
+    const roomFromUrl = (getParam("room") || "").trim().toUpperCase();
 
-    function uuidFallback(){
-      return "id-" + Date.now().toString(16) + "-" + Math.random().toString(16).slice(2);
-    }
-    const clientId = localStorage.getItem("clientId") || (crypto && crypto.randomUUID ? crypto.randomUUID() : uuidFallback());
-    localStorage.setItem("clientId", clientId);
+    const roomInput = document.getElementById("room");
+    const nameInput = document.getElementById("name");
+    const joinBtn   = document.getElementById("joinBtn");
+    const hostBtn   = document.getElementById("hostBtn");
 
-    const qs = new URLSearchParams(location.search);
-    const roomFromUrl = (qs.get("room") || "").trim().toUpperCase();
+    if (roomFromUrl) roomInput.value = roomFromUrl;
 
-    const light = document.getElementById("light");
-    const room = document.getElementById("room");
-    const name = document.getElementById("name");
-    const joinBtn = document.getElementById("joinBtn");
-    const hostBtn = document.getElementById("hostBtn");
-    const toast = document.getElementById("toast");
+    const socket = createSocket();
+    bindStatusLight(socket, document.getElementById("light"));
+    setupReconnectOverlay(socket);
 
-    if (roomFromUrl) room.value = roomFromUrl;
+    /* Auto-uppercase room code */
+    roomInput.addEventListener("input", () => {
+      roomInput.value = roomInput.value.toUpperCase().replace(/[^A-Z0-9]/g, "");
+    });
 
-    function showToast(text){
-      toast.textContent = text;
-      toast.style.display = "block";
-      clearTimeout(toast._t);
-      toast._t = setTimeout(() => toast.style.display = "none", 1400);
-    }
-
-    const socket = io(SERVER_URL, { transports:["websocket","polling"], auth:{ clientId } });
-
-    socket.on("connect", () => light.classList.add("ok"));
-    socket.on("disconnect", () => light.classList.remove("ok"));
-
-    hostBtn.onclick = () => location.href = `${WEB_ORIGIN}/host.html`;
+    hostBtn.onclick = () => location.href = WEB_ORIGIN + "/host.html";
 
     joinBtn.onclick = () => {
-      const rc = (room.value || "").trim().toUpperCase();
-      const nm = (name.value || "").trim();
-      if (!rc) return showToast("Enter room code");
-      if (!nm) return showToast("Enter your name");
+      /* Validate room code */
+      const rc = validateRoomCode(roomInput.value);
+      if (!rc.ok) {
+        roomInput.classList.add("invalid");
+        setTimeout(() => roomInput.classList.remove("invalid"), 400);
+        return showToast(rc.msg);
+      }
 
-      socket.emit("player:join", { roomCode: rc, name: nm, clientId });
+      /* Validate name */
+      const nm = validateName(nameInput.value);
+      if (!nm.ok) {
+        nameInput.classList.add("invalid");
+        setTimeout(() => nameInput.classList.remove("invalid"), 400);
+        return showToast(nm.msg);
+      }
+
+      socket.emit("player:join", { roomCode: rc.value, name: nm.value, clientId });
     };
 
     socket.on("join:error", ({ message } = {}) => {
@@ -186,7 +84,7 @@
       const code = (rc || "").trim().toUpperCase();
       showToast("Joined");
       setTimeout(() => {
-        location.href = `${WEB_ORIGIN}/lobby.html?room=${encodeURIComponent(code)}`;
+        location.href = WEB_ORIGIN + "/lobby.html?room=" + encodeURIComponent(code);
       }, 200);
     });
   </script>
