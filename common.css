@@ -1,0 +1,384 @@
+/* ===== GameHub4u — Shared Design System ===== */
+
+:root{
+  --bg:#0b1020;
+  --text:#eef1ff;
+  --muted:#a7b0d6;
+  --border:rgba(255,255,255,.10);
+  --shadow:0 14px 40px rgba(0,0,0,.45);
+  --red:#ff2e55;
+  --green:#2ee59d;
+  --btn1:#ff3b6a;
+  --btn2:#ff1f4f;
+  --radius:18px;
+}
+
+/* ---- Reset & Base ---- */
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family: system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  background: radial-gradient(1200px 800px at 20% 0%, #19214a 0%, var(--bg) 55%);
+  color:var(--text);
+}
+
+/* ---- Layout ---- */
+.wrap{max-width:980px;margin:0 auto;padding:22px}
+.wrap--narrow{max-width:780px}
+.wrap--wide{max-width:1100px}
+
+/* ---- Card ---- */
+.card{
+  background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
+  border:1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px;
+  box-shadow: var(--shadow);
+  position: relative;
+  overflow:hidden;
+}
+
+/* ---- Status Light ---- */
+.statusLight{
+  position:absolute; top:14px; left:14px;
+  width:14px; height:14px; border-radius:999px;
+  background: var(--red);
+  box-shadow: 0 0 0 4px rgba(255,46,85,.12), 0 0 18px rgba(255,46,85,.35);
+  transition: background .3s, box-shadow .3s;
+}
+.statusLight.ok{
+  background: var(--green);
+  box-shadow: 0 0 0 4px rgba(46,229,157,.14), 0 0 18px rgba(46,229,157,.35);
+}
+
+/* ---- Brand ---- */
+.brand{display:flex;justify-content:center;margin:6px 0 12px}
+.brand img{
+  width:260px;max-width:90%;height:auto;
+  filter: drop-shadow(0 18px 34px rgba(255,35,79,.18));
+  border-radius:18px;
+  border:1px solid rgba(255,255,255,.08);
+  background: rgba(0,0,0,.25);
+}
+
+/* ---- Pill ---- */
+.pill{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:8px 12px;border-radius:999px;
+  background: rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.10);
+  font-size:13px;color:var(--muted);
+}
+.roomCode{font-weight:950;letter-spacing:4px;color:#fff}
+
+/* ---- Row / Grid ---- */
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:720px){ .row2{grid-template-columns:1fr} }
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;margin-top:12px}
+.btnRow{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+
+/* ---- Box ---- */
+.box{
+  border-radius:18px;
+  border:1px solid rgba(255,255,255,.10);
+  background: rgba(0,0,0,.18);
+  padding:14px;
+  margin-top:12px;
+}
+
+/* ---- Typography ---- */
+.title{font-weight:1000;margin-bottom:10px}
+.small{font-size:12px;color:var(--muted)}
+.label{font-size:12px;color:var(--muted);font-weight:900;margin:0 0 8px}
+.mono{font-family: ui-monospace, SFMono-Regular, Menlo, monospace}
+.hr{height:1px;background:rgba(255,255,255,.10);margin:12px 0}
+.hint{font-size:12px;color:var(--muted);margin-top:10px}
+
+/* ---- Input / Select ---- */
+.input, .select{
+  width:100%;
+  padding:12px 14px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.06);
+  color: var(--text);
+  outline:none;
+  font-weight:900;
+  font-size:14px;
+}
+.select{cursor:pointer}
+.input:focus, .select:focus{
+  border-color: rgba(255,59,106,.35);
+}
+.input.invalid{
+  border-color: var(--red);
+  animation: shake .35s ease;
+}
+
+/* ---- Buttons ---- */
+.btn{
+  border:0;border-radius:16px;padding:12px 14px;
+  font-weight:950;cursor:pointer;color:#fff;
+  background: linear-gradient(135deg, var(--btn1), var(--btn2));
+  box-shadow: 0 12px 26px rgba(255,35,79,.22);
+  display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;
+  transition: transform .08s ease, filter .15s ease, opacity .15s ease;
+  position:relative;overflow:hidden;
+}
+.btn:hover{filter:brightness(1.05)}
+.btn:active{transform:scale(.98)}
+.btn:disabled{opacity:.55;cursor:not-allowed;box-shadow:none}
+.btn.secondary{
+  background: rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.12);
+  box-shadow:none;color:var(--text);
+}
+.btn.small{padding:10px 12px;border-radius:14px;font-size:13px}
+.btn::after{
+  content:"";position:absolute;top:-40%;left:-60%;
+  width:40%;height:180%;transform:rotate(25deg);
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.22), transparent);
+  animation: shine 2.2s infinite;
+}
+.btn.secondary::after{display:none}
+
+/* ---- Tabs ---- */
+.tabs{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.tab{
+  padding:10px 14px;border-radius:14px;
+  border:1px solid rgba(255,255,255,.10);
+  background: rgba(0,0,0,.18);
+  color: var(--text);
+  font-weight:950;
+  cursor:pointer;
+  opacity:.75;
+  transition: opacity .15s, background .2s, border-color .2s;
+  user-select:none;
+}
+.tab:hover{opacity:.9}
+.tab.active{
+  opacity:1;
+  border-color:rgba(255,59,106,.35);
+  background:rgba(255,59,106,.10);
+}
+
+/* ---- Player Card ---- */
+.player{
+  padding:12px;border-radius:16px;
+  border:1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.04);
+  display:flex;justify-content:space-between;align-items:center;gap:10px;
+  margin-bottom:8px;
+  overflow:hidden;
+  transition: background .2s, border-color .2s;
+}
+.player.clickable{cursor:pointer}
+.player.clickable:hover{
+  background: rgba(255,255,255,.08);
+  border-color: rgba(255,255,255,.18);
+}
+.name{font-weight:950;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* ---- Badge ---- */
+.badge{
+  font-weight:950;font-size:12px;padding:6px 10px;border-radius:999px;
+  border:1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.06);
+  color: rgba(167,176,214,.95);
+  white-space:nowrap;
+}
+.badge.ready{
+  border-color: rgba(46,229,157,.25);
+  color: rgba(46,229,157,.95);
+  background: rgba(46,229,157,.10);
+}
+.badge.dead{
+  border-color: rgba(255,46,85,.25);
+  color: rgba(255,46,85,.95);
+  background: rgba(255,46,85,.10);
+}
+.badge.soon{
+  border-color: rgba(255,165,0,.25);
+  color: rgba(255,165,0,.9);
+  background: rgba(255,165,0,.08);
+}
+
+/* ---- Game Card ---- */
+.gameCard{
+  padding:14px;border-radius:16px;
+  border:1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.04);
+  display:flex;justify-content:space-between;align-items:center;gap:12px;
+  margin-bottom:8px;
+  transition: background .2s, border-color .2s;
+}
+.gameCard.selectable{cursor:pointer}
+.gameCard.selectable:hover{
+  background: rgba(255,255,255,.08);
+  border-color: rgba(255,255,255,.18);
+}
+.gameCard.selected{
+  border-color: rgba(255,59,106,.35);
+  background: rgba(255,59,106,.08);
+}
+.gameLeft{display:flex;flex-direction:column;gap:3px}
+.gameTitle{font-weight:950;font-size:15px}
+.gameMeta{font-size:12px;color:var(--muted)}
+
+/* ---- Toast ---- */
+.toast{
+  position: fixed;left: 16px;bottom: 16px;
+  background: rgba(0,0,0,.65);
+  border: 1px solid rgba(255,255,255,.12);
+  color: var(--text);
+  padding: 10px 14px;border-radius: 14px;font-weight: 900;
+  display:none;z-index: 9999;box-shadow: var(--shadow);
+  animation: fadeUp .25s ease;
+}
+
+/* ---- Dev Badge ---- */
+.devBadge{
+  display:none;
+  margin-left:8px;
+  padding:6px 10px;border-radius:999px;
+  border:1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.08);
+  font-weight:1000;
+  color: rgba(255,210,218,.95);
+}
+.devBadge.on{display:inline-flex}
+
+/* ---- Reconnection Overlay ---- */
+.reconnect-overlay{
+  position:fixed;inset:0;
+  background: rgba(11,16,32,.88);
+  z-index:10000;
+  display:none;
+  align-items:center;justify-content:center;
+  flex-direction:column;gap:16px;
+}
+.reconnect-overlay.show{display:flex}
+.reconnect-overlay .spinner{
+  width:40px;height:40px;
+  border:4px solid rgba(255,255,255,.12);
+  border-top-color: var(--btn1);
+  border-radius:50%;
+  animation: spin .8s linear infinite;
+}
+.reconnect-overlay .msg{
+  font-weight:900;
+  color:var(--muted);
+  font-size:14px;
+}
+
+/* ---- Loading Spinner (inline) ---- */
+.loading{
+  display:inline-flex;align-items:center;gap:8px;
+  color:var(--muted);font-size:13px;font-weight:900;
+}
+.loading::before{
+  content:"";
+  width:16px;height:16px;
+  border:2px solid rgba(255,255,255,.12);
+  border-top-color:var(--btn1);
+  border-radius:50%;
+  animation: spin .7s linear infinite;
+}
+
+/* ---- Animations ---- */
+@keyframes shine{0%{left:-60%}55%{left:120%}100%{left:120%}}
+
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(10px)}
+  to{opacity:1;transform:translateY(0)}
+}
+@keyframes fadeIn{
+  from{opacity:0}
+  to{opacity:1}
+}
+@keyframes spin{
+  to{transform:rotate(360deg)}
+}
+@keyframes shake{
+  0%,100%{transform:translateX(0)}
+  20%,60%{transform:translateX(-6px)}
+  40%,80%{transform:translateX(6px)}
+}
+
+/* Phase transition animation */
+.phase-enter{
+  animation: phaseFlash .6s ease;
+}
+@keyframes phaseFlash{
+  0%{opacity:0;transform:scale(.92)}
+  50%{opacity:1;transform:scale(1.03)}
+  100%{transform:scale(1)}
+}
+
+/* ---- QR (host page) ---- */
+.qrWrap{
+  margin-top:10px;
+  display:flex;gap:14px;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;
+}
+.qr{
+  width:260px;height:260px;
+  border-radius:16px;
+  border:1px solid rgba(255,255,255,.12);
+  background:#fff;
+  overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+}
+.qr img{width:100%;height:100%;object-fit:cover}
+
+.copyRow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:8px}
+.copyBtn{
+  width:44px;height:44px;border-radius:14px;
+  border:1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.08);
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  opacity:.85;
+  transition: transform .08s ease, opacity .15s ease, filter .15s ease;
+}
+.copyBtn:hover{opacity:1;filter:brightness(1.05)}
+.copyBtn:active{transform:scale(.98)}
+
+/* ---- Hero (mafia page) ---- */
+.hero{
+  margin-top:12px;
+  border-radius:18px;
+  border:1px solid rgba(255,255,255,.10);
+  background: rgba(0,0,0,.18);
+  padding:14px;
+}
+.roleBox{
+  display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center;
+}
+.roleName{font-size:20px;font-weight:1000}
+.phase{font-weight:950;letter-spacing:1px}
+
+/* ---- Host Box (mafia page) ---- */
+.hostBox{
+  display:none;
+  margin-top:10px;
+  border-radius:16px;
+  border:1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.04);
+  padding:12px;
+}
+.hostRow{
+  display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;
+  margin-top:8px;
+}
+.kpi{display:flex;gap:10px;flex-wrap:wrap}
+.kpi .pill strong{color:#fff}
+
+.panel{
+  margin-top:12px;
+  border-radius:18px;
+  border:1px solid rgba(255,255,255,.10);
+  background: rgba(0,0,0,.18);
+  padding:14px;
+}
+.panel h3{margin:0 0 10px;font-size:16px}
